@@ -31,9 +31,9 @@ import {
 import {signIn} from './src/redux/actions.js'
 import {store} from './src/redux'
 
-import History from './src/component/history'
-import Contact from './src/component/contact'
-import Profile from './src/component/profile'
+import History from './src/screens/history'
+import ChatList from './src/screens/contact'
+import Profile from './src/screens/profile'
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -54,21 +54,24 @@ export default class App extends Component<{}> {
     }
 
     onLoginClick() {
-        store.dispatch(signIn('testuser', 'secret'))
-        store.subscribe(() => {
-        })
+
+
     }
 
     onTabClick(selectedTab) {
         this.setState({
             selectedTab
         })
+        store.dispatch(signIn('testuser', 'secret'))
+        store.subscribe((state) => {
+            console.log(store.getState())
+        })
     }
 
     renderContent() {
         if(this.state.selectedTab == 'Friends') {
             return (
-                <Contact />
+                <ChatList />
             )
         } else if (this.state.selectedTab == 'Chats') {
             return (
