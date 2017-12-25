@@ -12,6 +12,7 @@ import {
   RkTextInput,
   RkButton
 } from 'react-native-ui-kitten';
+import { Thumbnail } from 'native-base';
 import {Avatar} from '../../components';
 import {FontAwesome} from '../../assets/icons';
 import {data} from '../../data';
@@ -80,7 +81,7 @@ export default class ChatList extends React.Component {
     return (
         <TouchableOpacity onPress={() => this.props.navigation.navigate('Chat', {userId: info.item.withUser.id})}>
           <View style={styles.container}>
-            <Avatar rkType='circle' style={styles.avatar} img={info.item.withUser.photo}/>
+          <Thumbnail source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
             <View style={styles.content}>
               <View style={styles.contentHeader}>
                 <RkText rkType='header5'>{name}</RkText>

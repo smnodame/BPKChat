@@ -57,7 +57,7 @@ let populate = () => {
   }
 
 
-  //truncate();
+  truncate();
   console.log(' populate version ')
   populateVersion();
   console.log(' populate user ')

@@ -7,6 +7,4 @@ import {data} from './src/data'
 bootstrap();
 data.populateRealm();
 
-import ChatList from './src/screens/contact'
-
-AppRegistry.registerComponent('BPKChat', () => ChatList);
+AppRegistry.registerComponent('BPKChat', () => App);

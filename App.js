@@ -20,7 +20,8 @@ import {
     Body,
     Right,
     Thumbnail,
-    Title
+    Title,
+    Badge
 } from 'native-base';
 import {
   Platform,
@@ -31,9 +32,9 @@ import {
 import {signIn} from './src/redux/actions.js'
 import {store} from './src/redux'
 
-import History from './src/screens/history'
+import ProfileSettings from './src/screens/history'
 import ChatList from './src/screens/contact'
-import Profile from './src/screens/profile'
+import Contacts from './src/screens/profile'
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -71,15 +72,15 @@ export default class App extends Component<{}> {
     renderContent() {
         if(this.state.selectedTab == 'Friends') {
             return (
-                <ChatList />
+                <Contacts />
             )
         } else if (this.state.selectedTab == 'Chats') {
             return (
-                <History />
+                <ChatList />
             )
         } else if (this.state.selectedTab == 'Profile') {
             return (
-                <Profile />
+                <ProfileSettings />
             )
         }
     }
@@ -96,23 +97,31 @@ export default class App extends Component<{}> {
                   <Body>
                       <Title>{ this.state.selectedTab }</Title>
                   </Body>
+                  <Right>
+                      <Button transparent>
+                          <Icon name="md-person-add" />
+                      </Button>
+                  </Right>
               </Header>
+              <Content>
               {
                   this.renderContent()
               }
+              </Content>
               <Footer style={{ backgroundColor: '#3b5998' }}>
                 <FooterTab style={{ backgroundColor: '#3b5998' }}>
                   <Button vertical onPress={() => this.onTabClick('Friends')}>
-                    <Icon name="apps" />
-                    <Text>Apps</Text>
+                    <Icon name="md-contacts" />
+                    <Text>Contacts</Text>
                   </Button>
-                  <Button vertical onPress={() => this.onTabClick('Chats')}>
-                    <Icon name="camera" />
-                    <Text>Camera</Text>
+                  <Button badge vertical onPress={() => this.onTabClick('Chats')}>
+                    <Badge ><Text>51</Text></Badge>
+                    <Icon name="md-chatboxes" />
+                    <Text>Chat Lists</Text>
                   </Button>
                   <Button vertical onPress={() => this.onTabClick('Profile')}>
-                    <Icon active name="navigate" />
-                    <Text>Navigate</Text>
+                    <Icon active name="md-settings" />
+                    <Text>SETTINGS</Text>
                   </Button>
                 </FooterTab>
               </Footer>
