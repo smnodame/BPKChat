@@ -3,7 +3,8 @@ import {
   ListView,
   View,
   StyleSheet,
-  TouchableOpacity
+  TouchableOpacity,
+  Image
 } from 'react-native';
 import _ from 'lodash';
 import {
@@ -11,7 +12,8 @@ import {
   RkText,
   RkTextInput
 } from 'react-native-ui-kitten';
-import { Thumbnail, Icon } from 'native-base';
+import Modal from 'react-native-modal';
+import { Thumbnail, Icon, Text, Button } from 'native-base';
 import {data} from '../../data';
 import {Avatar} from '../../components/avatar';
 import {FontAwesome} from '../../assets/icons';
@@ -28,7 +30,9 @@ export default class Contacts extends React.Component {
 
     let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      data: ds.cloneWithRows(this.users)
+      data: ds.cloneWithRows(this.users),
+      showProfileModal: false,
+      showFriendModal: false
     };
 
     this.filter = this._filter.bind(this);
@@ -47,7 +51,7 @@ export default class Contacts extends React.Component {
   _renderRow(row) {
     let name = `${row.firstName} ${row.lastName}`;
     return (
-      <TouchableOpacity onPress={() => this.props.navigation.navigate('ProfileV1', {id: row.id})}>
+      <TouchableOpacity onPress={() => this.setState({ showFriendModal: true })}>
         <View style={styles.container}>
             <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
             <RkText rkType='header5'>{name}</RkText>
@@ -90,6 +94,186 @@ export default class Contacts extends React.Component {
   render() {
     return (
         <View>
+            <Modal
+                onRequestClose={() => this.setState({ showProfileModal: false })}
+                onBackdropPress={() => this.setState({ showProfileModal: false })}
+                isVisible={this.state.showProfileModal}
+            >
+                <View style={{
+                    height: 400,
+                    backgroundColor: 'white',
+                    // justifyContent: 'center',
+                    // alignItems: 'center',
+                    borderRadius: 4,
+                    borderColor: 'rgba(0, 0, 0, 0.1)',
+                }}>
+                    <View style={{ height: 220 }}>
+                        <Image
+                            style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
+                            source={{uri: 'https://images.alphacoders.com/685/685151.jpg'}}
+                        />
+                        <Image
+                            style={{
+                                width: 110,
+                                height: 110,
+                                borderRadius: 55,
+                                borderColor: 'white',
+                                borderWidth: 1,
+                                position: 'absolute',
+                                top: 95,
+                                left: '50%',
+                                marginLeft: -55
+                            }}
+                            source={{uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}}
+                        />
+                    </View>
+                    <View style={{
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                        <Text>Pat Charaporn</Text>
+                        <Text note>ID patcharaporn</Text>
+                    </View>
+                    <View style={{ flex: 1}}>
+                    </View>
+                    <View
+                        style={{
+                            borderWidth: 1, borderColor: '#fdfdfd', flexDirection: 'row',
+                            justifyContent: 'center', alignItems: 'flex-end', padding: 15
+                        }}
+                    >
+                        <Button transparent style={{ flexDirection: 'column' }}>
+                            <Icon name='md-person' style={{ color: 'gray' }} />
+                            <Text style={{ color: 'gray' }}>Edit Profile</Text>
+                        </Button>
+                        <Button transparent style={{ flexDirection: 'column', marginLeft: 10 }}>
+                            <Icon name='md-cloud-download' style={{ color: 'gray' }} />
+                            <Text style={{ color: 'gray' }}>KEEP</Text>
+                        </Button>
+                    </View>
+                </View>
+            </Modal>
+            <Modal
+                onRequestClose={() => this.setState({ showFriendModal: false })}
+                onBackdropPress={() => this.setState({ showFriendModal: false })}
+                isVisible={this.state.showFriendModal}
+            >
+                <View style={{
+                    height: 400,
+                    backgroundColor: 'white',
+                    // justifyContent: 'center',
+                    // alignItems: 'center',
+                    borderRadius: 4,
+                    borderColor: 'rgba(0, 0, 0, 0.1)',
+                }}>
+                    <View style={{ height: 220 }}>
+                        <Image
+                            style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
+                            source={{uri: 'https://images.alphacoders.com/685/685151.jpg'}}
+                        />
+                        <Image
+                            style={{
+                                width: 110,
+                                height: 110,
+                                borderRadius: 55,
+                                borderColor: 'white',
+                                borderWidth: 1,
+                                position: 'absolute',
+                                top: 95,
+                                left: '50%',
+                                marginLeft: -55
+                            }}
+                            source={{uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}}
+                        />
+                    </View>
+                    <View style={{
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                        <Text>Smnodame</Text>
+                        <Text note>ID smnodame</Text>
+                    </View>
+                    <View style={{ flex: 1}}>
+                    </View>
+                    <View
+                        style={{
+                            borderWidth: 1, borderColor: '#fdfdfd', flexDirection: 'row',
+                            justifyContent: 'center', alignItems: 'flex-end', padding: 15
+                        }}
+                    >
+                        <Button transparent style={{ flexDirection: 'column' }}>
+                            <Icon name='md-chatboxes' style={{ color: 'gray' }} />
+                            <Text style={{ color: 'gray' }}>CHAT</Text>
+                        </Button>
+                        <Button transparent style={{ flexDirection: 'column', marginLeft: 10 }}>
+                            <Icon name='md-call' style={{ color: 'gray' }} />
+                            <Text style={{ color: 'gray' }}>FREE CALL</Text>
+                        </Button>
+                        <Button transparent style={{ flexDirection: 'column', marginLeft: 10 }}>
+                            <Icon name='md-heart-outline' style={{ color: 'gray' }} />
+                            <Text style={{ color: 'gray' }}>FAVORITES</Text>
+                        </Button>
+                    </View>
+                </View>
+            </Modal>
+            <Modal
+                onRequestClose={() => this.setState({ showGroupModal: false })}
+                onBackdropPress={() => this.setState({ showGroupModal: false })}
+                isVisible={this.state.showGroupModal}
+            >
+                <View style={{
+                    height: 400,
+                    backgroundColor: 'white',
+                    // justifyContent: 'center',
+                    // alignItems: 'center',
+                    borderRadius: 4,
+                    borderColor: 'rgba(0, 0, 0, 0.1)',
+                }}>
+                    <View style={{ height: 220 }}>
+                        <Image
+                            style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
+                            source={{uri: 'https://images.alphacoders.com/685/685151.jpg'}}
+                        />
+                        <Image
+                            style={{
+                                width: 110,
+                                height: 110,
+                                borderRadius: 55,
+                                borderColor: 'white',
+                                borderWidth: 1,
+                                position: 'absolute',
+                                top: 95,
+                                left: '50%',
+                                marginLeft: -55
+                            }}
+                            source={{uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}}
+                        />
+                    </View>
+                    <View style={{
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                        <Text>Traveling</Text>
+                    </View>
+                    <View style={{ flex: 1}}>
+                    </View>
+                    <View
+                        style={{
+                            borderWidth: 1, borderColor: '#fdfdfd', flexDirection: 'row',
+                            justifyContent: 'center', alignItems: 'flex-end', padding: 15
+                        }}
+                    >
+                        <Button transparent style={{ flexDirection: 'column' }}>
+                            <Icon name='md-chatboxes' style={{ color: 'gray' }} />
+                            <Text style={{ color: 'gray' }}>CHAT</Text>
+                        </Button>
+                        <Button transparent style={{ flexDirection: 'column', marginLeft: 10 }}>
+                            <Icon name='md-settings' style={{ color: 'gray' }} />
+                            <Text style={{ color: 'gray' }}>EDIT GROUP</Text>
+                        </Button>
+                    </View>
+                </View>
+            </Modal>
             <View style={styles.searchContainer}>
               <RkTextInput autoCapitalize='none'
                            autoCorrect={false}
@@ -108,7 +292,7 @@ export default class Contacts extends React.Component {
                 <RkText rkType='header6 hintColor'>Profile</RkText>
             </View>
             <View style={{ backgroundColor: 'white' }}>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('ProfileV1', {id: row.id})}>
+                <TouchableOpacity onPress={() => this.setState({ showProfileModal: true })}>
                   <View style={styles.container}>
                       <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
                       <RkText rkType='header5'>Smnodame</RkText>
@@ -122,25 +306,42 @@ export default class Contacts extends React.Component {
                     borderBottomWidth: 0.5
                 }}
             >
+                <RkText rkType='header6 hintColor'>Favorites</RkText>
+            </View>
+            <View style={{ backgroundColor: 'white' }}>
+                <TouchableOpacity onPress={() => this.setState({ showFriendModal: true })}>
+                  <View style={styles.container}>
+                      <Thumbnail  style={styles.avatar}  source={{ uri: 'https://pbs.twimg.com/profile_images/733975023065563136/iqPHvjhs_400x400.jpg'}} />
+                      <RkText rkType='header5'>Pat Charaporn</RkText>
+                  </View>
+                </TouchableOpacity>
+            </View>
+            <View
+                style={{
+                    paddingTop: 10, paddingBottom: 10, paddingLeft: 15,
+                    backgroundColor: '#fafafa', borderBottomColor: '#eaeaea',
+                    borderBottomWidth: 0.5
+                }}
+            >
                 <RkText rkType='header6 hintColor'>Groups</RkText>
             </View>
             <View style={{ backgroundColor: 'white' }}>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('ProfileV1', {id: row.id})}>
+                <TouchableOpacity onPress={() => this.setState({ showGroupModal: true })}>
                   <View style={styles.container}>
                       <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
-                      <RkText rkType='header5'>Taylor swift</RkText>
+                      <RkText rkType='header5'>Travel</RkText>
                   </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('ProfileV1', {id: row.id})}>
+                <TouchableOpacity onPress={() => this.setState({ showGroupModal: true })}>
                   <View style={styles.container}>
                       <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
-                      <RkText rkType='header5'>Justin bieber</RkText>
+                      <RkText rkType='header5'>Dinner</RkText>
                   </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('ProfileV1', {id: row.id})}>
+                <TouchableOpacity onPress={() => this.setState({ showGroupModal: true })}>
                   <View style={styles.container}>
-                      <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
-                      <RkText rkType='header5'>Ed sheeran</RkText>
+                      <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg' }} />
+                      <RkText rkType='header5'>Sport</RkText>
                   </View>
                 </TouchableOpacity>
             </View>
