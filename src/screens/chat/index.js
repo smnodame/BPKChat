@@ -17,11 +17,30 @@ import {
   RkTheme
 } from 'react-native-ui-kitten';
 import _ from 'lodash';
-import { Thumbnail } from 'native-base';
+import {
+    Container,
+    Header,
+    Content,
+    Footer,
+    FooterTab,
+    Button,
+    Icon,
+    Text,
+    List,
+    ListItem,
+    Left,
+    Body,
+    Right,
+    Thumbnail,
+    Title,
+    Badge
+} from 'native-base';
 import realm from '../../data/realm/realm';
 import {FontAwesome} from '../../assets/icons';
 import {data} from '../../data';
 import {scale} from '../../utils/scale';
+
+import { NavigationActions } from 'react-navigation'
 let moment = require('moment');
 
 
@@ -137,32 +156,50 @@ export default class Chat extends React.Component {
 
   render() {
     return (
-      <RkAvoidKeyboard style={styles.container} onResponderRelease={(event) => {
-        Keyboard.dismiss();
-      }}>
-        <FlatList ref='list'
-                  extraData={this.state}
-                  style={styles.list}
-                  data={this.state.data.messages}
-                  keyExtractor={this._keyExtractor}
-                  renderItem={this._renderItem}/>
-        <View style={styles.footer}>
-          <RkButton style={styles.plus} rkType='clear'>
-            <RkText rkType='awesome secondaryColor'>{FontAwesome.plus}</RkText>
-          </RkButton>
+        <Container>
+            <Header style={{ backgroundColor: '#3b5998' }}>
+                <Left>
+                    <Button transparent onPress={() => this.props.navigation.dispatch(NavigationActions.back())}>
+                        <Icon name="md-arrow-round-back" />
+                    </Button>
+                </Left>
+                <Body>
+                    <Title>SMNODAME</Title>
+                </Body>
+                <Right>
+                    <Button transparent>
+                        <Icon name="md-call" />
+                    </Button>
+                </Right>
+            </Header>
+            <RkAvoidKeyboard style={styles.container} onResponderRelease={(event) => {
+              Keyboard.dismiss();
+            }}>
+              <FlatList ref='list'
+                        extraData={this.state}
+                        style={styles.list}
+                        data={this.state.data.messages}
+                        keyExtractor={this._keyExtractor}
+                        renderItem={this._renderItem}/>
+              <View style={styles.footer}>
+                <RkButton style={styles.plus} rkType='clear'>
+                  <RkText rkType='awesome secondaryColor'>{FontAwesome.plus}</RkText>
+                </RkButton>
 
-          <RkTextInput
-            onFocus={() => this._scroll(true)}
-            onBlur={() => this._scroll(true)}
-            onChangeText={(message) => this.setState({message})}
-            value={this.state.message}
-            rkType='row sticker'
-            placeholder="Add a comment..."/>
+                <RkTextInput
+                  onFocus={() => this._scroll(true)}
+                  onBlur={() => this._scroll(true)}
+                  onChangeText={(message) => this.setState({message})}
+                  value={this.state.message}
+                  rkType='row sticker'
+                  placeholder="Add a comment..."/>
 
-
-        </View>
-      </RkAvoidKeyboard>
-
+                <RkButton onPress={() => this._pushMessage()} style={styles.send} rkType='circle highlight'>
+                    <Image source={require('../../assets/icons/sendIcon.png')}/>
+                </RkButton>
+              </View>
+            </RkAvoidKeyboard>
+        </Container>
     )
   }
 }

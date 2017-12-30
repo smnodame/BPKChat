@@ -30,7 +30,6 @@ export default class ChatList extends React.Component {
     this.state = {
       data: []
     }
-
   }
 
   componentDidMount() {
@@ -79,7 +78,7 @@ export default class ChatList extends React.Component {
     let name = `${info.item.withUser.firstName} ${info.item.withUser.lastName}`;
     let last = info.item.messages[info.item.messages.length - 1];
     return (
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('Chat', {userId: info.item.withUser.id})}>
+        <TouchableOpacity onPress={() =>  this.props.screenProps.rootNavigation.navigate('Chat')}>
           <View style={styles.container}>
           <Thumbnail source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
             <View style={styles.content}>

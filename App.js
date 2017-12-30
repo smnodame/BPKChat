@@ -35,6 +35,7 @@ import {store} from './src/redux'
 import ProfileSettings from './src/screens/history'
 import ChatList from './src/screens/contact'
 import Contacts from './src/screens/profile'
+import Chat from './src/screens/chat'
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -76,7 +77,7 @@ export default class App extends Component<{}> {
             )
         } else if (this.state.selectedTab == 'Chats') {
             return (
-                <ChatList />
+                <ChatList screenProps={{ rootNavigation: this.props.navigation }} />
             )
         } else if (this.state.selectedTab == 'Profile') {
             return (
