@@ -18,6 +18,8 @@ import {data} from '../../data';
 import {Avatar} from '../../components/avatar';
 import {FontAwesome} from '../../assets/icons';
 
+import { NavigationActions } from 'react-navigation'
+
 export default class Contacts extends React.Component {
   static navigationOptions = {
     title: 'Contacts'.toUpperCase()

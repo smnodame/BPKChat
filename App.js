@@ -99,7 +99,7 @@ export default class App extends Component<{}> {
                       <Title>{ this.state.selectedTab }</Title>
                   </Body>
                   <Right>
-                      <Button transparent>
+                      <Button transparent onPress={() => this.props.navigation.navigate('AddFriend')}>
                           <Icon name="md-person-add" />
                       </Button>
                   </Right>

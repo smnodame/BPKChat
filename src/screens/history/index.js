@@ -2,7 +2,8 @@ import React from 'react';
 import {
   ScrollView,
   View,
-  StyleSheet
+  StyleSheet,
+  Image
 } from 'react-native';
 import {
   RkText,
@@ -13,7 +14,7 @@ import {
 } from 'react-native-ui-kitten';
 import {data} from '../../data';
 import {FontAwesome} from '../../assets/icons';
-import { Thumbnail } from 'native-base';
+import { Thumbnail, Button, Text } from 'native-base';
 
 export default class ProfileSettings extends React.Component {
   static navigationOptions = {
@@ -43,44 +44,62 @@ export default class ProfileSettings extends React.Component {
     return (
       <ScrollView style={styles.root}>
         <RkAvoidKeyboard>
-          <View style={styles.header}>
-            <Thumbnail large source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
-          </View>
+        <View style={{ height: 220 , backgroundColor: '#fafafa'}}>
+            <Image
+                style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
+                source={{uri: 'https://images.alphacoders.com/685/685151.jpg'}}
+            />
+            <Image
+                style={{
+                    width: 110,
+                    height: 110,
+                    borderRadius: 55,
+                    borderColor: 'white',
+                    borderWidth: 1,
+                    position: 'absolute',
+                    top: 95,
+                    left: '50%',
+                    marginLeft: -55
+                }}
+                source={{uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}}
+            />
+        </View>
+        <View>
+            <Button transparent info>
+                <Text>Change Profile Image</Text>
+            </Button>
+            <Button transparent>
+                <Text>Change Wallpaper Image</Text>
+            </Button>
+        </View>
           <View style={styles.section}>
             <View style={[styles.row, styles.heading]}>
               <RkText rkType='header6 primary'>INFO</RkText>
             </View>
             <View style={styles.row}>
-              <RkTextInput label='First Name'
-                           value={this.state.firstName}
+              <RkTextInput label='Display Name'
+                           value={'Boonprakit'}
                            rkType='right clear'
                            onChangeText={(text) => this.setState({firstName: text})}/>
             </View>
             <View style={styles.row}>
-              <RkTextInput label='Last Name'
-                           value={this.state.lastName}
+              <RkTextInput label='Username'
+                           value={'Smnodame'}
                            onChangeText={(text) => this.setState({lastName: text})}
                            rkType='right clear'/>
             </View>
             <View style={styles.row}>
-              <RkTextInput label='Email'
-                           value={this.state.email}
+              <RkTextInput label='Status'
+                           value={' Feel bad at this time '}
                            onChangeText={(text) => this.setState({email: text})}
                            rkType='right clear'/>
             </View>
             <View style={styles.row}>
-              <RkTextInput label='Country'
-                           value={this.state.country}
+              <RkTextInput label='HN'
+                           value={'1-4848-488'}
                            onChangeText={(text) => this.setState({country: text})}
                            rkType='right clear'/>
             </View>
-            <View style={styles.row}>
-              <RkTextInput label='Phone'
-                           value={this.state.phone}
-                           onChangeText={(text) => this.setState({phone: text})}
-                           rkType='right header'/>
-            </View>
-
           </View>
 
           <View style={styles.section}>
