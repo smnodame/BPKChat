@@ -171,11 +171,56 @@ export default class Chat extends React.Component {
                     <Button transparent>
                         <Icon name="md-call" />
                     </Button>
+                    <Button transparent>
+                        <Icon name="md-settings" />
+                    </Button>
                 </Right>
             </Header>
+
             <RkAvoidKeyboard style={styles.container} onResponderRelease={(event) => {
               Keyboard.dismiss();
             }}>
+            <View style={{
+                backgroundColor: 'white',
+                height: 200,
+                width: '100%',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                zIndex: 999
+            }}>
+                <GridView
+                    itemWidth={70}
+                    items={[
+                        {
+                            icon: 'md-person-add',
+                            name: 'Invite'
+                        },
+                        {
+                            icon: 'md-mail-open',
+                            name: 'Open Case'
+                        },
+                        {
+                            icon: 'md-settings',
+                            name: 'Setting'
+                        },
+                        {
+                            icon: 'md-log-out',
+                            name: 'Exit Group'
+                        }
+                    ]}
+                    renderItem={item => (
+                        <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                            <RkButton style={styles.plus} rkType='clear'>
+                                <Icon ios={item.icon} android={item.icon} style={{fontSize: 20, color: 'gray'}}/>
+                            </RkButton>
+                            <RkText rkType='secondary4 hintColor' style={{ textAlign: 'center'}}>
+                                 { item.name }
+                            </RkText>
+                        </View>
+                    )}
+                />
+            </View>
               <FlatList ref='list'
                         extraData={this.state}
                         style={styles.list}
@@ -183,51 +228,88 @@ export default class Chat extends React.Component {
                         keyExtractor={this._keyExtractor}
                         renderItem={this._renderItem}/>
               <View style={styles.footer}>
-                <RkButton style={styles.plus} rkType='clear'>
-                  <RkText rkType='awesome secondaryColor'>{FontAwesome.plus}</RkText>
-                </RkButton>
+                {
+                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => this.setState({ isShowMedie: false })}>
+                      <Icon ios='md-camera' android="md-arrow-dropleft-circle" style={{fontSize: 20, color: 'gray'}}/>
+                    </RkButton>
+                }
+                {
+                    !this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => this.setState({ isShowMedie: true })}>
+                        <Icon ios='md-camera' android="md-arrow-dropright-circle" style={{fontSize: 20, color: 'gray'}}/>
+                    </RkButton>
+                }
+                {
+                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear'>
+                        <Icon ios='md-camera' android="md-camera" style={{fontSize: 20, color: 'gray'}}/>
+                    </RkButton>
+                }
+                {
+                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear'>
+                        <Icon ios='md-photos' android="md-photos" style={{fontSize: 20, color: 'gray'}}/>
+                    </RkButton>
+                }
+                {
+                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear'>
+                        <Icon ios='attachment' android="md-mic" style={{fontSize: 20, color: 'gray'}}/>
+                    </RkButton>
+                }
+                {
+                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear'>
+                        <Icon ios='attachment' android="md-folder-open" style={{fontSize: 20, color: 'gray'}}/>
+                    </RkButton>
+                }
+
 
                 <RkTextInput
-                  onFocus={() => this._scroll(true)}
+                  onFocus={() => {
+                      this._scroll(true)
+                      this.setState({ isShowMedie: false, isShowPhoto: false })
+                  }}
                   onBlur={() => this._scroll(true)}
                   onChangeText={(message) => this.setState({message})}
                   value={this.state.message}
                   rkType='row sticker'
                   placeholder="Add a comment..."/>
+                  <RkButton style={styles.plus} rkType='clear' onPress={() => this.setState({ isShowPhoto: !this.state.isShowPhoto})}>
+                    <Icon ios='attachment' android="md-happy" style={{fontSize: 20, color: 'gray'}}/>
+                  </RkButton>
 
                 <RkButton onPress={() => this._pushMessage()} style={styles.send} rkType='circle highlight'>
                     <Image source={require('../../assets/icons/sendIcon.png')}/>
                 </RkButton>
               </View>
-              <View style={{ height: 200 }}>
-                    <GridView
-                        itemWidth={70}
-                        items={[
-                            'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
-                            'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
-                            'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png',
-                            'https://i.pinimg.com/236x/1e/6a/53/1e6a5385351b530f2f3ac337e1e86dd6--emoticon-facebook.jpg',
+              {
+                  this.state.isShowPhoto&&<View style={{ height: 200 }}>
+                        <GridView
+                            itemWidth={70}
+                            items={[
+                                'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
+                                'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
+                                'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png',
+                                'https://i.pinimg.com/236x/1e/6a/53/1e6a5385351b530f2f3ac337e1e86dd6--emoticon-facebook.jpg',
 
-                            'http://www.stickersort.com/wp-content/uploads/2014/12/381Sortlist-Facebook-Stickers.png',
-                            'http://123emoji.com/wp-content/uploads/2016/08/1943126362207548576.png',
-                            'http://www.stickersort.com/wp-content/uploads/2014/12/378Sortlist-Facebook-Stickers.png',
-                            'http://123emoji.com/wp-content/uploads/2016/08/1943126362080881922.png',
+                                'http://www.stickersort.com/wp-content/uploads/2014/12/381Sortlist-Facebook-Stickers.png',
+                                'http://123emoji.com/wp-content/uploads/2016/08/1943126362207548576.png',
+                                'http://www.stickersort.com/wp-content/uploads/2014/12/378Sortlist-Facebook-Stickers.png',
+                                'http://123emoji.com/wp-content/uploads/2016/08/1943126362080881922.png',
 
-                            'https://i.pinimg.com/236x/d7/e2/01/d7e20133528e631bc1a51f9b6b4c931d--emoticon-emojis.jpg',
-                            'https://www.google.co.th/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwicvKfDm7LYAhUEuI8KHWxVBuUQjBwIBA&url=https%3A%2F%2Flookaside.fbsbx.com%2Flookaside%2Fcrawler%2Fmedia%2F%3Fmedia_id%3D422317134532796&psig=AOvVaw3R7xvS0nxP6itWM50HuYPj&ust=1514739663079103',
-                            'https://pic.chinesefontdesign.com/uploads/2014/04/022.png',
-                            'http://www.stickersort.com/wp-content/uploads/2014/12/388Sortlist-Facebook-Stickers.png'
-                        ]}
-                        renderItem={item => (
-                            <View>
-                                <Image
-                                    style={{ height: 70 }}
-                                    source={{uri: item}}
-                                />
-                            </View>
-                        )}
-                    />
-              </View>
+                                'https://i.pinimg.com/236x/d7/e2/01/d7e20133528e631bc1a51f9b6b4c931d--emoticon-emojis.jpg',
+                                'https://www.google.co.th/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwicvKfDm7LYAhUEuI8KHWxVBuUQjBwIBA&url=https%3A%2F%2Flookaside.fbsbx.com%2Flookaside%2Fcrawler%2Fmedia%2F%3Fmedia_id%3D422317134532796&psig=AOvVaw3R7xvS0nxP6itWM50HuYPj&ust=1514739663079103',
+                                'https://pic.chinesefontdesign.com/uploads/2014/04/022.png',
+                                'http://www.stickersort.com/wp-content/uploads/2014/12/388Sortlist-Facebook-Stickers.png'
+                            ]}
+                            renderItem={item => (
+                                <View>
+                                    <Image
+                                        style={{ height: 70 }}
+                                        source={{uri: item}}
+                                    />
+                                </View>
+                            )}
+                        />
+                  </View>
+              }
+
             </RkAvoidKeyboard>
         </Container>
     )
