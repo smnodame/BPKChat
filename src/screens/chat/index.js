@@ -5,7 +5,8 @@ import {
   Platform,
   Image,
   TouchableOpacity,
-  Keyboard
+  Keyboard,
+  ScrollView
 } from 'react-native';
 import {InteractionManager} from 'react-native';
 import {
@@ -16,6 +17,7 @@ import {
   RkStyleSheet,
   RkTheme
 } from 'react-native-ui-kitten';
+import Modal from 'react-native-modal';
 import _ from 'lodash';
 import {
     Container,
@@ -195,7 +197,158 @@ export default class Chat extends React.Component {
                     </Button>
                 </Right>
             </Header>
-
+            <Modal
+                onRequestClose={() => this.setState({ showProfileModal: false })}
+                onBackdropPress={() => this.setState({ showProfileModal: false })}
+                isVisible={true}
+            >
+                <View style={{
+                    height: 400,
+                    backgroundColor: 'white',
+                    // justifyContent: 'center',
+                    // alignItems: 'center',
+                    borderRadius: 4,
+                    borderColor: 'rgba(0, 0, 0, 0.1)',
+                }}>
+                    <View style={[styles.searchContainer, { borderRadius: 4 }]}>
+                      <RkTextInput autoCapitalize='none'
+                                   autoCorrect={false}
+                                   label={<RkText rkType='awesome'>{FontAwesome.search}</RkText>}
+                                   rkType='row'
+                                   placeholder='Search'/>
+                    </View>
+                    <ScrollView>
+                        <List>
+                            <ListItem avatar>
+                                <Left>
+                                    <Thumbnail source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg' }} />
+                                </Left>
+                                <Body>
+                                    <Text>Kumar Pratik</Text>
+                                    <Text note>Doing what you like will always keep you happy . .</Text>
+                                </Body>
+                                <Right style={{justifyContent: 'center', alignItems: 'center'}}>
+                                    <RkButton style={styles.plus} rkType='clear'>
+                                        <Icon ios={'md-person-add'} android={'md-person-add'} style={{fontSize: 20, color: 'gray'}}/>
+                                    </RkButton>
+                                </Right>
+                            </ListItem>
+                            <ListItem avatar>
+                                <Left>
+                                    <Thumbnail source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg' }} />
+                                </Left>
+                                <Body>
+                                    <Text>Kumar Pratik</Text>
+                                    <Text note>Doing what you like will always keep you happy . .</Text>
+                                </Body>
+                                <Right style={{justifyContent: 'center', alignItems: 'center'}}>
+                                    <RkButton style={styles.plus} rkType='clear'>
+                                        <Icon ios={'md-person-add'} android={'md-person-add'} style={{fontSize: 20, color: 'gray'}}/>
+                                    </RkButton>
+                                </Right>
+                            </ListItem>
+                            <ListItem avatar>
+                                <Left>
+                                    <Thumbnail source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg' }} />
+                                </Left>
+                                <Body>
+                                    <Text>Kumar Pratik</Text>
+                                    <Text note>Doing what you like will always keep you happy . .</Text>
+                                </Body>
+                                <Right style={{justifyContent: 'center', alignItems: 'center'}}>
+                                    <RkButton style={styles.plus} rkType='clear'>
+                                        <Icon ios={'md-person-add'} android={'md-person-add'} style={{fontSize: 20, color: 'gray'}}/>
+                                    </RkButton>
+                                </Right>
+                            </ListItem>
+                            <ListItem avatar>
+                                <Left>
+                                    <Thumbnail source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg' }} />
+                                </Left>
+                                <Body>
+                                    <Text>Kumar Pratik</Text>
+                                    <Text note>Doing what you like will always keep you happy . .</Text>
+                                </Body>
+                                <Right style={{justifyContent: 'center', alignItems: 'center'}}>
+                                    <RkButton style={styles.plus} rkType='clear'>
+                                        <Icon ios={'md-person-add'} android={'md-person-add'} style={{fontSize: 20, color: 'gray'}}/>
+                                    </RkButton>
+                                </Right>
+                            </ListItem>
+                            <ListItem avatar>
+                                <Left>
+                                    <Thumbnail source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg' }} />
+                                </Left>
+                                <Body>
+                                    <Text>Kumar Pratik</Text>
+                                    <Text note>Doing what you like will always keep you happy . .</Text>
+                                </Body>
+                                <Right style={{justifyContent: 'center', alignItems: 'center'}}>
+                                    <RkButton style={styles.plus} rkType='clear'>
+                                        <Icon ios={'md-person-add'} android={'md-person-add'} style={{fontSize: 20, color: 'gray'}}/>
+                                    </RkButton>
+                                </Right>
+                            </ListItem>
+                            <ListItem avatar>
+                                <Left>
+                                    <Thumbnail source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg' }} />
+                                </Left>
+                                <Body>
+                                    <Text>Kumar Pratik</Text>
+                                    <Text note>Doing what you like will always keep you happy . .</Text>
+                                </Body>
+                                <Right style={{justifyContent: 'center', alignItems: 'center'}}>
+                                    <RkButton style={styles.plus} rkType='clear'>
+                                        <Icon ios={'md-person-add'} android={'md-person-add'} style={{fontSize: 20, color: 'gray'}}/>
+                                    </RkButton>
+                                </Right>
+                            </ListItem>
+                            <ListItem avatar>
+                                <Left>
+                                    <Thumbnail source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg' }} />
+                                </Left>
+                                <Body>
+                                    <Text>Kumar Pratik</Text>
+                                    <Text note>Doing what you like will always keep you happy . .</Text>
+                                </Body>
+                                <Right style={{justifyContent: 'center', alignItems: 'center'}}>
+                                    <RkButton style={styles.plus} rkType='clear'>
+                                        <Icon ios={'md-person-add'} android={'md-person-add'} style={{fontSize: 20, color: 'gray'}}/>
+                                    </RkButton>
+                                </Right>
+                            </ListItem>
+                            <ListItem avatar>
+                                <Left>
+                                    <Thumbnail source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg' }} />
+                                </Left>
+                                <Body>
+                                    <Text>Kumar Pratik</Text>
+                                    <Text note>Doing what you like will always keep you happy . .</Text>
+                                </Body>
+                                <Right style={{justifyContent: 'center', alignItems: 'center'}}>
+                                    <RkButton style={styles.plus} rkType='clear'>
+                                        <Icon ios={'md-person-add'} android={'md-person-add'} style={{fontSize: 20, color: 'gray'}}/>
+                                    </RkButton>
+                                </Right>
+                            </ListItem>
+                            <ListItem avatar>
+                                <Left>
+                                    <Thumbnail source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg' }} />
+                                </Left>
+                                <Body>
+                                    <Text>Kumar Pratik</Text>
+                                    <Text note>Doing what you like will always keep you happy . .</Text>
+                                </Body>
+                                <Right style={{justifyContent: 'center', alignItems: 'center'}}>
+                                    <RkButton style={styles.plus} rkType='clear'>
+                                        <Icon ios={'md-person-add'} android={'md-person-add'} style={{fontSize: 20, color: 'gray'}}/>
+                                    </RkButton>
+                                </Right>
+                            </ListItem>
+                        </List>
+                    </ScrollView>
+                </View>
+            </Modal>
             <RkAvoidKeyboard style={styles.container} onResponderRelease={(event) => {
               Keyboard.dismiss();
             }}>
@@ -345,12 +498,24 @@ let styles = RkStyleSheet.create(theme => ({
       left: 0,
       zIndex: 999
   },
+  searchContainer: {
+    backgroundColor: theme.colors.screen.bold,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    height: 60,
+    alignItems: 'center'
+  },
   avatar: {
     marginRight: 16,
   },
   container: {
     flex: 1,
     backgroundColor: theme.colors.screen.base
+  },
+  searchItemContainer: {
+    flexDirection: 'row',
+    padding: 16,
+    alignItems: 'center'
   },
   list: {
     paddingHorizontal: 17
