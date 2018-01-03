@@ -87,7 +87,8 @@ export default class Chat extends React.Component {
     let conversation = data.getConversation();
 
     this.state = {
-      data: conversation
+      data: conversation,
+      isShowAdditionalHeader: false
     };
   }
 
@@ -109,16 +110,34 @@ export default class Chat extends React.Component {
     let itemStyle = inMessage ? styles.itemIn : styles.itemOut;
 
     let renderDate = (date) => (
-      <RkText style={styles.time} rkType='secondary7 hintColor'>
-        {moment().add(date, 'seconds').format('LT')}
-      </RkText>);
+        <View>
+        <RkText style={styles.time} rkType='secondary7 hintColor'>
+          {moment().add(date, 'seconds').format('LT')}
+        </RkText>
+        </View>
+      );
 
     return (
       <View style={[styles.item, itemStyle]}>
         {!inMessage && renderDate(info.item.date)}
-        <View style={[styles.balloon, {backgroundColor}]}>
-          <RkText rkType='primary2 mediumLine chat'>{info.item.text}</RkText>
-        </View>
+        {
+            info.item.format=='text' && <View style={[styles.balloon, {backgroundColor}]}>
+              <RkText rkType='primary2 mediumLine chat'>{info.item.text}</RkText>
+            </View>
+        }
+        {
+            info.item.format=='image' && <Image
+                style={{ height: 120, width: 120 }}
+                source={{uri: info.item.url }}
+            />
+        }
+        {
+            info.item.format=='sticker' && <Image
+                style={{ height: 100, width: 100 }}
+                source={{uri: info.item.url }}
+            />
+        }
+
         {inMessage && renderDate(info.item.date)}
       </View>
     )
@@ -171,7 +190,7 @@ export default class Chat extends React.Component {
                     <Button transparent>
                         <Icon name="md-call" />
                     </Button>
-                    <Button transparent>
+                    <Button transparent onPress={() => this.setState({ isShowAdditionalHeader: !this.state.isShowAdditionalHeader })}>
                         <Icon name="md-settings" />
                     </Button>
                 </Right>
@@ -180,47 +199,45 @@ export default class Chat extends React.Component {
             <RkAvoidKeyboard style={styles.container} onResponderRelease={(event) => {
               Keyboard.dismiss();
             }}>
-            <View style={{
-                backgroundColor: 'white',
-                height: 200,
-                width: '100%',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                zIndex: 999
-            }}>
-                <GridView
-                    itemWidth={70}
-                    items={[
-                        {
-                            icon: 'md-person-add',
-                            name: 'Invite'
-                        },
-                        {
-                            icon: 'md-mail-open',
-                            name: 'Open Case'
-                        },
-                        {
-                            icon: 'md-settings',
-                            name: 'Setting'
-                        },
-                        {
-                            icon: 'md-log-out',
-                            name: 'Exit Group'
-                        }
-                    ]}
-                    renderItem={item => (
-                        <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                            <RkButton style={styles.plus} rkType='clear'>
-                                <Icon ios={item.icon} android={item.icon} style={{fontSize: 20, color: 'gray'}}/>
-                            </RkButton>
-                            <RkText rkType='secondary4 hintColor' style={{ textAlign: 'center'}}>
-                                 { item.name }
-                            </RkText>
-                        </View>
-                    )}
-                />
-            </View>
+            {
+                this.state.isShowAdditionalHeader&&<View style={styles.additionHeader}>
+                    <GridView
+                        itemWidth={70}
+                        items={[
+                            {
+                                icon: 'md-person-add',
+                                name: 'Invite'
+                            },
+                            {
+                                icon: 'md-remove-circle',
+                                name: 'Remove Invite'
+                            },
+                            {
+                                icon: 'md-mail-open',
+                                name: 'Open Case'
+                            },
+                            {
+                                icon: 'md-settings',
+                                name: 'Setting'
+                            },
+                            {
+                                icon: 'md-log-out',
+                                name: 'Exit Group'
+                            }
+                        ]}
+                        renderItem={item => (
+                            <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                                <RkButton style={styles.plus} rkType='clear'>
+                                    <Icon ios={item.icon} android={item.icon} style={{fontSize: 20, color: 'gray'}}/>
+                                </RkButton>
+                                <RkText rkType='secondary4 hintColor' style={{ textAlign: 'center'}}>
+                                     { item.name }
+                                </RkText>
+                            </View>
+                        )}
+                    />
+                </View>
+            }
               <FlatList ref='list'
                         extraData={this.state}
                         style={styles.list}
@@ -319,6 +336,14 @@ export default class Chat extends React.Component {
 let styles = RkStyleSheet.create(theme => ({
   header: {
     alignItems: 'center'
+  },
+  additionHeader: {
+      backgroundColor: 'white',
+      width: '100%',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      zIndex: 999
   },
   avatar: {
     marginRight: 16,

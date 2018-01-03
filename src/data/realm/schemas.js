@@ -38,7 +38,9 @@ Message.schema = {
     id: 'int',
     text: 'string',
     time: 'int',
-    type: 'string'
+    type: 'string',
+    format: 'string',
+    url: 'string'
   }
 };
 
