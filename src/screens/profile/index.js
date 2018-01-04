@@ -1,397 +1,168 @@
 import React from 'react';
 import {
-  ListView,
+  ScrollView,
   View,
   StyleSheet,
-  TouchableOpacity,
   Image
 } from 'react-native';
-import _ from 'lodash';
 import {
-  RkStyleSheet,
   RkText,
-  RkTextInput
+  RkTextInput,
+  RkAvoidKeyboard,
+  RkTheme,
+  RkStyleSheet
 } from 'react-native-ui-kitten';
-import Modal from 'react-native-modal';
-import { Thumbnail, Icon, Text, Button } from 'native-base';
 import {data} from '../../data';
-import {Avatar} from '../../components/avatar';
 import {FontAwesome} from '../../assets/icons';
+import { Thumbnail, Button, Text } from 'native-base';
 
-import { NavigationActions } from 'react-navigation'
-
-export default class Contacts extends React.Component {
+export default class ProfileSettings extends React.Component {
   static navigationOptions = {
-    title: 'Contacts'.toUpperCase()
+    title: 'Profile Settings'.toUpperCase()
   };
 
   constructor(props) {
     super(props);
+    this.user = data.getUser();
 
-    this.users = data.getUsers();
-
-    let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      data: ds.cloneWithRows(this.users),
-      showProfileModal: false,
-      showFriendModal: false
-    };
-
-    this.filter = this._filter.bind(this);
-    this.setData = this._setData.bind(this);
-    this.renderHeader = this._renderHeader.bind(this);
-    this.renderRow = this._renderRow.bind(this);
-  }
-
-  _setData(data) {
-    let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    this.setState({
-      data: ds.cloneWithRows(data)
-    })
-  }
-
-  _renderRow(row) {
-    let name = `${row.firstName} ${row.lastName}`;
-    return (
-      <TouchableOpacity onPress={() => this.setState({ showFriendModal: true })}>
-        <View style={styles.container}>
-            <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
-            <RkText rkType='header5'>{name}</RkText>
-        </View>
-      </TouchableOpacity>
-    )
-  }
-
-  renderSeparator(sectionID, rowID) {
-    return (
-      <View style={styles.separator}/>
-    )
-  }
-
-  _renderHeader() {
-    return (
-      <View style={styles.searchContainer}>
-        <RkTextInput autoCapitalize='none'
-                     autoCorrect={false}
-                     onChange={(event) => this._filter(event.nativeEvent.text)}
-                     label={<RkText rkType='awesome'>{FontAwesome.search}</RkText>}
-                     rkType='row'
-                     placeholder='Search'/>
-      </View>
-    )
-  }
-
-  _filter(text) {
-    let pattern = new RegExp(text, 'i');
-    let users = _.filter(this.users, (user) => {
-
-      if (user.firstName.search(pattern) != -1
-        || user.lastName.search(pattern) != -1)
-        return user;
-    });
-
-    this.setData(users);
+      firstName: this.user.firstName,
+      lastName: this.user.lastName,
+      email: this.user.email,
+      country: this.user.country,
+      phone: this.user.phone,
+      password: this.user.password,
+      newPassword: this.user.newPassword,
+      confirmPassword: this.user.confirmPassword,
+      twitter: true,
+      google: false,
+      facebook: false
+    }
   }
 
   render() {
     return (
-        <View>
-            <Modal
-                onRequestClose={() => this.setState({ showProfileModal: false })}
-                onBackdropPress={() => this.setState({ showProfileModal: false })}
-                isVisible={this.state.showProfileModal}
-            >
-                <View style={{
-                    height: 400,
-                    backgroundColor: 'white',
-                    // justifyContent: 'center',
-                    // alignItems: 'center',
-                    borderRadius: 4,
-                    borderColor: 'rgba(0, 0, 0, 0.1)',
-                }}>
-                    <View style={{ height: 220 }}>
-                        <Image
-                            style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
-                            source={{uri: 'https://images.alphacoders.com/685/685151.jpg'}}
-                        />
-                        <Image
-                            style={{
-                                width: 110,
-                                height: 110,
-                                borderRadius: 55,
-                                borderColor: 'white',
-                                borderWidth: 1,
-                                position: 'absolute',
-                                top: 95,
-                                left: '50%',
-                                marginLeft: -55
-                            }}
-                            source={{uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}}
-                        />
-                    </View>
-                    <View style={{
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}>
-                        <Text>Pat Charaporn</Text>
-                        <Text note>ID patcharaporn</Text>
-                    </View>
-                    <View style={{ flex: 1}}>
-                    </View>
-                    <View
-                        style={{
-                            borderWidth: 1, borderColor: '#fdfdfd', flexDirection: 'row',
-                            justifyContent: 'center', alignItems: 'flex-end', padding: 15
-                        }}
-                    >
-                        <Button transparent style={{ flexDirection: 'column' }}>
-                            <Icon name='md-person' style={{ color: 'gray' }} />
-                            <Text style={{ color: 'gray' }}>Edit Profile</Text>
-                        </Button>
-                        <Button transparent style={{ flexDirection: 'column', marginLeft: 10 }}>
-                            <Icon name='md-cloud-download' style={{ color: 'gray' }} />
-                            <Text style={{ color: 'gray' }}>KEEP</Text>
-                        </Button>
-                    </View>
-                </View>
-            </Modal>
-            <Modal
-                onRequestClose={() => this.setState({ showFriendModal: false })}
-                onBackdropPress={() => this.setState({ showFriendModal: false })}
-                isVisible={this.state.showFriendModal}
-            >
-                <View style={{
-                    height: 400,
-                    backgroundColor: 'white',
-                    // justifyContent: 'center',
-                    // alignItems: 'center',
-                    borderRadius: 4,
-                    borderColor: 'rgba(0, 0, 0, 0.1)',
-                }}>
-                    <View style={{ height: 220 }}>
-                        <Image
-                            style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
-                            source={{uri: 'https://images.alphacoders.com/685/685151.jpg'}}
-                        />
-                        <Image
-                            style={{
-                                width: 110,
-                                height: 110,
-                                borderRadius: 55,
-                                borderColor: 'white',
-                                borderWidth: 1,
-                                position: 'absolute',
-                                top: 95,
-                                left: '50%',
-                                marginLeft: -55
-                            }}
-                            source={{uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}}
-                        />
-                    </View>
-                    <View style={{
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}>
-                        <Text>Smnodame</Text>
-                        <Text note>ID smnodame</Text>
-                    </View>
-                    <View style={{ flex: 1}}>
-                    </View>
-                    <View
-                        style={{
-                            borderWidth: 1, borderColor: '#fdfdfd', flexDirection: 'row',
-                            justifyContent: 'center', alignItems: 'flex-end', padding: 15
-                        }}
-                    >
-                        <Button transparent style={{ flexDirection: 'column' }}>
-                            <Icon name='md-chatboxes' style={{ color: 'gray' }} />
-                            <Text style={{ color: 'gray' }}>CHAT</Text>
-                        </Button>
-                        <Button transparent style={{ flexDirection: 'column', marginLeft: 10 }}>
-                            <Icon name='md-call' style={{ color: 'gray' }} />
-                            <Text style={{ color: 'gray' }}>FREE CALL</Text>
-                        </Button>
-                        <Button transparent style={{ flexDirection: 'column', marginLeft: 10 }}>
-                            <Icon name='md-heart-outline' style={{ color: 'gray' }} />
-                            <Text style={{ color: 'gray' }}>FAVORITES</Text>
-                        </Button>
-                    </View>
-                </View>
-            </Modal>
-            <Modal
-                onRequestClose={() => this.setState({ showGroupModal: false })}
-                onBackdropPress={() => this.setState({ showGroupModal: false })}
-                isVisible={this.state.showGroupModal}
-            >
-                <View style={{
-                    height: 400,
-                    backgroundColor: 'white',
-                    // justifyContent: 'center',
-                    // alignItems: 'center',
-                    borderRadius: 4,
-                    borderColor: 'rgba(0, 0, 0, 0.1)',
-                }}>
-                    <View style={{ height: 220 }}>
-                        <Image
-                            style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
-                            source={{uri: 'https://images.alphacoders.com/685/685151.jpg'}}
-                        />
-                        <Image
-                            style={{
-                                width: 110,
-                                height: 110,
-                                borderRadius: 55,
-                                borderColor: 'white',
-                                borderWidth: 1,
-                                position: 'absolute',
-                                top: 95,
-                                left: '50%',
-                                marginLeft: -55
-                            }}
-                            source={{uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}}
-                        />
-                    </View>
-                    <View style={{
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}>
-                        <Text>Traveling</Text>
-                    </View>
-                    <View style={{ flex: 1}}>
-                    </View>
-                    <View
-                        style={{
-                            borderWidth: 1, borderColor: '#fdfdfd', flexDirection: 'row',
-                            justifyContent: 'center', alignItems: 'flex-end', padding: 15
-                        }}
-                    >
-                        <Button transparent style={{ flexDirection: 'column' }}>
-                            <Icon name='md-chatboxes' style={{ color: 'gray' }} />
-                            <Text style={{ color: 'gray' }}>CHAT</Text>
-                        </Button>
-                        <Button transparent style={{ flexDirection: 'column', marginLeft: 10 }}>
-                            <Icon name='md-settings' style={{ color: 'gray' }} />
-                            <Text style={{ color: 'gray' }}>EDIT GROUP</Text>
-                        </Button>
-                    </View>
-                </View>
-            </Modal>
-            <View style={styles.searchContainer}>
-              <RkTextInput autoCapitalize='none'
-                           autoCorrect={false}
-                           onChange={(event) => this._filter(event.nativeEvent.text)}
-                           label={<RkText rkType='awesome'>{FontAwesome.search}</RkText>}
-                           rkType='row'
-                           placeholder='Search'/>
-            </View>
-            <View
+      <ScrollView style={styles.root}>
+        <RkAvoidKeyboard>
+        <View style={{ height: 220 , backgroundColor: '#fafafa'}}>
+            <Image
+                style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
+                source={{uri: 'https://images.alphacoders.com/685/685151.jpg'}}
+            />
+            <Image
                 style={{
-                    paddingTop: 10, paddingBottom: 10, paddingLeft: 15,
-                    backgroundColor: '#fafafa', borderBottomColor: '#eaeaea',
-                    borderBottomWidth: 0.5
+                    width: 110,
+                    height: 110,
+                    borderRadius: 55,
+                    borderColor: 'white',
+                    borderWidth: 1,
+                    position: 'absolute',
+                    top: 95,
+                    left: '50%',
+                    marginLeft: -55
                 }}
-            >
-                <RkText rkType='header6 hintColor'>Profile</RkText>
-            </View>
-            <View style={{ backgroundColor: 'white' }}>
-                <TouchableOpacity onPress={() => this.setState({ showProfileModal: true })}>
-                  <View style={styles.container}>
-                      <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
-                      <RkText rkType='header5'>Smnodame</RkText>
-                  </View>
-                </TouchableOpacity>
-            </View>
-            <View
-                style={{
-                    paddingTop: 10, paddingBottom: 10, paddingLeft: 15,
-                    backgroundColor: '#fafafa', borderBottomColor: '#eaeaea',
-                    borderBottomWidth: 0.5
-                }}
-            >
-                <RkText rkType='header6 hintColor'>Favorites</RkText>
-            </View>
-            <View style={{ backgroundColor: 'white' }}>
-                <TouchableOpacity onPress={() => this.setState({ showFriendModal: true })}>
-                  <View style={styles.container}>
-                      <Thumbnail  style={styles.avatar}  source={{ uri: 'https://pbs.twimg.com/profile_images/733975023065563136/iqPHvjhs_400x400.jpg'}} />
-                      <RkText rkType='header5'>Pat Charaporn</RkText>
-                  </View>
-                </TouchableOpacity>
-            </View>
-            <View
-                style={{
-                    paddingTop: 10, paddingBottom: 10, paddingLeft: 15,
-                    backgroundColor: '#fafafa', borderBottomColor: '#eaeaea',
-                    borderBottomWidth: 0.5
-                }}
-            >
-                <RkText rkType='header6 hintColor'>Groups</RkText>
-            </View>
-            <View style={{ backgroundColor: 'white' }}>
-                <TouchableOpacity onPress={() => this.setState({ showGroupModal: true })}>
-                  <View style={styles.container}>
-                      <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
-                      <RkText rkType='header5'>Travel</RkText>
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.setState({ showGroupModal: true })}>
-                  <View style={styles.container}>
-                      <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
-                      <RkText rkType='header5'>Dinner</RkText>
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.setState({ showGroupModal: true })}>
-                  <View style={styles.container}>
-                      <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg' }} />
-                      <RkText rkType='header5'>Sport</RkText>
-                  </View>
-                </TouchableOpacity>
-            </View>
-            <View>
-                <View
-                    style={{
-                        paddingTop: 10, paddingBottom: 10, paddingLeft: 15,
-                        backgroundColor: '#fafafa', borderBottomColor: '#eaeaea',
-                        borderBottomWidth: 0.5
-                    }}
-                >
-                    <RkText rkType='header6 hintColor'>Friends</RkText>
-                </View>
-                <ListView
-                    style={styles.root}
-                    dataSource={this.state.data}
-                    renderRow={this.renderRow}
-                    renderSeparator={this.renderSeparator}
-                    enableEmptySections={true}
-                />
-            </View>
+                source={{uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}}
+            />
         </View>
+        <View>
+            <Button transparent info>
+                <Text>Change Profile Image</Text>
+            </Button>
+            <Button transparent>
+                <Text>Change Wallpaper Image</Text>
+            </Button>
+        </View>
+          <View style={styles.section}>
+            <View style={[styles.row, styles.heading]}>
+              <RkText rkType='header6 primary'>INFO</RkText>
+            </View>
+            <View style={styles.row}>
+              <RkTextInput label='Display Name'
+                           value={'Boonprakit'}
+                           rkType='right clear'
+                           onChangeText={(text) => this.setState({firstName: text})}/>
+            </View>
+            <View style={styles.row}>
+              <RkTextInput label='Username'
+                           value={'Smnodame'}
+                           onChangeText={(text) => this.setState({lastName: text})}
+                           rkType='right clear'/>
+            </View>
+            <View style={styles.row}>
+              <RkTextInput label='Status'
+                           value={' Feel bad at this time '}
+                           onChangeText={(text) => this.setState({email: text})}
+                           rkType='right clear'/>
+            </View>
+            <View style={styles.row}>
+              <RkTextInput label='HN'
+                           value={'1-4848-488'}
+                           onChangeText={(text) => this.setState({country: text})}
+                           rkType='right clear'/>
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <View style={[styles.row, styles.heading]}>
+              <RkText rkType='primary header6'>CHANGE PASSWORD</RkText>
+            </View>
+            <View style={styles.row}>
+              <RkTextInput label='Old Password'
+                           value={this.state.password}
+                           rkType='right clear'
+                           secureTextEntry={true}
+                           onChangeText={(text) => this.setState({password: text})}/>
+            </View>
+            <View style={styles.row}>
+              <RkTextInput label='New Password'
+                           value={this.state.newPassword}
+                           rkType='right clear'
+                           secureTextEntry={true}
+                           onChangeText={(text) => this.setState({newPassword: text})}/>
+            </View>
+            <View style={styles.row}>
+              <RkTextInput label='Confirm Password'
+                           value={this.state.confirmPassword}
+                           rkType='right clear'
+                           secureTextEntry={true}
+                           onChangeText={(text) => this.setState({confirmPassword: text})}/>
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <View style={[styles.row, styles.heading]}>
+              <RkText rkType='primary header6'>CONNECT YOUR ACCOUNT</RkText>
+            </View>
+          </View>
+        </RkAvoidKeyboard>
+      </ScrollView>
     )
   }
 }
-// renderHeader={this.renderHeader}
+
 let styles = RkStyleSheet.create(theme => ({
   root: {
     backgroundColor: theme.colors.screen.base
   },
-  searchContainer: {
-    backgroundColor: theme.colors.screen.bold,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    height: 60,
-    alignItems: 'center'
+  header: {
+    backgroundColor: theme.colors.screen.neutral,
+    paddingVertical: 25
   },
-  container: {
+  section: {
+    marginVertical: 25
+  },
+  heading: {
+    paddingBottom: 12.5
+  },
+  row: {
     flexDirection: 'row',
-    padding: 16,
+    paddingHorizontal: 17.5,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: theme.colors.border.base,
     alignItems: 'center'
   },
-  avatar: {
-    marginRight: 16
-  },
-  separator: {
-    flex: 1,
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: theme.colors.border.base
+  button: {
+    marginHorizontal: 16,
+    marginBottom: 32
   }
 }));

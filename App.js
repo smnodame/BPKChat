@@ -32,9 +32,9 @@ import {
 import {signIn} from './src/redux/actions.js'
 import {store} from './src/redux'
 
-import ProfileSettings from './src/screens/history'
-import ChatList from './src/screens/contact'
-import Contacts from './src/screens/profile'
+import ProfileSettings from './src/screens/profile'
+import ChatList from './src/screens/chatlist'
+import Contacts from './src/screens/contact'
 import Chat from './src/screens/chat'
 
 const instructions = Platform.select({
