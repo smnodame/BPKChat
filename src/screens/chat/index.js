@@ -5,6 +5,7 @@ import {
   Platform,
   Image,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Keyboard,
   ScrollView
 } from 'react-native';
@@ -124,7 +125,9 @@ export default class Chat extends React.Component {
         {!inMessage && renderDate(info.item.date)}
         {
             info.item.format=='text' && <View style={[styles.balloon, {backgroundColor}]}>
-              <RkText rkType='primary2 mediumLine chat'>{info.item.text}</RkText>
+                <TouchableWithoutFeedback onLongPress={() => alert('hello')}>
+                    <RkText rkType='primary2 mediumLine chat'>{info.item.text}</RkText>
+                </TouchableWithoutFeedback>
             </View>
         }
         {
@@ -301,6 +304,7 @@ export default class Chat extends React.Component {
                                        label={<RkText rkType='awesome'>{FontAwesome.search}</RkText>}
                                        rkType='row'
                                        placeholder='Search'/>
+
                         </View>
                         <ScrollView>
                             <List>
@@ -350,6 +354,13 @@ export default class Chat extends React.Component {
                                 name: 'Open Case',
                                 event: () => {
                                     this.setState({ showOpenCaseModal : true })
+                                }
+                            },
+                            {
+                                icon: 'md-search',
+                                name: 'Search Text',
+                                event: () => {
+
                                 }
                             },
                             {
@@ -535,8 +546,7 @@ let styles = RkStyleSheet.create(theme => ({
   },
   plus: {
     paddingVertical: 10,
-    paddingHorizontal: 10,
-    marginRight: 7
+    paddingHorizontal: 10
   },
   send: {
     width: 40,

@@ -3,7 +3,8 @@ import {
   FlatList,
   View,
   StyleSheet,
-  TouchableOpacity
+  TouchableOpacity,
+  TouchableWithoutFeedback
 } from 'react-native';
 import _ from 'lodash';
 import {
@@ -78,7 +79,7 @@ export default class ChatList extends React.Component {
     let name = `${info.item.withUser.firstName} ${info.item.withUser.lastName}`;
     let last = info.item.messages[info.item.messages.length - 1];
     return (
-        <TouchableOpacity onPress={() =>  this.props.screenProps.rootNavigation.navigate('Chat')}>
+        <TouchableWithoutFeedback onPress={() =>  this.props.screenProps.rootNavigation.navigate('Chat')}>
           <View style={styles.container}>
           <Thumbnail source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
             <View style={styles.content}>
@@ -91,7 +92,7 @@ export default class ChatList extends React.Component {
               <RkText numberOfLines={2} rkType='primary3 mediumLine'>{last.text}</RkText>
             </View>
           </View>
-        </TouchableOpacity>
+        </TouchableWithoutFeedback>
     )
   }
 
