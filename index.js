@@ -7,6 +7,7 @@ import {data} from './src/data'
 
 import Chat from './src/screens/chat'
 import AddFriend from './src/screens/addFriend'
+import Login from './src/screens/login'
 
 bootstrap();
 data.populateRealm();
@@ -14,10 +15,11 @@ data.populateRealm();
 const BPKChat = StackNavigator({
     App: { screen: App },
     Chat: { screen: Chat },
-    AddFriend: { screen: AddFriend }
+    AddFriend: { screen: AddFriend },
+    Login: { screen: Login }
 },
 {
-    initialRouteName: "App",
+    initialRouteName: "Login",
     headerMode: "none",
 })
 
