@@ -122,12 +122,7 @@ export default class Signup extends React.Component {
     render() {
     return (
 		<Container>
-			<View style={{
-				backgroundColor: '#f4f4f4',
-				flex: 1,
-				alignItems: 'center',
-				justifyContent: 'center'
-			}}>
+			<Content contentContainerStyle={{ backgroundColor: '#f4f4f4', flexGrow: 1, justifyContent : 'center' }}>
 				<KeyboardAvoidingView  behavior="padding" style={{ backgroundColor: '#f4f4f4', marginTop: 15, paddingLeft: 20, paddingRight: 20, marginBottom: 15, width: '100%' }}>
 					<Item regular style={[styles.textInput, { backgroundColor: 'white', marginBottom: 10 } ]}>
             			<Input placeholderTextColor='#d4d8da' placeholder='ID'
@@ -187,7 +182,7 @@ export default class Signup extends React.Component {
 					  now </RkText>
 				  </RkButton>
 				</View>
-			</View>
+			</Content>
 		</Container>
     )
   }
