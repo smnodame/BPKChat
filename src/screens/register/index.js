@@ -25,14 +25,6 @@ import {
 	TabHeading,
 	Keyboard
 } from "native-base";
-import {
-  RkButton,
-  RkText,
-  RkTextInput,
-  RkAvoidKeyboard,
-  RkStyleSheet,
-  RkTheme
-} from 'react-native-ui-kitten';
 import axios from "axios"
 import { NavigationActions } from 'react-navigation'
 
@@ -50,7 +42,7 @@ const datas = [
 
 
 
-export default class Login extends React.Component {
+export default class Signup extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -159,13 +151,6 @@ export default class Login extends React.Component {
 					{
 						!!this.state.error&&<Text style={{ textAlign: 'center', color: 'white', marginTop: 10 }}>{ this.state.error }</Text>
 					}
-					<View style={{ justifyContent: 'center',flexDirection: 'row', marginTop: 15 }}>
-		              <RkText rkType='primary3' style={{ color: 'white'}}>Don’t have an account?</RkText>
-		              <RkButton rkType='clear'>
-		                <RkText rkType='header6' style={{ color: 'white'}} onPress={() => this.props.navigation.navigate('SignUp')}> Sign up
-		                  now </RkText>
-		              </RkButton>
-		            </View>
             </View>
 
 		</Container>
