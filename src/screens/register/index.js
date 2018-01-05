@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Dimensions, Platform, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, AsyncStorage, ActivityIndicator } from 'react-native';
+import { StyleSheet, Dimensions, Platform, Image, Picker, TextInput, TouchableOpacity, KeyboardAvoidingView, AsyncStorage, ActivityIndicator } from 'react-native';
 import {
 	Content,
 	Text,
@@ -27,6 +27,14 @@ import {
 } from "native-base";
 import axios from "axios"
 import { NavigationActions } from 'react-navigation'
+import {
+  RkButton,
+  RkText,
+  RkTextInput,
+  RkAvoidKeyboard,
+  RkStyleSheet,
+  RkTheme
+} from 'react-native-ui-kitten';
 
 const deviceHeight = Dimensions.get("window").height
 const deviceWidth = Dimensions.get("window").width
@@ -113,46 +121,73 @@ export default class Signup extends React.Component {
 
     render() {
     return (
-		<Container style={{ backgroundColor: '#3b5998' }}>
-            <Header style={{ backgroundColor: '#3b5998' }}>
-            	<Left>
-            	</Left>
-            	<Body>
-            		<Title>Authentication</Title>
-            	</Body>
-            </Header>
-            <View style={styles.container} behavior="padding">
-            		<Item regular style={[styles.textInput, { marginLeft: 15, marginRight: 15, marginBottom: 10, backgroundColor: 'white' } ]}>
-            			<Icon active name='ios-contact' style={{ color: '#d4d8da' }} />
-            			<Input
-							placeholderTextColor='#d4d8da'
-							placeholder='Username'
-							onChangeText={(username) => this.setState({username})}
-							value={this.state.username}
+		<Container>
+			<View style={{
+				backgroundColor: '#f4f4f4',
+				flex: 1,
+				alignItems: 'center',
+				justifyContent: 'center'
+			}}>
+				<KeyboardAvoidingView  behavior="padding" style={{ backgroundColor: '#f4f4f4', marginTop: 15, paddingLeft: 20, paddingRight: 20, marginBottom: 15, width: '100%' }}>
+					<Item regular style={[styles.textInput, { backgroundColor: 'white', marginBottom: 10 } ]}>
+            			<Input placeholderTextColor='#d4d8da' placeholder='ID'
+							onChangeText={(firstname) => this.setState({firstname})}
+							value={this.state.firstname}
 						/>
             		</Item>
-            		<Item regular style={[styles.textInput, { marginLeft: 15, marginRight: 15, backgroundColor: 'white' } ]}>
-            			<Icon active name='lock' style={{ color: '#d4d8da' }} />
-            			<Input placeholderTextColor='#d4d8da'
+					<Item regular style={[styles.textInput, { backgroundColor: 'white', marginBottom: 10 } ]}>
+            			<Input placeholderTextColor='#d4d8da' placeholder='Password'
 							secureTextEntry={true}
-							placeholder='Password'
-							onChangeText={(password) => this.setState({password})}
-							value={this.state.password}
+							onChangeText={(lastname) => this.setState({lastname})}
+							value={this.state.lastname}
 						/>
             		</Item>
-            		<Button block style={{ marginRight: 15, marginLeft: 15, marginTop: 15, backgroundColor: '#8b9dc3' }}
-						onPress={() =>  this.onLogin()}
-					>
-						{
-							this.state.loading&&<ActivityIndicator size='large' />
-						}
-            			<Text>Log In</Text>
-            		</Button>
+					<Item regular style={[styles.textInput, { backgroundColor: 'white', marginBottom: 10 } ]}>
+						<Input placeholderTextColor='#d4d8da' placeholder='Confirm Password'
+							secureTextEntry={true}
+							onChangeText={(pid) => this.setState({pid})}
+							value={this.state.pid}
+						/>
+					</Item>
+					<Item regular style={[styles.textInput, { backgroundColor: 'white', marginBottom: 10 } ]}>
+						<Input placeholderTextColor='#d4d8da' placeholder='Display Name'
+							onChangeText={(old_hv) => this.setState({old_hv})}
+							value={this.state.old_hv}
+						/>
+					</Item>
+					<Item regular style={[styles.textInput, { backgroundColor: 'white', marginBottom: 10 } ]}>
+						<Input placeholderTextColor='#d4d8da' placeholder='Mobile No'
+							onChangeText={(old_hv) => this.setState({old_hv})}
+							value={this.state.old_hv}
+						/>
+					</Item>
+					<Picker
+						style={[styles.textInput, { backgroundColor: 'white', marginBottom: 10, borderWidth: 3, borderColor: 'black' } ]}
+						selectedValue={this.state.language}
+						onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}>
+						<Picker.Item label="ไทย" value="th" />
+						<Picker.Item label="English" value="en" />
+					</Picker>
+				</KeyboardAvoidingView>
+				<Button block style={{ marginRight: 20, marginLeft: 20, backgroundColor: '#8b9dc3' }}
+					onPress={() =>  this.onLogin()}
+				>
 					{
-						!!this.state.error&&<Text style={{ textAlign: 'center', color: 'white', marginTop: 10 }}>{ this.state.error }</Text>
+						this.state.loading&&<ActivityIndicator size='large' />
 					}
-            </View>
-
+					<Text>Register</Text>
+				</Button>
+				{
+					!!this.state.error&&<Text style={{ textAlign: 'center', color: 'white', marginTop: 10 }}>{ this.state.error }</Text>
+				}
+				<View style={{ justifyContent: 'center',flexDirection: 'row', marginTop: 15 }}>
+				  <RkText rkType='primary3' style={{ color: 'black'}}>Already have an account?</RkText>
+				  <RkButton rkType='clear'>
+					<RkText rkType='header6' style={{ color: 'black'}} onPress={() => this.props.navigation.navigate('Login')}> Sign in
+					  now </RkText>
+				  </RkButton>
+				</View>
+			</View>
 		</Container>
     )
   }
@@ -167,7 +202,6 @@ const drawerStyles = {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#3b5998',
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
@@ -178,7 +212,7 @@ const styles = StyleSheet.create({
 	textInput: {
 		height: 50,
 		borderRadius: 3,
-		borderWidth: 0.5,
+		borderWidth: 1,
 		borderColor: '#d3d3d3',
 		paddingHorizontal: 19,
 		paddingLeft: 10, paddingRight: 10
