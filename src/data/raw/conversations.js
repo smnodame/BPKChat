@@ -40,7 +40,7 @@ export const Conversations = [
         time: -100,
         type: 'out',
         url: 'http://www.filmgamed.com/wp-content/uploads/2016/04/ZootopiaIN.jpg',
-        text: '',
+        text: 'Image',
         format: 'image'
       },
       {
@@ -63,7 +63,7 @@ export const Conversations = [
         id: 7,
         time: -2,
         type: 'out',
-        text: '',
+        text: 'Sticker',
         url: 'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
         format: 'sticker'
     }]

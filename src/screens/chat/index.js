@@ -93,6 +93,7 @@ export default class Chat extends React.Component {
       data: conversation,
       isShowAdditionalHeader: false
     };
+    this._renderItem = this._renderItem.bind(this)
   }
 
   componentDidMount() {
@@ -125,7 +126,7 @@ export default class Chat extends React.Component {
         {!inMessage && renderDate(info.item.date)}
         {
             info.item.format=='text' && <View style={[styles.balloon, {backgroundColor}]}>
-                <TouchableWithoutFeedback onLongPress={() => alert('hello')}>
+                <TouchableWithoutFeedback onLongPress={() => this.setState({showPickerModal: true})}>
                     <RkText rkType='primary2 mediumLine chat'>{info.item.text}</RkText>
                 </TouchableWithoutFeedback>
             </View>
@@ -327,6 +328,33 @@ export default class Chat extends React.Component {
                     </View>
                 </Modal>
             }
+            <Modal
+                onRequestClose={() => this.setState({ showPickerModal: false })}
+                onBackdropPress={() => this.setState({ showPickerModal: false })}
+                isVisible={this.state.showPickerModal}
+            >
+                <View style={{
+                    backgroundColor: 'white',
+                    borderRadius: 4,
+                    borderColor: 'rgba(0, 0, 0, 0.1)',
+                }}>
+                  <Button block light>
+                      <Text>COPY</Text>
+                  </Button>
+                  <Button block light>
+                      <Text>SAVE IN KEEP</Text>
+                  </Button>
+                  <Button block light>
+                      <Text>DELETE MESSEGES</Text>
+                  </Button>
+                  <Button block light>
+                      <Text>FORWORD</Text>
+                  </Button>
+                  <Button block light>
+                      <Text>SHARE</Text>
+                  </Button>
+                </View>
+            </Modal>
             <RkAvoidKeyboard style={styles.container} onResponderRelease={(event) => {
               Keyboard.dismiss();
             }}>
@@ -396,7 +424,7 @@ export default class Chat extends React.Component {
                         style={styles.list}
                         data={this.state.data.messages}
                         keyExtractor={this._keyExtractor}
-                        renderItem={this._renderItem}/>
+                        renderItem={this._renderItem.bind(this)}/>
               <View style={styles.footer}>
                 {
                     this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => this.setState({ isShowMedie: false })}>

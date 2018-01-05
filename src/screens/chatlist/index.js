@@ -13,11 +13,12 @@ import {
   RkTextInput,
   RkButton
 } from 'react-native-ui-kitten';
-import { Thumbnail } from 'native-base';
+import { Thumbnail, Button, Text } from 'native-base';
 import {Avatar} from '../../components';
 import {FontAwesome} from '../../assets/icons';
 import {data} from '../../data';
 let moment = require('moment');
+import Modal from 'react-native-modal';
 
 export default class ChatList extends React.Component {
   static navigationOptions = {
@@ -79,7 +80,7 @@ export default class ChatList extends React.Component {
     let name = `${info.item.withUser.firstName} ${info.item.withUser.lastName}`;
     let last = info.item.messages[info.item.messages.length - 1];
     return (
-        <TouchableWithoutFeedback onPress={() =>  this.props.screenProps.rootNavigation.navigate('Chat')}>
+        <TouchableWithoutFeedback onPress={() =>  this.props.screenProps.rootNavigation.navigate('Chat')} onLongPress={() => this.setState({showPickerModal: true})}>
           <View style={styles.container}>
           <Thumbnail source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
             <View style={styles.content}>
@@ -98,14 +99,40 @@ export default class ChatList extends React.Component {
 
   render() {
     return (
-      <FlatList
-        style={styles.root}
-        data={this.state.data}
-        extraData={this.state}
-        ListHeaderComponent={this.renderHeader}
-        ItemSeparatorComponent={this._renderSeparator}
-        keyExtractor={this._keyExtractor}
-        renderItem={this.renderItem}/>
+    <View>
+        <FlatList
+          style={styles.root}
+          data={this.state.data}
+          extraData={this.state}
+          ListHeaderComponent={this.renderHeader}
+          ItemSeparatorComponent={this._renderSeparator}
+          keyExtractor={this._keyExtractor}
+          renderItem={this.renderItem}/>
+          <Modal
+              onRequestClose={() => this.setState({ showPickerModal: false })}
+              onBackdropPress={() => this.setState({ showPickerModal: false })}
+              isVisible={this.state.showPickerModal}
+          >
+              <View style={{
+                  backgroundColor: 'white',
+                  borderRadius: 4,
+                  borderColor: 'rgba(0, 0, 0, 0.1)',
+              }}>
+                <Button block light>
+                    <Text>Chat</Text>
+                </Button>
+                <Button block light>
+                    <Text>Mute</Text>
+                </Button>
+                <Button block light>
+                    <Text>Block Chat</Text>
+                </Button>
+                <Button block light>
+                    <Text>Delete</Text>
+                </Button>
+              </View>
+          </Modal>
+    </View>
     )
   }
 }
