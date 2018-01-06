@@ -14,7 +14,7 @@ import {
 } from 'react-native-ui-kitten';
 import {data} from '../../data';
 import {FontAwesome} from '../../assets/icons';
-import { Thumbnail, Button, Text } from 'native-base';
+import { Thumbnail, Button, Text, Icon } from 'native-base';
 
 export default class ProfileSettings extends React.Component {
   static navigationOptions = {
@@ -65,12 +65,6 @@ export default class ProfileSettings extends React.Component {
             />
         </View>
         <View>
-            <Button transparent info>
-                <Text>Change Profile Image</Text>
-            </Button>
-            <Button transparent>
-                <Text>Change Wallpaper Image</Text>
-            </Button>
         </View>
           <View style={styles.section}>
             <View style={[styles.row, styles.heading]}>

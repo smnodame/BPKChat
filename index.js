@@ -18,10 +18,10 @@ const BPKChat = StackNavigator({
     Chat: { screen: Chat },
     AddFriend: { screen: AddFriend },
     Login: { screen: Login },
-    SignUp: { screen: SignUp }
+    SignUp: { screen: SignUp },
 },
 {
-    initialRouteName: "Login",
+    initialRouteName: "App",
     headerMode: "none",
 })
 

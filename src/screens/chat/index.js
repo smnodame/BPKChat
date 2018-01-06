@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
-  ScrollView
+  ScrollView,
+  StyleSheet
 } from 'react-native';
 import {InteractionManager} from 'react-native';
 import {
@@ -355,6 +356,63 @@ export default class Chat extends React.Component {
                   </Button>
                 </View>
             </Modal>
+            <Modal
+                onRequestClose={() => this.setState({ showGroupSetting: false })}
+                onBackdropPress={() => this.setState({ showGroupSetting: false })}
+                isVisible={this.state.showGroupSetting}
+            >
+                <View style={{
+                    height: 400,
+                    backgroundColor: 'white',
+                    // justifyContent: 'center',
+                    // alignItems: 'center',
+                    borderRadius: 4,
+                    borderColor: 'rgba(0, 0, 0, 0.1)',
+                }}>
+                    <View style={{ height: 220 }}>
+                        <Image
+                            style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
+                            source={{uri: 'https://images.alphacoders.com/685/685151.jpg'}}
+                        />
+                        <Image
+                            style={{
+                                width: 110,
+                                height: 110,
+                                borderRadius: 55,
+                                borderColor: 'white',
+                                borderWidth: 1,
+                                position: 'absolute',
+                                top: 95,
+                                left: '50%',
+                                marginLeft: -55
+                            }}
+                            source={{uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}}
+                        />
+                    </View>
+                    <View style={{
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                        <View style={styles.row}>
+                          <RkTextInput label='Display Name'
+                                       value={'Boonprakit'}
+                                       rkType='right clear'
+                                       onChangeText={(text) => this.setState({firstName: text})}/>
+                        </View>
+                    </View>
+                    <View style={{ flex: 1}}>
+                    </View>
+                    <View
+                        style={{
+                            width: '100%'
+                        }}
+                    >
+                        <Button block style={{ backgroundColor: '#3b5998', margin: 5 }}>
+                            <Text>UPDATE</Text>
+                        </Button>
+                    </View>
+                </View>
+            </Modal>
             <RkAvoidKeyboard style={styles.container} onResponderRelease={(event) => {
               Keyboard.dismiss();
             }}>
@@ -395,7 +453,7 @@ export default class Chat extends React.Component {
                                 icon: 'md-settings',
                                 name: 'Setting',
                                 event: () => {
-
+                                    this.setState({ showGroupSetting : true })
                                 }
                             },
                             {
@@ -580,5 +638,12 @@ let styles = RkStyleSheet.create(theme => ({
     width: 40,
     height: 40,
     marginLeft: 10,
-  }
+},
+row: {
+  flexDirection: 'row',
+  paddingHorizontal: 17.5,
+  borderBottomWidth: StyleSheet.hairlineWidth,
+  borderColor: theme.colors.border.base,
+  alignItems: 'center'
+},
 }));
