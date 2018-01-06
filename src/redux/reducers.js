@@ -1,30 +1,16 @@
 import { combineReducers } from 'redux'
 
-// const posts = (state = [], action) => {
-//   switch (action.type) {
-//     case 'ADD_POST':
-//       return [
-//         ...state,
-//         {
-//           id: action.id,
-//           post: action.post
-//         }
-//       ]
-//     default:
-//       return state
-//   }
-// }
-
-const users = (state = [], action) => {
+const users = (state = {}, action) => {
     switch (action.type) {
       case 'AUTHENTICATED':
-          return [
-              ...state,
-              {
-                  token: action.payload.token,
-                  expire: action.payload.expire
-              }
-          ]
+          return Object.assign(state, {
+              token: action.payload.token,
+              expire: action.payload.expire
+          })
+      case 'SIGNIN_ERROR':
+          return Object.assign(state, {
+              error: action.payload.error
+          })
       default:
         return state
     }

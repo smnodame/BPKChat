@@ -36,19 +36,8 @@ import {
 import axios from "axios"
 import { NavigationActions } from 'react-navigation'
 
-const deviceHeight = Dimensions.get("window").height
-const deviceWidth = Dimensions.get("window").width
-
-const datas = [
-	{
-		name: "Login",
-		route: "Login",
-		icon: "lock",
-		bg: "#C5F442",
-	}
-];
-
-
+import {signIn} from '../../redux/actions.js'
+import {store} from '../../redux'
 
 export default class Login extends React.Component {
     constructor(props) {
@@ -59,7 +48,9 @@ export default class Login extends React.Component {
 			isReady: false,
 			page: 'Login',
 			error: "",
-			loading: false
+			loading: false,
+			username: "",
+			password: ""
         }
 		this.openControlPanel = this.openControlPanel.bind(this)
 		this.onLogin = this.onLogin.bind(this)
@@ -70,22 +61,12 @@ export default class Login extends React.Component {
     }
 
 	async componentWillMount() {
-		let default_host = await AsyncStorage.getItem('default_host')
-
-		const host = await AsyncStorage.getItem('default_host')
-		if(host) {
-
-		} else {
-			default_host = await AsyncStorage.setItem('default_host', 'http://192.168.13.31/bpkservice')
-		}
-		this.setState({ isReady: true, default_host: default_host })
-
-		// const token = await AsyncStorage.getItem('token')
-		// if(token) {
-        //
-		// } else {
-		// 	await AsyncStorage.setItem('current_state', 'Login')
-		// }
+        store.subscribe(() => {
+            const state = store.getState()
+			this.setState({
+				error: state.users.error
+			})
+        })
     }
 
 	openControlPanel = () => {
@@ -93,30 +74,7 @@ export default class Login extends React.Component {
 	}
 
 	async onLogin() {
-		if(this.state.username && this.state.password) {
-			this.setState({
-				loading: true
-			})
-			axios.get(this.state.default_host + '/api/user/login?username=' + this.state.username + '&password='+ this.state.password)
-			.then((response) => {
-				if(response.data.success == "1") {
-					this.setState({ error: "" })
-					this.setState({
-						loading: false
-					})
-				} else {
-					this.setState({ error: response.data.error, password: ""})
-					this.setState({
-						loading: false
-					})
-				}
-			})
-		} else {
-			this.setState({ error: 'กรุณาระบุ Username เเละ Password' })
-			this.setState({
-				loading: false
-			})
-		}
+		store.dispatch(signIn(this.state.username, this.state.password))
 	}
 
     render() {
