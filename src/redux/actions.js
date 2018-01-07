@@ -56,6 +56,13 @@ export const enterContacts = () => ({
     type: 'ENTER_CONTACTS'
 })
 
+export const myprofile = (data) => ({
+    type: 'MY_PROFILE',
+    payload: {
+        myprofile: data
+    }
+})
+
 export const languages = (languages) => ({
     type: 'LANGUAGES',
     payload: {

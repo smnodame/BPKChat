@@ -12,6 +12,11 @@ const user = (state = {}, action) => {
           return Object.assign(state, {
               error: action.payload.error
           })
+      case 'MY_PROFILE':
+          return Object.assign(state, {
+              setting: action.payload.myprofile.setting,
+              user: action.payload.myprofile.user
+          })
       default:
         return state
     }

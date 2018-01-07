@@ -46,8 +46,10 @@ export default class Contacts extends React.Component {
 
     updateData = () => {
         const state = store.getState()
+        console.log(state)
         this.setState({
-            friends: _.get(state, 'friend.friends', [])
+            friends: _.get(state, 'friend.friends', []),
+            user: _.get(state, 'user.user', {})
         })
     }
 
@@ -75,7 +77,7 @@ export default class Contacts extends React.Component {
 
     renderGroups = () => {
         return this.state.friends.filter((friend) => {
-            return friend.is_group == 'T'
+            return friend.friend_type == 'group'
         }).map((friend) => {
             return (
                 <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ showGroupModal: true })}>
@@ -90,7 +92,7 @@ export default class Contacts extends React.Component {
 
     renderFavorite = () => {
         return this.state.friends.filter((friend) => {
-            return friend.is_favorite == 'T'
+            return friend.friend_type == 'favorite'
         }).map((friend) => {
             return (
                 <View>
@@ -108,7 +110,26 @@ export default class Contacts extends React.Component {
 
     renderOthers = () => {
         return this.state.friends.filter((friend) => {
-            return friend.is_group == 'F'
+            return friend.friend_type == 'other'
+        }).map((friend) => {
+            return (
+                <View>
+                    <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ showFriendModal: true })}>
+                        <View style={styles.container}>
+                            <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
+                            <RkText rkType='header5'>{ friend.display_name }</RkText>
+                        </View>
+                        </TouchableOpacity>
+                    <View style={styles.separator}/>
+                </View>
+
+            )
+        })
+    }
+
+    renderDepartment = () => {
+        return this.state.friends.filter((friend) => {
+            return friend.friend_type == 'department'
         }).map((friend) => {
             return (
                 <View>
@@ -144,7 +165,7 @@ export default class Contacts extends React.Component {
                     <View style={{ height: 220 }}>
                         <Image
                             style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
-                            source={{uri: 'https://images.alphacoders.com/685/685151.jpg'}}
+                            source={{uri: this.state.user.wall_pic_url}}
                         />
                         <Image
                             style={{
@@ -158,15 +179,15 @@ export default class Contacts extends React.Component {
                                 left: '50%',
                                 marginLeft: -55
                             }}
-                            source={{uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}}
+                            source={{uri: this.state.user.profile_pic_url}}
                         />
                     </View>
                     <View style={{
                         justifyContent: 'center',
                         alignItems: 'center'
                     }}>
-                        <Text>Pat Charaporn</Text>
-                        <Text note>ID patcharaporn</Text>
+                        <Text>{ this.state.user.display_name }</Text>
+                        <Text note>{ `ID ${this.state.user.ename}` }</Text>
                     </View>
                     <View style={{ flex: 1}}>
                     </View>
@@ -328,8 +349,8 @@ export default class Contacts extends React.Component {
             <View style={{ backgroundColor: 'white' }}>
                 <TouchableOpacity onPress={() => this.setState({ showProfileModal: true })}>
                   <View style={styles.container}>
-                      <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
-                      <RkText rkType='header5'>Smnodame</RkText>
+                      <Thumbnail  style={styles.avatar}  source={{ uri: this.state.user.profile_pic_url }} />
+                      <RkText rkType='header5'>{ this.state.user.display_name }</RkText>
                   </View>
                 </TouchableOpacity>
             </View>
@@ -359,6 +380,20 @@ export default class Contacts extends React.Component {
             <View style={{ backgroundColor: 'white' }}>
                 {
                     this.renderGroups()
+                }
+            </View>
+            <View
+                style={{
+                    paddingTop: 10, paddingBottom: 10, paddingLeft: 15,
+                    backgroundColor: '#fafafa', borderBottomColor: '#eaeaea',
+                    borderBottomWidth: 0.5
+                }}
+            >
+                <RkText rkType='header6 hintColor'>Department</RkText>
+            </View>
+            <View style={{ backgroundColor: 'white' }}>
+                {
+                    this.renderDepartment()
                 }
             </View>
             <View>

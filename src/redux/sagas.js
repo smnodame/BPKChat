@@ -2,7 +2,7 @@ import _ from "lodash"
 import axios from "axios"
 
 import { all, call, put, takeEvery, takeLatest, take, select } from 'redux-saga/effects'
-import { signin_error, languages, authenticated, friendGroups, friends } from './actions'
+import { signin_error, languages, authenticated, friendGroups, friends, myprofile } from './actions'
 import { NavigationActions } from 'react-navigation'
 
 function login_api(username, password) {
@@ -28,7 +28,7 @@ function fetchFriendGroups() {
 }
 
 function fetchFriendLists() {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=0&limit=10&filter=&friend_type=`)
+    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=0&limit=100&filter=&friend_type=`)
 }
 function* signin() {
     while (true) {
@@ -98,6 +98,10 @@ const getFriendGroups = state => {
 //     })
 // }
 
+const fetchMyProfile = () => {
+    return axios.get('http://itsmartone.com/bpk_connect/api/user/my_profile?token=asdf1234aaa&user_id=3963')
+}
+
 function* enterContacts() {
     while (true) {
         yield take('ENTER_CONTACTS')
@@ -106,6 +110,8 @@ function* enterContacts() {
         yield put(friendGroups(friendGroupsData))
         const friendsData = yield call(fetchFriendLists)
         yield put(friends(_.get(friendsData, 'data.data')))
+        const resFetchMyProfile = yield call(fetchMyProfile)
+        yield put(myprofile(_.get(resFetchMyProfile, 'data.data')))
     }
 }
 
