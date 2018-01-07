@@ -1,8 +1,8 @@
 import _ from "lodash"
 import axios from "axios"
 
-import { all, call, put, takeEvery, takeLatest, take } from 'redux-saga/effects'
-import { signin_error, languages, authenticated, friendGroups } from './actions'
+import { all, call, put, takeEvery, takeLatest, take, select } from 'redux-saga/effects'
+import { signin_error, languages, authenticated, friendGroups, friends } from './actions'
 import { NavigationActions } from 'react-navigation'
 
 function login_api(username, password) {
@@ -27,6 +27,9 @@ function fetchFriendGroups() {
     return axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_type_list')
 }
 
+function fetchFriendLists() {
+    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=0&limit=10&filter=&friend_type=`)
+}
 function* signin() {
     while (true) {
         const { payload: { username, password } } = yield take('SIGNIN')
@@ -50,10 +53,9 @@ function* start_app() {
     while (true) {
         yield take('START_APP')
         const { data: { data }} = yield call(fetch_language)
-        const resFetchFriendGroups = yield call(fetchFriendGroups)
-        const friendGroupsData = _.get(resFetchFriendGroups, 'data.data')
+
+
         yield put(languages(data))
-        yield put(friendGroups(friendGroupsData))
     }
 }
 
@@ -80,10 +82,38 @@ function* signup() {
     }
 }
 
+const getFriendGroups = state => {
+    return state.friend.friendGroups
+}
+
+// const combinedFriends = (groups) => {
+//     let promises = []
+//     _.forEach(groups, (group) => {
+//         const promise = fetchFriendLists(group)
+//         promises.push(promise)
+//     })
+//     return Promise.all(promises).then(values => {
+//         console.log('===============')
+//         console.log(values)
+//     })
+// }
+
+function* enterContacts() {
+    while (true) {
+        yield take('ENTER_CONTACTS')
+        const resFetchFriendGroups = yield call(fetchFriendGroups)
+        const friendGroupsData = _.get(resFetchFriendGroups, 'data.data')
+        yield put(friendGroups(friendGroupsData))
+        const friendsData = yield call(fetchFriendLists)
+        yield put(friends(_.get(friendsData, 'data.data')))
+    }
+}
+
 export default function* rootSaga() {
     yield all([
         signin(),
         start_app(),
-        signup()
+        signup(),
+        enterContacts()
     ])
 }

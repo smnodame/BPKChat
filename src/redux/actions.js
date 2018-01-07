@@ -45,6 +45,17 @@ export const start_app = () => ({
     type: 'START_APP'
 })
 
+export const friends = (friends) => ({
+    type: 'FRIENDS',
+    payload: {
+        friends
+    }
+})
+
+export const enterContacts = () => ({
+    type: 'ENTER_CONTACTS'
+})
+
 export const languages = (languages) => ({
     type: 'LANGUAGES',
     payload: {

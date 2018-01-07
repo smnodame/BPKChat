@@ -1,24 +1,26 @@
-import React from 'react';
+import React from 'react'
 import {
   ListView,
   View,
   StyleSheet,
   TouchableOpacity,
   Image
-} from 'react-native';
-import _ from 'lodash';
+} from 'react-native'
+import _ from 'lodash'
 import {
   RkStyleSheet,
   RkText,
   RkTextInput
-} from 'react-native-ui-kitten';
-import Modal from 'react-native-modal';
-import { Thumbnail, Icon, Text, Button } from 'native-base';
-import {data} from '../../data';
-import {Avatar} from '../../components/avatar';
-import {FontAwesome} from '../../assets/icons';
-import {store} from '../../redux'
+} from 'react-native-ui-kitten'
+import Modal from 'react-native-modal'
+import { Thumbnail, Icon, Text, Button } from 'native-base'
+import {data} from '../../data'
+import {Avatar} from '../../components/avatar'
+import {FontAwesome} from '../../assets/icons'
 import { NavigationActions } from 'react-navigation'
+
+import { enterContacts } from '../../redux/actions.js'
+import {store} from '../../redux'
 
 export default class Contacts extends React.Component {
     static navigationOptions = {
@@ -44,13 +46,13 @@ export default class Contacts extends React.Component {
     }
 
     updateState = () => {
-
 		this.setState({
 			languages: state.system.languages
 		})
 	}
 
 	async componentWillMount() {
+        store.dispatch(enterContacts())
 		store.subscribe(() => {
             const state = store.getState()
     		console.log(state)
@@ -68,10 +70,10 @@ export default class Contacts extends React.Component {
         let name = `${row.firstName} ${row.lastName}`;
         return (
             <TouchableOpacity onPress={() => this.setState({ showFriendModal: true })}>
-            <View style={styles.container}>
-            <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
-            <RkText rkType='header5'>{name}</RkText>
-            </View>
+                <View style={styles.container}>
+                    <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
+                    <RkText rkType='header5'>{name}</RkText>
+                </View>
             </TouchableOpacity>
         )
     }
