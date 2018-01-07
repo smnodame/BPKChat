@@ -17,81 +17,95 @@ import { Thumbnail, Icon, Text, Button } from 'native-base';
 import {data} from '../../data';
 import {Avatar} from '../../components/avatar';
 import {FontAwesome} from '../../assets/icons';
-
+import {store} from '../../redux'
 import { NavigationActions } from 'react-navigation'
 
 export default class Contacts extends React.Component {
-  static navigationOptions = {
-    title: 'Contacts'.toUpperCase()
-  };
+    static navigationOptions = {
+        title: 'Contacts'.toUpperCase()
+    }
 
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props)
 
-    this.users = data.getUsers();
+        this.users = data.getUsers();
 
-    let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    this.state = {
-      data: ds.cloneWithRows(this.users),
-      showProfileModal: false,
-      showFriendModal: false
-    };
+        let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+        this.state = {
+            data: ds.cloneWithRows(this.users),
+            showProfileModal: false,
+            showFriendModal: false
+        }
 
-    this.filter = this._filter.bind(this);
-    this.setData = this._setData.bind(this);
-    this.renderHeader = this._renderHeader.bind(this);
-    this.renderRow = this._renderRow.bind(this);
-  }
+        this.filter = this._filter.bind(this)
+        this.setData = this._setData.bind(this)
+        this.renderHeader = this._renderHeader.bind(this)
+        this.renderRow = this._renderRow.bind(this)
+    }
 
-  _setData(data) {
-    let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    this.setState({
-      data: ds.cloneWithRows(data)
-    })
-  }
+    updateState = () => {
 
-  _renderRow(row) {
-    let name = `${row.firstName} ${row.lastName}`;
-    return (
-      <TouchableOpacity onPress={() => this.setState({ showFriendModal: true })}>
-        <View style={styles.container}>
+		this.setState({
+			languages: state.system.languages
+		})
+	}
+
+	async componentWillMount() {
+		store.subscribe(() => {
+            const state = store.getState()
+    		console.log(state)
+		})
+    }
+
+    _setData(data) {
+        let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        this.setState({
+            data: ds.cloneWithRows(data)
+        })
+    }
+
+    _renderRow(row) {
+        let name = `${row.firstName} ${row.lastName}`;
+        return (
+            <TouchableOpacity onPress={() => this.setState({ showFriendModal: true })}>
+            <View style={styles.container}>
             <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
             <RkText rkType='header5'>{name}</RkText>
-        </View>
-      </TouchableOpacity>
-    )
-  }
+            </View>
+            </TouchableOpacity>
+        )
+    }
 
-  renderSeparator(sectionID, rowID) {
-    return (
-      <View style={styles.separator}/>
-    )
-  }
+    renderSeparator(sectionID, rowID) {
+        return (
+            <View style={styles.separator}/>
+        )
+    }
 
-  _renderHeader() {
-    return (
-      <View style={styles.searchContainer}>
-        <RkTextInput autoCapitalize='none'
-                     autoCorrect={false}
-                     onChange={(event) => this._filter(event.nativeEvent.text)}
-                     label={<RkText rkType='awesome'>{FontAwesome.search}</RkText>}
-                     rkType='row'
-                     placeholder='Search'/>
-      </View>
-    )
-  }
+    _renderHeader() {
+        return (
+            <View style={styles.searchContainer}>
+                <RkTextInput autoCapitalize='none'
+                    autoCorrect={false}
+                    onChange={(event) => this._filter(event.nativeEvent.text)}
+                    label={<RkText rkType='awesome'>{FontAwesome.search}</RkText>}
+                    rkType='row'
+                    placeholder='Search'/>
+            </View>
+        )
+    }
 
-  _filter(text) {
-    let pattern = new RegExp(text, 'i');
-    let users = _.filter(this.users, (user) => {
+    _filter(text) {
+        let pattern = new RegExp(text, 'i');
+        let users = _.filter(this.users, (user) => {
 
-      if (user.firstName.search(pattern) != -1
-        || user.lastName.search(pattern) != -1)
-        return user;
-    });
+        if (user.firstName.search(pattern) != -1
+            || user.lastName.search(pattern) != -1)
+                return user
+        });
 
-    this.setData(users);
-  }
+        this.setData(users)
+    }
 
   render() {
     return (

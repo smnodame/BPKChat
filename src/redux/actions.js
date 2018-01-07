@@ -34,6 +34,13 @@ export const authenticated = (token, setting, user) => ({
     }
 })
 
+export const friendGroups = (friendGroups) => ({
+    type: 'FRIEND_GROUPS',
+    payload: {
+        friendGroups
+    }
+})
+
 export const start_app = () => ({
     type: 'START_APP'
 })

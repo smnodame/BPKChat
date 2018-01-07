@@ -2,7 +2,7 @@ import _ from "lodash"
 import axios from "axios"
 
 import { all, call, put, takeEvery, takeLatest, take } from 'redux-saga/effects'
-import { signin_error, languages, authenticated } from './actions'
+import { signin_error, languages, authenticated, friendGroups } from './actions'
 import { NavigationActions } from 'react-navigation'
 
 function login_api(username, password) {
@@ -23,10 +23,13 @@ function create_new_account(id, password, display_name, mobile_no, language) {
     })
 }
 
+function fetchFriendGroups() {
+    return axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_type_list')
+}
+
 function* signin() {
     while (true) {
         const { payload: { username, password } } = yield take('SIGNIN')
-        console.log(NavigationActions)
         if(username && password) {
             const res_login_api = yield call(login_api, username, password)
             if(_.get(res_login_api.data, 'error')) {
@@ -47,7 +50,10 @@ function* start_app() {
     while (true) {
         yield take('START_APP')
         const { data: { data }} = yield call(fetch_language)
+        const resFetchFriendGroups = yield call(fetchFriendGroups)
+        const friendGroupsData = _.get(resFetchFriendGroups, 'data.data')
         yield put(languages(data))
+        yield put(friendGroups(friendGroupsData))
     }
 }
 

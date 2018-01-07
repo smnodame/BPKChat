@@ -10,8 +10,12 @@ import AddFriend from './src/screens/addFriend'
 import Login from './src/screens/login'
 import SignUp from './src/screens/register'
 
+import {store} from './src/redux'
+import { start_app  } from './src/redux/actions.js'
+
 bootstrap();
 data.populateRealm();
+store.dispatch(start_app())
 
 const BPKChat = StackNavigator({
     App: { screen: App },
@@ -21,7 +25,7 @@ const BPKChat = StackNavigator({
     SignUp: { screen: SignUp },
 },
 {
-    initialRouteName: "Login",
+    initialRouteName: "App",
     headerMode: "none",
 })
 

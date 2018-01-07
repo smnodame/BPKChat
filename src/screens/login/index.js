@@ -58,7 +58,6 @@ export default class Login extends React.Component {
     }
 
 	async componentWillMount() {
-		store.dispatch(start_app())
         store.subscribe(() => {
             const state = store.getState()
 			this.setState({

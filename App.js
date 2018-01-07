@@ -64,10 +64,6 @@ export default class App extends Component<{}> {
         this.setState({
             selectedTab
         })
-        store.dispatch(signIn('testuser', 'secret'))
-        store.subscribe((state) => {
-            console.log(store.getState())
-        })
     }
 
     renderContent() {

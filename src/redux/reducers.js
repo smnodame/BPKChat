@@ -28,8 +28,18 @@ const system = (state = {}, action) => {
     }
 }
 
-
+const friend = (state = {}, action) => {
+    switch (action.type) {
+        case 'FRIEND_GROUPS':
+            return Object.assign(state, {
+                friendGroups: action.payload.friendGroups
+            })
+        default:
+            return state
+    }
+}
 export default combineReducers({
   user,
-  system
+  system,
+  friend
 })
