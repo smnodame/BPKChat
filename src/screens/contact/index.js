@@ -30,58 +30,33 @@ export default class Contacts extends React.Component {
     constructor(props) {
         super(props)
 
-        this.users = data.getUsers();
+        // this.users = data.getUsers();
+        //
+        // let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+        // data: ds.cloneWithRows(this.users),
 
-        let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
         this.state = {
-            data: ds.cloneWithRows(this.users),
             showProfileModal: false,
-            showFriendModal: false
+            showFriendModal: false,
+            friends: []
         }
 
-        this.filter = this._filter.bind(this)
-        this.setData = this._setData.bind(this)
         this.renderHeader = this._renderHeader.bind(this)
-        this.renderRow = this._renderRow.bind(this)
     }
 
-    updateState = () => {
-		this.setState({
-			languages: state.system.languages
-		})
-	}
-
-	async componentWillMount() {
-        store.dispatch(enterContacts())
-		store.subscribe(() => {
-            const state = store.getState()
-    		console.log(state)
-		})
-    }
-
-    _setData(data) {
-        let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    updateData = () => {
+        const state = store.getState()
         this.setState({
-            data: ds.cloneWithRows(data)
+            friends: _.get(state, 'friend.friends', [])
         })
     }
 
-    _renderRow(row) {
-        let name = `${row.firstName} ${row.lastName}`;
-        return (
-            <TouchableOpacity onPress={() => this.setState({ showFriendModal: true })}>
-                <View style={styles.container}>
-                    <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
-                    <RkText rkType='header5'>{name}</RkText>
-                </View>
-            </TouchableOpacity>
-        )
-    }
-
-    renderSeparator(sectionID, rowID) {
-        return (
-            <View style={styles.separator}/>
-        )
+	async componentWillMount() {
+        store.dispatch(enterContacts())
+        this.updateData()
+		store.subscribe(() => {
+            this.updateData()
+		})
     }
 
     _renderHeader() {
@@ -97,16 +72,57 @@ export default class Contacts extends React.Component {
         )
     }
 
-    _filter(text) {
-        let pattern = new RegExp(text, 'i');
-        let users = _.filter(this.users, (user) => {
 
-        if (user.firstName.search(pattern) != -1
-            || user.lastName.search(pattern) != -1)
-                return user
-        });
+    renderGroups = () => {
+        return this.state.friends.filter((friend) => {
+            return friend.is_group == 'T'
+        }).map((friend) => {
+            return (
+                <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ showGroupModal: true })}>
+                  <View style={styles.container}>
+                      <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
+                      <RkText rkType='header5'>Travel</RkText>
+                  </View>
+                </TouchableOpacity>
+            )
+        })
+    }
 
-        this.setData(users)
+    renderFavorite = () => {
+        return this.state.friends.filter((friend) => {
+            return friend.is_favorite == 'T'
+        }).map((friend) => {
+            return (
+                <View>
+                    <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ showFriendModal: true })}>
+                      <View style={styles.container}>
+                          <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
+                          <RkText rkType='header5'>{ friend.display_name }</RkText>
+                      </View>
+                    </TouchableOpacity>
+                    <View style={styles.separator}/>
+                </View>
+            )
+        })
+    }
+
+    renderOthers = () => {
+        return this.state.friends.filter((friend) => {
+            return friend.is_group == 'F'
+        }).map((friend) => {
+            return (
+                <View>
+                    <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ showFriendModal: true })}>
+                        <View style={styles.container}>
+                            <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
+                            <RkText rkType='header5'>{ friend.display_name }</RkText>
+                        </View>
+                        </TouchableOpacity>
+                    <View style={styles.separator}/>
+                </View>
+
+            )
+        })
     }
 
   render() {
@@ -327,12 +343,9 @@ export default class Contacts extends React.Component {
                 <RkText rkType='header6 hintColor'>Favorites</RkText>
             </View>
             <View style={{ backgroundColor: 'white' }}>
-                <TouchableOpacity onPress={() => this.setState({ showFriendModal: true })}>
-                  <View style={styles.container}>
-                      <Thumbnail  style={styles.avatar}  source={{ uri: 'https://pbs.twimg.com/profile_images/733975023065563136/iqPHvjhs_400x400.jpg'}} />
-                      <RkText rkType='header5'>Pat Charaporn</RkText>
-                  </View>
-                </TouchableOpacity>
+                {
+                    this.renderFavorite()
+                }
             </View>
             <View
                 style={{
@@ -344,24 +357,9 @@ export default class Contacts extends React.Component {
                 <RkText rkType='header6 hintColor'>Groups</RkText>
             </View>
             <View style={{ backgroundColor: 'white' }}>
-                <TouchableOpacity onPress={() => this.setState({ showGroupModal: true })}>
-                  <View style={styles.container}>
-                      <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
-                      <RkText rkType='header5'>Travel</RkText>
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.setState({ showGroupModal: true })}>
-                  <View style={styles.container}>
-                      <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
-                      <RkText rkType='header5'>Dinner</RkText>
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.setState({ showGroupModal: true })}>
-                  <View style={styles.container}>
-                      <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg' }} />
-                      <RkText rkType='header5'>Sport</RkText>
-                  </View>
-                </TouchableOpacity>
+                {
+                    this.renderGroups()
+                }
             </View>
             <View>
                 <View
@@ -373,13 +371,11 @@ export default class Contacts extends React.Component {
                 >
                     <RkText rkType='header6 hintColor'>Friends</RkText>
                 </View>
-                <ListView
-                    style={styles.root}
-                    dataSource={this.state.data}
-                    renderRow={this.renderRow}
-                    renderSeparator={this.renderSeparator}
-                    enableEmptySections={true}
-                />
+                <View style={{ backgroundColor: 'white' }}>
+                    {
+                        this.renderOthers()
+                    }
+                </View>
             </View>
         </View>
     )
