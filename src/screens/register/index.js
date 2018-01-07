@@ -35,6 +35,8 @@ import {
   RkStyleSheet,
   RkTheme
 } from 'react-native-ui-kitten';
+import {store} from '../../redux'
+import { signup } from '../../redux/actions.js'
 
 export default class Signup extends React.Component {
     constructor(props) {
@@ -42,22 +44,44 @@ export default class Signup extends React.Component {
         this.state = {
 			isReady: false,
 			error: "",
-			loading: false
+			loading: false,
+			languages: [],
+			language_id: 1
         }
-		this.openControlPanel = this.openControlPanel.bind(this)
-		this.onLogin = this.onLogin.bind(this)
+		this.onSignup = this.onSignup.bind(this)
+
     }
 
 	async componentDidMount() {
 
     }
 
-	async componentWillMount() {
+	updateState = () => {
+		const state = store.getState()
+		console.log(state)
+		this.setState({
+			languages: state.system.languages
+		})
+	}
 
+	async componentWillMount() {
+		this.updateState()
+		store.subscribe(() => {
+			this.updateState()
+		})
     }
 
-	async onLogin() {
-
+	async onSignup() {
+		store.dispatch(
+			signup(
+				this.state.id,
+				this.state.password,
+				this.state.confirm_password,
+				this.state.display_name,
+				this.state.mobile_no,
+				this.state.language_id
+			)
+		)
 	}
 
     render() {
@@ -67,46 +91,54 @@ export default class Signup extends React.Component {
 				<KeyboardAvoidingView  behavior="padding" style={{ backgroundColor: '#f4f4f4', marginTop: 15, paddingLeft: 20, paddingRight: 20, marginBottom: 15, width: '100%' }}>
 					<Item regular style={[styles.textInput, { backgroundColor: 'white', marginBottom: 10 } ]}>
             			<Input placeholderTextColor='#d4d8da' placeholder='ID'
-							onChangeText={(firstname) => this.setState({firstname})}
-							value={this.state.firstname}
+							onChangeText={(id) => this.setState({id})}
+							value={this.state.id}
 						/>
             		</Item>
 					<Item regular style={[styles.textInput, { backgroundColor: 'white', marginBottom: 10 } ]}>
             			<Input placeholderTextColor='#d4d8da' placeholder='Password'
 							secureTextEntry={true}
-							onChangeText={(lastname) => this.setState({lastname})}
-							value={this.state.lastname}
+							onChangeText={(password) => this.setState({password})}
+							value={this.state.password}
 						/>
             		</Item>
 					<Item regular style={[styles.textInput, { backgroundColor: 'white', marginBottom: 10 } ]}>
 						<Input placeholderTextColor='#d4d8da' placeholder='Confirm Password'
 							secureTextEntry={true}
-							onChangeText={(pid) => this.setState({pid})}
-							value={this.state.pid}
+							onChangeText={(confirm_password) => this.setState({confirm_password})}
+							value={this.state.confirm_password}
 						/>
 					</Item>
 					<Item regular style={[styles.textInput, { backgroundColor: 'white', marginBottom: 10 } ]}>
 						<Input placeholderTextColor='#d4d8da' placeholder='Display Name'
-							onChangeText={(old_hv) => this.setState({old_hv})}
-							value={this.state.old_hv}
+							onChangeText={(display_name) => this.setState({display_name})}
+							value={this.state.display_name}
 						/>
 					</Item>
 					<Item regular style={[styles.textInput, { backgroundColor: 'white', marginBottom: 10 } ]}>
 						<Input placeholderTextColor='#d4d8da' placeholder='Mobile No'
-							onChangeText={(old_hv) => this.setState({old_hv})}
-							value={this.state.old_hv}
+							onChangeText={(mobile_no) => this.setState({mobile_no})}
+							value={this.state.mobile_no}
 						/>
 					</Item>
 					<Picker
 						style={[styles.textInput, { backgroundColor: 'white', marginBottom: 10, borderWidth: 3, borderColor: 'black' } ]}
-						selectedValue={this.state.language}
-						onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}>
-						<Picker.Item label="ไทย" value="th" />
-						<Picker.Item label="English" value="en" />
+						selectedValue={this.state.language_id}
+						onValueChange={(itemValue, itemIndex) => {
+							this.setState({language_id: itemValue})
+						}}>
+
+						{
+							this.state.languages.map((language) => {
+								return (
+									<Picker.Item key={language.user_language_id} label={language.detail} value={language.user_language_id} />
+								)
+							})
+						}
 					</Picker>
 				</KeyboardAvoidingView>
 				<Button block style={{ marginRight: 20, marginLeft: 20, backgroundColor: '#8b9dc3' }}
-					onPress={() =>  this.onLogin()}
+					onPress={() =>  this.onSignup()}
 				>
 					{
 						this.state.loading&&<ActivityIndicator size='large' />

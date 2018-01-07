@@ -1,4 +1,4 @@
-export const signIn = (username, password) => ({
+export const signin = (username, password) => ({
   type: 'SIGNIN',
   payload: {
       username,
@@ -6,17 +6,41 @@ export const signIn = (username, password) => ({
   }
 })
 
-export const signInError = (error) => ({
+export const signin_error = (error) => ({
     type: 'SIGNIN_ERROR',
     payload: {
         error
     }
 })
 
-export const authenticated = (token, expire) => ({
+export const signup = (id, password, confirm_password, display_name, mobile_no, language_id) => ({
+    type: 'SIGNUP',
+    payload: {
+        id,
+        password,
+        confirm_password,
+        display_name,
+        mobile_no,
+        language_id
+    }
+})
+
+export const authenticated = (token, setting, user) => ({
     type: 'AUTHENTICATED',
     payload: {
         token,
-        expire
+        setting,
+        user
+    }
+})
+
+export const start_app = () => ({
+    type: 'START_APP'
+})
+
+export const languages = (languages) => ({
+    type: 'LANGUAGES',
+    payload: {
+        languages
     }
 })
