@@ -27,8 +27,8 @@ function fetchFriendGroups() {
     return axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_type_list')
 }
 
-function fetchFriendLists() {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=0&limit=100&filter=&friend_type=`)
+function fetchFriendLists(group) {
+    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=0&limit=15&filter=&friend_type=${group}`)
 }
 function* signin() {
     while (true) {
@@ -86,17 +86,20 @@ const getFriendGroups = state => {
     return state.friend.friendGroups
 }
 
-// const combinedFriends = (groups) => {
-//     let promises = []
-//     _.forEach(groups, (group) => {
-//         const promise = fetchFriendLists(group)
-//         promises.push(promise)
-//     })
-//     return Promise.all(promises).then(values => {
-//         console.log('===============')
-//         console.log(values)
-//     })
-// }
+const combinedFriends = (groups) => {
+    let promises = []
+    _.forEach(groups, (group) => {
+        const promise = fetchFriendLists(group)
+        promises.push(promise)
+    })
+    return Promise.all(promises).then(values => {
+        let friends = {}
+        _.forEach(groups, (group, index) => {
+            friends[group] = _.get(values[index], 'data.data', [])
+        })
+        return friends
+    })
+}
 
 const fetchMyProfile = () => {
     return axios.get('http://itsmartone.com/bpk_connect/api/user/my_profile?token=asdf1234aaa&user_id=3963')
@@ -108,10 +111,11 @@ function* enterContacts() {
         const resFetchFriendGroups = yield call(fetchFriendGroups)
         const friendGroupsData = _.get(resFetchFriendGroups, 'data.data')
         yield put(friendGroups(friendGroupsData))
-        const friendsData = yield call(fetchFriendLists)
-        yield put(friends(_.get(friendsData, 'data.data')))
+        const friendsData = yield call(combinedFriends, friendGroupsData)
+        yield put(friends(friendsData))
         const resFetchMyProfile = yield call(fetchMyProfile)
         yield put(myprofile(_.get(resFetchMyProfile, 'data.data')))
+
     }
 }
 

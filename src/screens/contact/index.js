@@ -38,7 +38,12 @@ export default class Contacts extends React.Component {
         this.state = {
             showProfileModal: false,
             showFriendModal: false,
-            friends: []
+            friends: {
+                favorite: [],
+                other: [],
+                group: [],
+                department: []
+            }
         }
 
         this.renderHeader = this._renderHeader.bind(this)
@@ -48,7 +53,12 @@ export default class Contacts extends React.Component {
         const state = store.getState()
         console.log(state)
         this.setState({
-            friends: _.get(state, 'friend.friends', []),
+            friends: _.get(state, 'friend.friends', {
+                favorite: [],
+                other: [],
+                group: [],
+                department: []
+            }),
             user: _.get(state, 'user.user', {})
         })
     }
@@ -76,14 +86,14 @@ export default class Contacts extends React.Component {
 
 
     renderGroups = () => {
-        return this.state.friends.filter((friend) => {
-            return friend.friend_type == 'group'
+        return this.state.friends.group.filter((friend) => {
+            return true
         }).map((friend) => {
             return (
                 <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ showGroupModal: true })}>
                   <View style={styles.container}>
-                      <Thumbnail  style={styles.avatar}  source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
-                      <RkText rkType='header5'>Travel</RkText>
+                      <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
+                      <RkText rkType='header5'>{ friend.display_name }</RkText>
                   </View>
                 </TouchableOpacity>
             )
@@ -91,8 +101,8 @@ export default class Contacts extends React.Component {
     }
 
     renderFavorite = () => {
-        return this.state.friends.filter((friend) => {
-            return friend.friend_type == 'favorite'
+        return this.state.friends.favorite.filter((friend) => {
+            return true
         }).map((friend) => {
             return (
                 <View>
@@ -109,8 +119,8 @@ export default class Contacts extends React.Component {
     }
 
     renderOthers = () => {
-        return this.state.friends.filter((friend) => {
-            return friend.friend_type == 'other'
+        return this.state.friends.other.filter((friend) => {
+            return true
         }).map((friend) => {
             return (
                 <View>
@@ -128,8 +138,8 @@ export default class Contacts extends React.Component {
     }
 
     renderDepartment = () => {
-        return this.state.friends.filter((friend) => {
-            return friend.friend_type == 'department'
+        return this.state.friends.department.filter((friend) => {
+            return true
         }).map((friend) => {
             return (
                 <View>
@@ -389,7 +399,7 @@ export default class Contacts extends React.Component {
                     borderBottomWidth: 0.5
                 }}
             >
-                <RkText rkType='header6 hintColor'>Department</RkText>
+                <RkText rkType='header6 hintColor'>Departments</RkText>
             </View>
             <View style={{ backgroundColor: 'white' }}>
                 {
