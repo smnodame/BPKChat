@@ -17,6 +17,10 @@ const user = (state = {}, action) => {
               setting: action.payload.myprofile.setting,
               user: action.payload.myprofile.user
           })
+      case 'SIGNUP_ERROR':
+          return Object.assign(state, {
+              signupError: action.payload.error
+          })
       default:
         return state
     }

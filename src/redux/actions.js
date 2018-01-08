@@ -13,6 +13,13 @@ export const signin_error = (error) => ({
     }
 })
 
+export const signupEror = (error) => ({
+    type: 'SIGNUP_ERROR',
+    payload: {
+        error
+    }
+})
+
 export const signup = (id, password, confirm_password, display_name, mobile_no, language_id) => ({
     type: 'SIGNUP',
     payload: {

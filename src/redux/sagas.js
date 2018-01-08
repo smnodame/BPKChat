@@ -2,7 +2,7 @@ import _ from "lodash"
 import axios from "axios"
 
 import { all, call, put, takeEvery, takeLatest, take, select } from 'redux-saga/effects'
-import { signin_error, languages, authenticated, friendGroups, friends, myprofile } from './actions'
+import { signin_error, languages, authenticated, friendGroups, friends, myprofile, signupEror } from './actions'
 import { NavigationActions } from 'react-navigation'
 
 function login_api(username, password) {
@@ -65,12 +65,12 @@ function* signup() {
         console.log(id, password, confirm_password, display_name, mobile_no, language_id)
         if(id && password && confirm_password && display_name && mobile_no && language_id) {
             if(password != confirm_password) {
-                console.log('Password and Confirm password is not match!')
+                yield put(signupEror('Password and Confirm password is not match!'))
                 continue
             }
             const res_create_new_account = yield call(create_new_account, id, password, display_name, mobile_no, language_id)
             if(res_create_new_account.error) {
-                console.log(res_create_new_account.error)
+                yield put(signupEror(res_create_new_account.error))
                 continue
             }
             const { data: { token, setting } } = res_create_new_account
@@ -78,7 +78,7 @@ function* signup() {
             yield put(NavigationActions.navigate({ routeName: 'Login' }))
             continue
         }
-        console.log('กรุณาระบุรายละเอียดให้ครบทุกช่อง')
+        yield put(signupEror('กรุณาระบุรายละเอียดให้ครบทุกช่อง'))
     }
 }
 

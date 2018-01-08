@@ -60,6 +60,7 @@ export default class Signup extends React.Component {
 		const state = store.getState()
 		console.log(state)
 		this.setState({
+			error: state.user.signupError,
 			languages: state.system.languages
 		})
 	}
@@ -146,7 +147,7 @@ export default class Signup extends React.Component {
 					<Text>Register</Text>
 				</Button>
 				{
-					!!this.state.error&&<Text style={{ textAlign: 'center', color: 'white', marginTop: 10 }}>{ this.state.error }</Text>
+					!!this.state.error&&<Text style={{ textAlign: 'center', color: 'red', marginTop: 10 }}>{ this.state.error }</Text>
 				}
 				<View style={{ justifyContent: 'center',flexDirection: 'row', marginTop: 15 }}>
 				  <RkText rkType='primary3' style={{ color: 'black'}}>Already have an account?</RkText>
@@ -155,6 +156,7 @@ export default class Signup extends React.Component {
 					  now </RkText>
 				  </RkButton>
 				</View>
+
 			</Content>
 		</Container>
     )
