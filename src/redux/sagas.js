@@ -2,7 +2,7 @@ import _ from "lodash"
 import axios from "axios"
 
 import { all, call, put, takeEvery, takeLatest, take, select } from 'redux-saga/effects'
-import { signin_error, languages, authenticated, friendGroups, friends, myprofile, signupEror } from './actions'
+import { signin_error, languages, authenticated, friendGroups, friends, myprofile, signupEror, searchNewFriend } from './actions'
 import { NavigationActions } from 'react-navigation'
 
 function login_api(username, password) {
@@ -29,6 +29,19 @@ function fetchFriendGroups() {
 
 function fetchFriendLists(group) {
     return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=0&limit=15&filter=&friend_type=${group}`)
+}
+
+function fetchFriendProfile(userID) {
+    return axios.get(`http://itsmartone.com/bpk_connect/api/user/data/${userID}`)
+}
+
+function* searchNewFriendSaga() {
+    while (true) {
+        const { payload: { userID }} = yield take('SEARCH_NEW_FRIEND')
+        const resFetchFriendProfile = yield call(fetchFriendProfile, userID)
+        console.log('==============')
+        console.log(resFetchFriendProfile)
+    }
 }
 
 function* signin() {
@@ -125,6 +138,7 @@ export default function* rootSaga() {
         signin(),
         start_app(),
         signup(),
-        enterContacts()
+        enterContacts(),
+        searchNewFriendSaga()
     ])
 }

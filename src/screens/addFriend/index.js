@@ -40,6 +40,10 @@ import {
 } from 'native-base'
 import { NavigationActions } from 'react-navigation'
 
+import { searchNewFriend } from '../../redux/actions.js'
+import {store} from '../../redux'
+
+
 export default class AddFriend extends React.Component {
 
   constructor(props) {
@@ -53,6 +57,11 @@ export default class AddFriend extends React.Component {
 
   componentDidMount() {
 
+  }
+
+  _submit = () => {
+      store.dispatch(searchNewFriend(this.state.user))
+      this.setState({ showProfileModal: true })
   }
 
   render() {
@@ -71,7 +80,10 @@ export default class AddFriend extends React.Component {
             <Header searchBar rounded>
                 <Item>
                     <Icon name="ios-search" />
-                    <Input onSubmitEditing={() => this.setState({ showProfileModal: true })} placeholder="Search" />
+                    <Input
+                        onSubmitEditing={() => this._submit()}
+                        onChangeText={(user) => this.setState({user})}
+                        placeholder="Search" />
                     <Icon name="ios-people" />
                 </Item>
                 <Button transparent>

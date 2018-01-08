@@ -76,3 +76,10 @@ export const languages = (languages) => ({
         languages
     }
 })
+
+export const searchNewFriend = (userID) => ({
+    type: 'SEARCH_NEW_FRIEND',
+    payload: {
+        userID
+    }
+})
