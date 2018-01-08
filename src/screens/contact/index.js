@@ -43,7 +43,13 @@ export default class Contacts extends React.Component {
                 other: [],
                 group: [],
                 department: []
-            }
+            },
+            showFavoriteFriendLists: false,
+            showGroupFriendLists: false,
+            showOtherFriendLists: false,
+            showDepartmentFriendLists: false,
+            showProfileFriendLists: false,
+            selectedFriend: {}
         }
 
         this.renderHeader = this._renderHeader.bind(this)
@@ -90,7 +96,7 @@ export default class Contacts extends React.Component {
             return true
         }).map((friend) => {
             return (
-                <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ showGroupModal: true })}>
+                <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ selectedFriend: friend, showGroupModal: true })}>
                   <View style={styles.container}>
                       <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
                       <RkText rkType='header5'>{ friend.display_name }</RkText>
@@ -106,7 +112,7 @@ export default class Contacts extends React.Component {
         }).map((friend) => {
             return (
                 <View>
-                    <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ showFriendModal: true })}>
+                    <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ selectedFriend: friend, showFriendModal: true })}>
                       <View style={styles.container}>
                           <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
                           <RkText rkType='header5'>{ friend.display_name }</RkText>
@@ -124,7 +130,7 @@ export default class Contacts extends React.Component {
         }).map((friend) => {
             return (
                 <View>
-                    <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ showFriendModal: true })}>
+                    <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ selectedFriend: friend, showFriendModal: true })}>
                         <View style={styles.container}>
                             <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
                             <RkText rkType='header5'>{ friend.display_name }</RkText>
@@ -143,7 +149,7 @@ export default class Contacts extends React.Component {
         }).map((friend) => {
             return (
                 <View>
-                    <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ showFriendModal: true })}>
+                    <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ selectedFriend: friend, showFriendModal: true })}>
                         <View style={styles.container}>
                             <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
                             <RkText rkType='header5'>{ friend.display_name }</RkText>
@@ -231,33 +237,33 @@ export default class Contacts extends React.Component {
                     borderRadius: 4,
                     borderColor: 'rgba(0, 0, 0, 0.1)',
                 }}>
-                    <View style={{ height: 220 }}>
-                        <Image
-                            style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
-                            source={{uri: 'https://images.alphacoders.com/685/685151.jpg'}}
-                        />
-                        <Image
-                            style={{
-                                width: 110,
-                                height: 110,
-                                borderRadius: 55,
-                                borderColor: 'white',
-                                borderWidth: 1,
-                                position: 'absolute',
-                                top: 95,
-                                left: '50%',
-                                marginLeft: -55
-                            }}
-                            source={{uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}}
-                        />
-                    </View>
-                    <View style={{
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}>
-                        <Text>Smnodame</Text>
-                        <Text note>ID smnodame</Text>
-                    </View>
+                <View style={{ height: 220 }}>
+                    <Image
+                        style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
+                        source={{uri: this.state.selectedFriend.wall_pic_url}}
+                    />
+                    <Image
+                        style={{
+                            width: 110,
+                            height: 110,
+                            borderRadius: 55,
+                            borderColor: 'white',
+                            borderWidth: 1,
+                            position: 'absolute',
+                            top: 95,
+                            left: '50%',
+                            marginLeft: -55
+                        }}
+                        source={{uri: this.state.selectedFriend.profile_pic_url}}
+                    />
+                </View>
+                <View style={{
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <Text>{ this.state.selectedFriend.display_name }</Text>
+                    <Text note>{ `ID ${this.state.selectedFriend.ename}` }</Text>
+                </View>
                     <View style={{ flex: 1}}>
                     </View>
                     <View
@@ -297,7 +303,7 @@ export default class Contacts extends React.Component {
                     <View style={{ height: 220 }}>
                         <Image
                             style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
-                            source={{uri: 'https://images.alphacoders.com/685/685151.jpg'}}
+                            source={{uri: this.state.selectedFriend.wall_pic_url}}
                         />
                         <Image
                             style={{
@@ -311,14 +317,14 @@ export default class Contacts extends React.Component {
                                 left: '50%',
                                 marginLeft: -55
                             }}
-                            source={{uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}}
+                            source={{uri: this.state.selectedFriend.profile_pic_url}}
                         />
                     </View>
                     <View style={{
                         justifyContent: 'center',
                         alignItems: 'center'
                     }}>
-                        <Text>Traveling</Text>
+                        <Text>{ this.state.selectedFriend.display_name }</Text>
                     </View>
                     <View style={{ flex: 1}}>
                     </View>
@@ -364,61 +370,66 @@ export default class Contacts extends React.Component {
                   </View>
                 </TouchableOpacity>
             </View>
-            <View
+            <TouchableOpacity
                 style={{
                     paddingTop: 10, paddingBottom: 10, paddingLeft: 15,
                     backgroundColor: '#fafafa', borderBottomColor: '#eaeaea',
-                    borderBottomWidth: 0.5
+                    borderBottomWidth: 0.5, flexDirection: 'row'
                 }}
+                onPress={() => this.setState({ showFavoriteFriendLists: !this.state.showFavoriteFriendLists })}
             >
                 <RkText rkType='header6 hintColor'>Favorites</RkText>
-            </View>
+                <View style={{ flex: 1 }} />
+            </TouchableOpacity>
             <View style={{ backgroundColor: 'white' }}>
                 {
-                    this.renderFavorite()
+                    !!this.state.showFavoriteFriendLists&&this.renderFavorite()
                 }
             </View>
-            <View
+            <TouchableOpacity
                 style={{
                     paddingTop: 10, paddingBottom: 10, paddingLeft: 15,
                     backgroundColor: '#fafafa', borderBottomColor: '#eaeaea',
                     borderBottomWidth: 0.5
                 }}
+                onPress={() => this.setState({ showGroupFriendLists: !this.state.showGroupFriendLists })}
             >
                 <RkText rkType='header6 hintColor'>Groups</RkText>
-            </View>
+            </TouchableOpacity>
             <View style={{ backgroundColor: 'white' }}>
                 {
-                    this.renderGroups()
+                    !!this.state.showGroupFriendLists&&this.renderGroups()
                 }
             </View>
-            <View
+            <TouchableOpacity
                 style={{
                     paddingTop: 10, paddingBottom: 10, paddingLeft: 15,
                     backgroundColor: '#fafafa', borderBottomColor: '#eaeaea',
                     borderBottomWidth: 0.5
                 }}
+                onPress={() => this.setState({ showDepartmentFriendLists: !this.state.showDepartmentFriendLists })}
             >
                 <RkText rkType='header6 hintColor'>Departments</RkText>
-            </View>
+            </TouchableOpacity>
             <View style={{ backgroundColor: 'white' }}>
                 {
-                    this.renderDepartment()
+                    !!this.state.showDepartmentFriendLists&&this.renderDepartment()
                 }
             </View>
             <View>
-                <View
+                <TouchableOpacity
                     style={{
                         paddingTop: 10, paddingBottom: 10, paddingLeft: 15,
                         backgroundColor: '#fafafa', borderBottomColor: '#eaeaea',
                         borderBottomWidth: 0.5
                     }}
+                    onPress={() => this.setState({ showOtherFriendLists: !this.state.showOtherFriendLists })}
                 >
                     <RkText rkType='header6 hintColor'>Friends</RkText>
-                </View>
+                </TouchableOpacity>
                 <View style={{ backgroundColor: 'white' }}>
                     {
-                        this.renderOthers()
+                        !!this.state.showOtherFriendLists&&this.renderOthers()
                     }
                 </View>
             </View>

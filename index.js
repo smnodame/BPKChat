@@ -25,7 +25,7 @@ const BPKChat = StackNavigator({
     SignUp: { screen: SignUp },
 },
 {
-    initialRouteName: "Login",
+    initialRouteName: "App",
     headerMode: "none",
 })
 

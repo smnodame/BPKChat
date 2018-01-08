@@ -30,6 +30,7 @@ function fetchFriendGroups() {
 function fetchFriendLists(group) {
     return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=0&limit=15&filter=&friend_type=${group}`)
 }
+
 function* signin() {
     while (true) {
         const { payload: { username, password } } = yield take('SIGNIN')
