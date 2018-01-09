@@ -96,7 +96,7 @@ export default class Contacts extends React.Component {
     }
 
     _addFavorite = () => {
-        store.dispatch(addFavorite(this.state.user.user_id, this.state.selectedFriend.friend_user_id))
+        store.dispatch(addFavorite(this.state.user.user_id, this.state.selectedFriend.friend_user_id, this.state.selectedFriend))
     }
 
     renderGroups = () => {

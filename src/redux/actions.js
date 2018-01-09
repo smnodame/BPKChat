@@ -85,11 +85,12 @@ export const removeFavorite = (user_id, friend_user_id) => ({
     }
 })
 
-export const addFavorite = (user_id, friend_user_id) => ({
+export const addFavorite = (user_id, friend_user_id, friend_data) => ({
     type: 'ADD_FAVORITE',
     payload: {
         user_id,
-        friend_user_id
+        friend_user_id,
+        friend_data
     }
 })
 
