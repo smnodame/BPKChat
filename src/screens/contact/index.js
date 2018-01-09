@@ -19,7 +19,7 @@ import {Avatar} from '../../components/avatar'
 import {FontAwesome} from '../../assets/icons'
 import { NavigationActions } from 'react-navigation'
 
-import { enterContacts } from '../../redux/actions.js'
+import { enterContacts, removeFavorite, addFavorite } from '../../redux/actions.js'
 import {store} from '../../redux'
 
 export default class Contacts extends React.Component {
@@ -59,7 +59,6 @@ export default class Contacts extends React.Component {
 
     updateData = () => {
         const state = store.getState()
-        console.log(state)
         this.setState({
             friends: _.get(state, 'friend.friends', {
                 favorite: [],
@@ -92,6 +91,13 @@ export default class Contacts extends React.Component {
         )
     }
 
+    _removeFavorite = () => {
+        store.dispatch(removeFavorite(this.state.user.user_id, this.state.selectedFriend.friend_user_id))
+    }
+
+    _addFavorite = () => {
+        store.dispatch(addFavorite(this.state.user.user_id, this.state.selectedFriend.friend_user_id))
+    }
 
     renderGroups = () => {
         return this.state.friends.group.filter((friend) => {
@@ -303,15 +309,43 @@ export default class Contacts extends React.Component {
                             <Icon name='md-call' style={{ color: 'gray' }} />
                             <Text style={{ color: 'gray' }}>FREE CALL</Text>
                         </Button>
-                        <Button transparent style={{ flexDirection: 'column', marginLeft: 10 }}>
+
                             {
-                                this.state.selectedFriend.is_favorite == 'F' && <Icon name='md-heart-outline' style={{ color: 'gray' }} />
+                                this.state.selectedFriend.is_favorite == 'F' &&
+                                <Button
+                                    transparent
+                                    style={{ flexDirection: 'column', marginLeft: 10 }}
+                                    onPress={() => {
+                                        const selectedFriend = this.state.selectedFriend
+                                        selectedFriend.is_favorite = 'T'
+                                        this.setState({
+                                            selectedFriend
+                                        })
+                                        this._addFavorite()
+                                    }}
+                                >
+                                    <Icon name='md-heart-outline' style={{ color: 'gray' }} />
+                                    <Text style={{ color: 'gray' }}>FAVORITES</Text>
+                                </Button>
                             }
                             {
-                                this.state.selectedFriend.is_favorite == 'T' && <Icon name='md-heart' style={{ color: 'gray' }} />
+                                this.state.selectedFriend.is_favorite == 'T' &&
+                                <Button
+                                    transparent
+                                    style={{ flexDirection: 'column', marginLeft: 10 }}
+                                    onPress={() => {
+                                        const selectedFriend = this.state.selectedFriend
+                                        selectedFriend.is_favorite = 'F'
+                                        this.setState({
+                                            selectedFriend
+                                        })
+                                        this._removeFavorite()
+                                    }}
+                                >
+                                    <Icon name='md-heart' style={{ color: 'gray' }} />
+                                    <Text style={{ color: 'gray' }}>FAVORITES</Text>
+                                </Button>
                             }
-                            <Text style={{ color: 'gray' }}>FAVORITES</Text>
-                        </Button>
                     </View>
                 </View>
             </Modal>

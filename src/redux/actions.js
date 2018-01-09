@@ -77,7 +77,7 @@ export const languages = (languages) => ({
     }
 })
 
-export type removeFavorite = (user_id, friend_user_id) => ({
+export const removeFavorite = (user_id, friend_user_id) => ({
     type: 'REMOVE_FAVORITE',
     payload: {
         user_id,
@@ -85,7 +85,7 @@ export type removeFavorite = (user_id, friend_user_id) => ({
     }
 })
 
-export type addFavorite = (user_id, friend_user_id) => ({
+export const addFavorite = (user_id, friend_user_id) => ({
     type: 'ADD_FAVORITE',
     payload: {
         user_id,
@@ -99,5 +99,3 @@ export const searchNewFriend = (userID) => ({
         userID
     }
 })
-
-export
