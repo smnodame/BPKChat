@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React from 'react';
 import {
   ScrollView,
@@ -16,6 +17,9 @@ import {data} from '../../data';
 import {FontAwesome} from '../../assets/icons';
 import { Thumbnail, Button, Text, Icon } from 'native-base';
 
+import {store} from '../../redux'
+
+
 export default class ProfileSettings extends React.Component {
   static navigationOptions = {
     title: 'Profile Settings'.toUpperCase()
@@ -23,21 +27,29 @@ export default class ProfileSettings extends React.Component {
 
   constructor(props) {
     super(props);
-    this.user = data.getUser();
+    // this.user = data.getUser();
 
     this.state = {
-      firstName: this.user.firstName,
-      lastName: this.user.lastName,
-      email: this.user.email,
-      country: this.user.country,
-      phone: this.user.phone,
-      password: this.user.password,
-      newPassword: this.user.newPassword,
-      confirmPassword: this.user.confirmPassword,
-      twitter: true,
-      google: false,
-      facebook: false
     }
+  }
+
+  updateData = () => {
+      const state = store.getState()
+      this.setState({
+          display_name: _.get(state, 'user.user.display_name', ''),
+          username: _.get(state, 'user.user.username', ''),
+          hn: _.get(state, 'user.user.status_quote', ''),
+          status_quote: _.get(state, 'user.user.status_quote', ''),
+          wall_pic_url: _.get(state, 'user.user.wall_pic_url', ''),
+          profile_pic_url: _.get(state, 'user.user.profile_pic_url', '')
+      })
+  }
+
+  async componentWillMount() {
+      this.updateData()
+      store.subscribe(() => {
+          this.updateData()
+      })
   }
 
   render() {
@@ -47,7 +59,7 @@ export default class ProfileSettings extends React.Component {
         <View style={{ height: 220 , backgroundColor: '#fafafa'}}>
             <Image
                 style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
-                source={{uri: 'https://images.alphacoders.com/685/685151.jpg'}}
+                source={{uri: this.state.wall_pic_url}}
             />
             <Image
                 style={{
@@ -61,7 +73,7 @@ export default class ProfileSettings extends React.Component {
                     left: '50%',
                     marginLeft: -55
                 }}
-                source={{uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}}
+                source={{uri: this.state.profile_pic_url}}
             />
         </View>
         <View>
@@ -72,54 +84,27 @@ export default class ProfileSettings extends React.Component {
             </View>
             <View style={styles.row}>
               <RkTextInput label='Display Name'
-                           value={'Boonprakit'}
+                           value={this.state.display_name}
                            rkType='right clear'
-                           onChangeText={(text) => this.setState({firstName: text})}/>
+                           onChangeText={(text) => this.setState({display_name: text})}/>
             </View>
             <View style={styles.row}>
               <RkTextInput label='Username'
-                           value={'Smnodame'}
-                           onChangeText={(text) => this.setState({lastName: text})}
+                           value={this.state.username}
+                           onChangeText={(text) => this.setState({username: text})}
                            rkType='right clear'/>
             </View>
             <View style={styles.row}>
               <RkTextInput label='Status'
-                           value={' Feel bad at this time '}
-                           onChangeText={(text) => this.setState({email: text})}
+                           value={this.state.status_quote}
+                           onChangeText={(text) => this.setState({status_quote: text})}
                            rkType='right clear'/>
             </View>
             <View style={styles.row}>
               <RkTextInput label='HN'
-                           value={'1-4848-488'}
-                           onChangeText={(text) => this.setState({country: text})}
+                           value={this.state.hn}
+                           onChangeText={(text) => this.setState({hn: text})}
                            rkType='right clear'/>
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <View style={[styles.row, styles.heading]}>
-              <RkText rkType='primary header6'>CHANGE PASSWORD</RkText>
-            </View>
-            <View style={styles.row}>
-              <RkTextInput label='Old Password'
-                           value={this.state.password}
-                           rkType='right clear'
-                           secureTextEntry={true}
-                           onChangeText={(text) => this.setState({password: text})}/>
-            </View>
-            <View style={styles.row}>
-              <RkTextInput label='New Password'
-                           value={this.state.newPassword}
-                           rkType='right clear'
-                           secureTextEntry={true}
-                           onChangeText={(text) => this.setState({newPassword: text})}/>
-            </View>
-            <View style={styles.row}>
-              <RkTextInput label='Confirm Password'
-                           value={this.state.confirmPassword}
-                           rkType='right clear'
-                           secureTextEntry={true}
-                           onChangeText={(text) => this.setState({confirmPassword: text})}/>
             </View>
           </View>
 
@@ -160,3 +145,31 @@ let styles = RkStyleSheet.create(theme => ({
     marginBottom: 32
   }
 }));
+
+
+//   <View style={styles.section}>
+//     <View style={[styles.row, styles.heading]}>
+//       <RkText rkType='primary header6'>CHANGE PASSWORD</RkText>
+//     </View>
+//     <View style={styles.row}>
+//       <RkTextInput label='Old Password'
+//                    value={this.state.password}
+//                    rkType='right clear'
+//                    secureTextEntry={true}
+//                    onChangeText={(text) => this.setState({password: text})}/>
+//     </View>
+//     <View style={styles.row}>
+//       <RkTextInput label='New Password'
+//                    value={this.state.newPassword}
+//                    rkType='right clear'
+//                    secureTextEntry={true}
+//                    onChangeText={(text) => this.setState({newPassword: text})}/>
+//     </View>
+//     <View style={styles.row}>
+//       <RkTextInput label='Confirm Password'
+//                    value={this.state.confirmPassword}
+//                    rkType='right clear'
+//                    secureTextEntry={true}
+//                    onChangeText={(text) => this.setState({confirmPassword: text})}/>
+//     </View>
+//   </View>
