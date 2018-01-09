@@ -79,7 +79,7 @@ export default class App extends Component<{}> {
     renderContent() {
         if(this.state.selectedTab == 'Friends') {
             return (
-                <Contacts />
+                <Contacts onTabClick={this.onTabClick} />
             )
         } else if (this.state.selectedTab == 'Chats') {
             return (

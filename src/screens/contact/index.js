@@ -49,7 +49,9 @@ export default class Contacts extends React.Component {
             showOtherFriendLists: false,
             showDepartmentFriendLists: false,
             showProfileFriendLists: false,
-            selectedFriend: {}
+            selectedFriend: {
+                is_favorite: 'F'
+            }
         }
 
         this.renderHeader = this._renderHeader.bind(this)
@@ -155,15 +157,18 @@ export default class Contacts extends React.Component {
     renderDepartment = () => {
         return this.state.friends.department.filter((friend) => {
             return true
-        }).map((friend) => {
+        }).map((friend, key) => {
             return (
                 <View>
-                    <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ selectedFriend: friend, showFriendModal: true })}>
+                    <TouchableOpacity key={key} onPress={() => this.setState({ selectedFriend: friend, showFriendModal: true })}>
                         <View style={styles.container}>
                             <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
-                            <RkText rkType='header5'>{ friend.display_name }</RkText>
+                            <View style={{ flexDirection: 'column' }}>
+                                <RkText rkType='header5'>{ friend.display_name }</RkText>
+                                <RkText rkType='secondary4 hintColor'>{ friend.status_quote }</RkText>
+                            </View>
                         </View>
-                        </TouchableOpacity>
+                    </TouchableOpacity>
                     <View style={styles.separator}/>
                 </View>
 
@@ -222,7 +227,16 @@ export default class Contacts extends React.Component {
                             justifyContent: 'center', alignItems: 'flex-end', padding: 15
                         }}
                     >
-                        <Button transparent style={{ flexDirection: 'column' }}>
+                        <Button
+                            transparent
+                            style={{ flexDirection: 'column' }}
+                            onPress={() => {
+                                this.setState({
+                                    showProfileModal: false
+                                })
+                                this.props.onTabClick("Profile")
+                            }}
+                        >
                             <Icon name='md-person' style={{ color: 'gray' }} />
                             <Text style={{ color: 'gray' }}>Edit Profile</Text>
                         </Button>
@@ -290,7 +304,12 @@ export default class Contacts extends React.Component {
                             <Text style={{ color: 'gray' }}>FREE CALL</Text>
                         </Button>
                         <Button transparent style={{ flexDirection: 'column', marginLeft: 10 }}>
-                            <Icon name='md-heart-outline' style={{ color: 'gray' }} />
+                            {
+                                this.state.selectedFriend.is_favorite == 'F' && <Icon name='md-heart-outline' style={{ color: 'gray' }} />
+                            }
+                            {
+                                this.state.selectedFriend.is_favorite == 'T' && <Icon name='md-heart' style={{ color: 'gray' }} />
+                            }
                             <Text style={{ color: 'gray' }}>FAVORITES</Text>
                         </Button>
                     </View>

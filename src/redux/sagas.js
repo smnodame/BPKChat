@@ -35,12 +35,40 @@ function fetchFriendProfile(userID) {
     return axios.get(`http://itsmartone.com/bpk_connect/api/user/data/${userID}`)
 }
 
+function addFavoriteApi(user_id, friend_user_id) {
+    return axios.post('http://itsmartone.com/bpk_connect/api/friend/add_fav', {
+        token: 'asdf1234aaa',
+        user_id,
+        friend_user_id
+    })
+}
+
+function removeFavoriteApi(user_id, friend_user_id) {
+    return axios.post('http://itsmartone.com/bpk_connect/api/friend/remove_fav', {
+        token: 'asdf1234aaa',
+        user_id,
+        friend_user_id
+    })
+}
+
+function* addFavoriteSaga() {
+    while (true) {
+        const { payload: { user_id, friend_user_id }} = yield take('ADD_FAVORITE')
+        yield call(addFavoriteApi, user_id, friend_user_id)
+    }
+}
+
+function* removeFavoriteSaga() {
+    while (true) {
+        const { payload: { user_id, friend_user_id }} = yield take('REMOVE_FAVORITE')
+        yield call(removeFavoriteApi, user_id, friend_user_id)
+    }
+}
+
 function* searchNewFriendSaga() {
     while (true) {
         const { payload: { userID }} = yield take('SEARCH_NEW_FRIEND')
         const resFetchFriendProfile = yield call(fetchFriendProfile, userID)
-        console.log('==============')
-        console.log(resFetchFriendProfile)
     }
 }
 
@@ -139,6 +167,7 @@ export default function* rootSaga() {
         start_app(),
         signup(),
         enterContacts(),
-        searchNewFriendSaga()
+        searchNewFriendSaga(),
+        addFavoriteSaga()
     ])
 }
