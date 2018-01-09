@@ -99,7 +99,10 @@ export default class Contacts extends React.Component {
                 <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ selectedFriend: friend, showGroupModal: true })}>
                   <View style={styles.container}>
                       <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
-                      <RkText rkType='header5'>{ friend.display_name }</RkText>
+                      <View style={{ flexDirection: 'column' }}>
+                          <RkText rkType='header5'>{ friend.display_name }</RkText>
+                          <RkText rkType='secondary4 hintColor'>{ friend.status_quote }</RkText>
+                      </View>
                   </View>
                 </TouchableOpacity>
             )
@@ -115,7 +118,10 @@ export default class Contacts extends React.Component {
                     <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ selectedFriend: friend, showFriendModal: true })}>
                       <View style={styles.container}>
                           <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
-                          <RkText rkType='header5'>{ friend.display_name }</RkText>
+                          <View style={{ flexDirection: 'column' }}>
+                              <RkText rkType='header5'>{ friend.display_name }</RkText>
+                              <RkText rkType='secondary4 hintColor'>{ friend.status_quote }</RkText>
+                          </View>
                       </View>
                     </TouchableOpacity>
                     <View style={styles.separator}/>
@@ -133,7 +139,10 @@ export default class Contacts extends React.Component {
                     <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ selectedFriend: friend, showFriendModal: true })}>
                         <View style={styles.container}>
                             <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
-                            <RkText rkType='header5'>{ friend.display_name }</RkText>
+                            <View style={{ flexDirection: 'column' }}>
+                                <RkText rkType='header5'>{ friend.display_name }</RkText>
+                                <RkText rkType='secondary4 hintColor'>{ friend.status_quote }</RkText>
+                            </View>
                         </View>
                         </TouchableOpacity>
                     <View style={styles.separator}/>
@@ -203,7 +212,7 @@ export default class Contacts extends React.Component {
                         alignItems: 'center'
                     }}>
                         <Text>{ this.state.user.display_name }</Text>
-                        <Text note>{ `ID ${this.state.user.ename}` }</Text>
+                        <Text note>{ `ID ${this.state.user.username}` }</Text>
                     </View>
                     <View style={{ flex: 1}}>
                     </View>
@@ -262,7 +271,7 @@ export default class Contacts extends React.Component {
                     alignItems: 'center'
                 }}>
                     <Text>{ this.state.selectedFriend.display_name }</Text>
-                    <Text note>{ `ID ${this.state.selectedFriend.ename}` }</Text>
+                    <Text note>{ `ID ${this.state.selectedFriend.friend_username}` }</Text>
                 </View>
                     <View style={{ flex: 1}}>
                     </View>
