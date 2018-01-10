@@ -51,8 +51,21 @@ const friend = (state = {}, action) => {
             return state
     }
 }
+
+const chat = (state = {}, action) => {
+    switch (action.type) {
+        case 'CHAT_LISTS':
+            return Object.assign(state, {
+                chatLists: action.payload.chatLists
+            })
+        default:
+            return state
+    }
+}
+
 export default combineReducers({
-  user,
-  system,
-  friend
+    user,
+    system,
+    friend,
+    chat
 })

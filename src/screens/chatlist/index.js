@@ -19,62 +19,79 @@ import {FontAwesome} from '../../assets/icons';
 import {data} from '../../data';
 let moment = require('moment');
 import Modal from 'react-native-modal';
+import {store} from '../../redux'
 
 export default class ChatList extends React.Component {
-  static navigationOptions = {
-    title: 'Chats List'.toUpperCase()
-  };
+    static navigationOptions = {
+        title: 'Chats List'.toUpperCase()
+    };
 
-  constructor(props) {
-    super(props);
-    this.renderHeader = this._renderHeader.bind(this);
-    this.renderItem = this._renderItem.bind(this);
-    this.state = {
-      data: []
+    constructor(props) {
+        super(props);
+        this.renderHeader = this._renderHeader.bind(this);
+        this.renderItem = this._renderItem.bind(this);
+        this.state = {
+            data: []
+        }
     }
-  }
 
-  componentDidMount() {
-    this.chats = data.getChatList();
-    this.setState({
-      data: this.chats
-    });
-  }
+    // componentDidMount() {
+    // // this.chats = data.getChatList();
+    // // this.setState({
+    // //   data: this.chats
+    // // });
+    // }
 
-  _filter(text) {
-    let pattern = new RegExp(text, 'i');
-    let chats = _.filter(this.chats, (chat) => {
+    updateData = () => {
+        const state = store.getState()
+        this.setState({
+            chatLists: _.get(state, 'chat.chatLists', [])
+        })
+        console.log('===================')
+        console.log(_.get(state, 'chat.chatLists', []))
+    }
 
-      if (chat.withUser.firstName.search(pattern) != -1
-        || chat.withUser.lastName.search(pattern) != -1)
-        return chat;
-    });
+	async componentWillMount() {
+        this.updateData()
+		store.subscribe(() => {
+            this.updateData()
+		})
+    }
 
-    this.setState({data: chats});
-  }
+    _filter(text) {
+        let pattern = new RegExp(text, 'i');
+        let chats = _.filter(this.chats, (chat) => {
 
-  _keyExtractor(item, index) {
-    return item.withUser.id;
-  }
+            if (chat.withUser.firstName.search(pattern) != -1
+            || chat.withUser.lastName.search(pattern) != -1)
+                return chat;
+        });
 
-  _renderSeparator() {
-    return (
-      <View style={styles.separator}/>
-    )
-  }
+        this.setState({data: chats});
+    }
 
-  _renderHeader() {
-    return (
-      <View style={styles.searchContainer}>
-        <RkTextInput autoCapitalize='none'
-                     autoCorrect={false}
-                     onChange={(event) => this._filter(event.nativeEvent.text)}
-                     label={<RkText rkType='awesome'>{FontAwesome.search}</RkText>}
-                     rkType='row'
-                     placeholder='Search'/>
-      </View>
-    )
-  }
+    _keyExtractor(item, index) {
+        return item.withUser.id;
+    }
+
+    _renderSeparator() {
+        return (
+            <View style={styles.separator}/>
+        )
+    }
+
+    _renderHeader() {
+        return (
+            <View style={styles.searchContainer}>
+                <RkTextInput autoCapitalize='none'
+                    autoCorrect={false}
+                    onChange={(event) => this._filter(event.nativeEvent.text)}
+                    label={<RkText rkType='awesome'>{FontAwesome.search}</RkText>}
+                    rkType='row'
+                    placeholder='Search'/>
+            </View>
+        )
+    }
 
   _renderItem(info) {
     let name = `${info.item.withUser.firstName} ${info.item.withUser.lastName}`;

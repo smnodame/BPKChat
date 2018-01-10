@@ -2,7 +2,7 @@ import _ from "lodash"
 import axios from "axios"
 
 import { all, call, put, takeEvery, takeLatest, take, select } from 'redux-saga/effects'
-import { signin_error, languages, authenticated, friendGroups, friends, myprofile, signupEror, searchNewFriend } from './actions'
+import { signin_error, languages, authenticated, friendGroups, friends, myprofile, signupEror, searchNewFriend, chatLists } from './actions'
 import { NavigationActions } from 'react-navigation'
 
 function login_api(username, password) {
@@ -161,6 +161,10 @@ const fetchMyProfile = () => {
     return axios.get('http://itsmartone.com/bpk_connect/api/user/my_profile?token=asdf1234aaa&user_id=3963')
 }
 
+const fetchChatLists = () => {
+    return axios.get('http://itsmartone.com/bpk_connect/api/chat/chat_list?token=asdf1234aaa&user_id=3963&start=0&limit=20')
+}
+
 function* enterContacts() {
     while (true) {
         yield take('ENTER_CONTACTS')
@@ -172,6 +176,9 @@ function* enterContacts() {
         const resFetchMyProfile = yield call(fetchMyProfile)
         yield put(myprofile(_.get(resFetchMyProfile, 'data.data')))
 
+        // fetch chat lists
+        const resFetchChatLists = yield call(fetchChatLists)
+        yield put(chatLists(_.get(resFetchChatLists, 'data.data')))
     }
 }
 

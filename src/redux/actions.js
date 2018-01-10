@@ -100,3 +100,10 @@ export const searchNewFriend = (userID) => ({
         userID
     }
 })
+
+export const chatLists = (chatLists) => ({
+    type: 'CHAT_LISTS',
+    payload: {
+        chatLists
+    }
+})
