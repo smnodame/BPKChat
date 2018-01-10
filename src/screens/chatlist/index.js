@@ -70,9 +70,9 @@ export default class ChatList extends React.Component {
         this.setState({data: chats});
     }
 
-    _keyExtractor(item, index) {
-        return item.withUser.id;
-    }
+    // _keyExtractor(item, index) {
+    //     return item.withUser.id;
+    // }
 
     _renderSeparator() {
         return (
@@ -93,37 +93,35 @@ export default class ChatList extends React.Component {
         )
     }
 
-  _renderItem(info) {
-    let name = `${info.item.withUser.firstName} ${info.item.withUser.lastName}`;
-    let last = info.item.messages[info.item.messages.length - 1];
-    return (
-        <TouchableWithoutFeedback onPress={() =>  this.props.screenProps.rootNavigation.navigate('Chat')} onLongPress={() => this.setState({showPickerModal: true})}>
-          <View style={styles.container}>
-          <Thumbnail source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}} />
-            <View style={styles.content}>
-              <View style={styles.contentHeader}>
-                <RkText rkType='header5'>{name}</RkText>
-                <RkText rkType='secondary4 hintColor'>
-                  {moment().add(last.time, 'seconds').format('LT')}
-                </RkText>
-              </View>
-              <RkText numberOfLines={2} rkType='primary3 mediumLine'>{last.text}</RkText>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-    )
-  }
+    _renderItem(data) {
+        const info = data.item
+        return (
+            <TouchableWithoutFeedback onPress={() =>  this.props.screenProps.rootNavigation.navigate('Chat')} onLongPress={() => this.setState({showPickerModal: true})}>
+                <View style={styles.container}>
+                    <Thumbnail source={{ uri: info.profile_pic_url }} />
+                    <View style={styles.content}>
+                        <View style={styles.contentHeader}>
+                            <RkText rkType='header5'>{ info.display_name }</RkText>
+                            <RkText rkType='secondary4 hintColor'>
+                                x
+                            </RkText>
+                        </View>
+                        <RkText numberOfLines={2} rkType='primary3 mediumLine'>{ info.last_message }</RkText>
+                    </View>
+                </View>
+            </TouchableWithoutFeedback>
+        )
+    }
 
   render() {
     return (
     <View>
         <FlatList
           style={styles.root}
-          data={this.state.data}
+          data={this.state.chatLists}
           extraData={this.state}
           ListHeaderComponent={this.renderHeader}
           ItemSeparatorComponent={this._renderSeparator}
-          keyExtractor={this._keyExtractor}
           renderItem={this.renderItem}/>
           <Modal
               onRequestClose={() => this.setState({ showPickerModal: false })}
