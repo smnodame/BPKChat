@@ -95,6 +95,7 @@ export default class ChatList extends React.Component {
 
     _renderItem(data) {
         const info = data.item
+        console.log(info)
         return (
             <TouchableWithoutFeedback onPress={() =>  this.props.screenProps.rootNavigation.navigate('Chat')} onLongPress={() => this.setState({showPickerModal: true})}>
                 <View style={styles.container}>
@@ -103,7 +104,7 @@ export default class ChatList extends React.Component {
                         <View style={styles.contentHeader}>
                             <RkText rkType='header5'>{ info.display_name }</RkText>
                             <RkText rkType='secondary4 hintColor'>
-                                x
+                                {moment(info.last_chat).fromNow()}
                             </RkText>
                         </View>
                         <RkText numberOfLines={2} rkType='primary3 mediumLine'>{ info.last_message }</RkText>

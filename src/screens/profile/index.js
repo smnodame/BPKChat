@@ -4,7 +4,8 @@ import {
   ScrollView,
   View,
   StyleSheet,
-  Image
+  Image,
+  TouchableHighlight
 } from 'react-native';
 import {
   RkText,
@@ -61,22 +62,34 @@ export default class ProfileSettings extends React.Component {
                 style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
                 source={{uri: this.state.wall_pic_url}}
             />
-            <Image
-                style={{
-                    width: 110,
-                    height: 110,
-                    borderRadius: 55,
-                    borderColor: 'white',
-                    borderWidth: 1,
-                    position: 'absolute',
-                    top: 95,
-                    left: '50%',
-                    marginLeft: -55
-                }}
-                source={{uri: this.state.profile_pic_url}}
-            />
+            <TouchableHighlight
+            style={{
+                width: 110,
+                height: 110,
+                borderRadius: 55,
+                borderColor: 'white',
+                borderWidth: 1,
+                position: 'absolute',
+                top: 95,
+                left: '50%',
+                marginLeft: -55
+            }}
+             onPress={() => alert('hello')}>
+                <Image
+                    style={{
+                        width: 110,
+                        height: 110,
+                        borderRadius: 55
+                    }}
+                    source={{uri: this.state.profile_pic_url}}
+
+                />
+            </TouchableHighlight>
         </View>
         <View>
+            <Button block bordered>
+                <Text>Info</Text>
+            </Button>
         </View>
           <View style={styles.section}>
             <View style={[styles.row, styles.heading]}>
