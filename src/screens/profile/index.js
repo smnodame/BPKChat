@@ -20,17 +20,6 @@ import { Thumbnail, Button, Text, Icon } from 'native-base';
 import ImagePicker from 'react-native-image-picker'
 import {store} from '../../redux'
 
-var options = {
-  title: 'Select Avatar',
-  customButtons: [
-    {name: 'fb', title: 'Choose Photo from Facebook'},
-  ],
-  storageOptions: {
-    skipBackup: true,
-    path: 'images'
-  }
-};
-
 
 export default class ProfileSettings extends React.Component {
   static navigationOptions = {
@@ -64,6 +53,60 @@ export default class ProfileSettings extends React.Component {
       })
   }
 
+  selectProfileImage = () => {
+      ImagePicker.showImagePicker({
+          title: 'Select Profile Image',
+          storageOptions: {
+            skipBackup: true,
+            path: 'images'
+          }
+      }, (response) => {
+          console.log('Response = ', response);
+
+          if (response.didCancel) {
+              console.log('User cancelled image picker')
+          }
+          else if (response.error) {
+              console.log('ImagePicker Error: ', response.error)
+          }
+          else if (response.customButton) {
+              console.log('User tapped custom button: ', response.customButton)
+          }
+          else {
+              this.setState({
+                  profile_pic_url: response.uri
+              })
+          }
+      })
+  }
+
+  selectWallImage = () => {
+      ImagePicker.showImagePicker({
+          title: 'Select Wall Image',
+          storageOptions: {
+            skipBackup: true,
+            path: 'images'
+          }
+      }, (response) => {
+          console.log('Response = ', response);
+
+          if (response.didCancel) {
+              console.log('User cancelled image picker')
+          }
+          else if (response.error) {
+              console.log('ImagePicker Error: ', response.error)
+          }
+          else if (response.customButton) {
+              console.log('User tapped custom button: ', response.customButton)
+          }
+          else {
+              this.setState({
+                  wall_pic_url: response.uri
+              })
+          }
+      })
+  }
+
   render() {
     return (
       <ScrollView style={styles.root}>
@@ -76,6 +119,9 @@ export default class ProfileSettings extends React.Component {
             <Button
                 transparent
                 dark
+                onPress={() => {
+                    this.selectWallImage()
+                }}
                 style={{
                     position: 'absolute',
                     top: 5,
@@ -98,30 +144,9 @@ export default class ProfileSettings extends React.Component {
                         marginLeft: -55
                     }}
                  onPress={() => {
-                    ImagePicker.showImagePicker(options, (response) => {
-                        console.log('Response = ', response);
-
-                        if (response.didCancel) {
-                            console.log('User cancelled image picker')
-                        }
-                        else if (response.error) {
-                            console.log('ImagePicker Error: ', response.error)
-                        }
-                        else if (response.customButton) {
-                            console.log('User tapped custom button: ', response.customButton)
-                        }
-                        else {
-                            // let source = { uri: response.uri }
-
-                            // You can also display the image using data:
-                            // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-                            this.setState({
-                                profile_pic_url: response.uri
-                            })
-                        }
-                    })
-             }}>
+                     this.selectProfileImage()
+                 }}
+             >
                 <View>
                     <Image
                         style={{
