@@ -62,7 +62,7 @@ function* addFavoriteSaga() {
         const friendsData = yield select(getFriends)
         friendsData.favorite.push(friend_data)
         yield put(friends(friendsData))
-
+        yield call(addFavoriteApi, user_id, friend_user_id)
     }
 }
 
@@ -76,6 +76,7 @@ function* removeFavoriteSaga() {
         })
         friendsData.favorite = newFavorite
         yield put(friends(friendsData))
+        yield call(removeFavoriteApi, user_id, friend_user_id)
     }
 }
 

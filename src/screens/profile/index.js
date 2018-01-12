@@ -59,7 +59,9 @@ export default class ProfileSettings extends React.Component {
           storageOptions: {
             skipBackup: true,
             path: 'images'
-          }
+        },
+        mediaType: 'photo',
+        noData: false
       }, (response) => {
           console.log('Response = ', response);
 
@@ -86,7 +88,9 @@ export default class ProfileSettings extends React.Component {
           storageOptions: {
             skipBackup: true,
             path: 'images'
-          }
+        },
+        mediaType: 'photo',
+        noData: false
       }, (response) => {
           console.log('Response = ', response);
 
