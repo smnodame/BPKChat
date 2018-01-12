@@ -40,14 +40,24 @@ export default class GroupSetting extends React.Component {
 
   updateData = () => {
       const state = store.getState()
+      console.log(this.props.navigation.state.params.selectedFriend)
       this.setState({
           display_name: _.get(this.props.navigation.state.params.selectedFriend, 'display_name', ''),
           wall_pic_url: _.get(this.props.navigation.state.params.selectedFriend, 'wall_pic_url', ''),
-          profile_pic_url: _.get(this.props.navigation.state.params.selectedFriend, 'profile_pic_url', '')
+          profile_pic_url: _.get(this.props.navigation.state.params.selectedFriend, 'profile_pic_url', ''),
+          patient_name: _.get(this.props.navigation.state.params.selectedFriend, 'profile_pic_url', ''),
+          hn: _.get(this.props.navigation.state.params.selectedFriend, 'hn', ''),
+          description: _.get(this.props.navigation.state.params.selectedFriend, 'description', ''),
+          chat_room_id: this.props.navigation.state.params.selectedFriend.chat_room_id
       })
   }
 
   async componentWillMount() {
+      const chat_room_id = this.props.navigation.state.params.selectedFriend.chat_room_id
+      const res = await axios.get(`http://itsmartone.com/bpk_connect/api/chat/data?token=asdf1234aaa&user_id=3963&chat_room_id=${chat_room_id}`)
+      this.setState({
+          chat_room_type: _.get(res, 'data.data.chat_room_type', 'Z')
+      })
       this.updateData()
       console.log(this.props.navigation.state.params.selectedFriend)
   }
@@ -163,7 +173,7 @@ export default class GroupSetting extends React.Component {
                        })
           }
           const resUpdatePicture = await axios.post("http://itsmartone.com/bpk_connect/api/group/update_setting?token=asdf1234aaa", {
-              chat_room_id: oldSetting.chat_room_id,
+              chat_room_id: this.state.chat_room_id,
               profile_pic_base64: this.state.profile_pic_base64,
               wall_pic_base64: this.state.wall_pic_base64
           })
@@ -171,8 +181,11 @@ export default class GroupSetting extends React.Component {
 
 
       await axios.post("http://itsmartone.com/bpk_connect/api/group/update_setting?token=asdf1234aaa", {
-          chat_room_id: oldSetting.chat_room_id,
-          display_name: this.state.display_name
+          chat_room_id: this.state.chat_room_id,
+          display_name: this.state.display_name,
+          patient_name: this.state.patient_name,
+          hn: this.state.hn,
+          description: this.state.description
       }).then((res) => {
           console.log(res)
       }, (err) => {
@@ -278,7 +291,33 @@ export default class GroupSetting extends React.Component {
                                value={this.state.display_name}
                                rkType='right clear'
                                onChangeText={(text) => this.setState({display_name: text})}/>
+
                 </View>
+                {
+                    this.state.chat_room_type=='C' && <View>
+                        <View style={styles.row}>
+                          <RkTextInput label="Patient Name"
+                                       value={this.state.patient_name}
+                                       rkType='right clear'
+                                       onChangeText={(text) => this.setState({patient_name: text})}/>
+
+                        </View>
+                        <View style={styles.row}>
+                          <RkTextInput label='HN'
+                                       value={this.state.hn}
+                                       rkType='right clear'
+                                       onChangeText={(text) => this.setState({hn: text})}/>
+
+                        </View>
+                        <View style={styles.row}>
+                          <RkTextInput label="Description"
+                                       value={this.state.description}
+                                       rkType='right clear'
+                                       onChangeText={(text) => this.setState({description: text})}/>
+
+                        </View>
+                    </View>
+                }
               </View>
             </RkAvoidKeyboard>
           </ScrollView>
