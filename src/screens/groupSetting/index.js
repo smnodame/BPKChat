@@ -21,6 +21,9 @@ import { Thumbnail, Button, Text, Icon, Container, Content, Header, Title, Left,
 import ImagePicker from 'react-native-image-picker'
 import {store} from '../../redux'
 import axios from 'axios'
+import RNFetchBlob from 'react-native-fetch-blob'
+
+const fs = RNFetchBlob.fs
 
 export default class GroupSetting extends React.Component {
   static navigationOptions = {
@@ -115,19 +118,68 @@ export default class GroupSetting extends React.Component {
           this.props.navigation.state.params.selectedFriend.wall_pic_url != this.state.wall_pic_url ||
           this.props.navigation.state.params.selectedFriend.profile_pic_url != this.state.profile_pic_url
       ) {
-          if(this.state.profile_pic_rsa) {
-
+          if(!this.state.profile_pic_base64) {
+              await RNFetchBlob.config({
+                         fileCache : true
+                    })
+                       .fetch('GET', this.state.profile_pic_url)
+                       // the image is now dowloaded to device's storage
+                       .then((resp) => {
+                           // the image path you can use it directly with Image component
+                           imagePath = resp.path()
+                           console.log(resp.readFile('base64'))
+                           return resp.readFile('base64')
+                       })
+                       .then((base64Data) => {
+                           // here's base64 encoded image
+                           // base64Data
+                           this.setState({
+                               profile_pic_base64: base64Data
+                           })
+                           // remove the file from storage
+                           return fs.unlink(imagePath)
+                       })
+          }
+          if(!this.state.wall_pic_base64) {
+              await RNFetchBlob.config({
+                         fileCache : true
+                    })
+                       .fetch('GET', this.state.wall_pic_url)
+                       // the image is now dowloaded to device's storage
+                       .then((resp) => {
+                           // the image path you can use it directly with Image component
+                           imagePath = resp.path()
+                           console.log(resp.readFile('base64'))
+                           return resp.readFile('base64')
+                       })
+                       .then((base64Data) => {
+                           // here's base64 encoded image
+                           // base64Data
+                           this.setState({
+                               wall_pic_base64: base64Data
+                           })
+                           // remove the file from storage
+                           return fs.unlink(imagePath)
+                       })
           }
           const resUpdatePicture = await axios.post("http://itsmartone.com/bpk_connect/api/group/update_setting?token=asdf1234aaa", {
-              chat_room_id: data.chat_room_id,
+              chat_room_id: oldSetting.chat_room_id,
               profile_pic_base64: this.state.profile_pic_base64,
               wall_pic_base64: this.state.wall_pic_base64
           })
       }
-      const res = await axios.post("http://itsmartone.com/bpk_connect/api/group/update_setting?token=asdf1234aaa", {
-          chat_room_id: data.chat_room_id,
+
+
+      await axios.post("http://itsmartone.com/bpk_connect/api/group/update_setting?token=asdf1234aaa", {
+          chat_room_id: oldSetting.chat_room_id,
           display_name: this.state.display_name
+      }).then((res) => {
+          console.log(res)
+      }, (err) => {
+          console.log(err)
       })
+      this.props.navigation.dispatch(NavigationActions.back())
+
   }
 
   render() {
@@ -143,7 +195,7 @@ export default class GroupSetting extends React.Component {
                 <Title>GROUP SETTIING</Title>
             </Body>
             <Right>
-                <Button transparent onPress={() => this.props.navigation.dispatch(NavigationActions.back())}>
+                <Button transparent onPress={() => this._updateGroupSetting() }>
                     <Icon name="md-checkmark" />
                 </Button>
             </Right>
