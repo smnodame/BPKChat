@@ -428,7 +428,16 @@ export default class Contacts extends React.Component {
                             <Icon name='md-chatboxes' style={{ color: 'gray' }} />
                             <Text style={{ color: 'gray' }}>CHAT</Text>
                         </Button>
-                        <Button transparent style={{ flexDirection: 'column', marginLeft: 10 }}>
+                        <Button
+                            transparent
+                            style={{ flexDirection: 'column', marginLeft: 10 }}
+                            onPress={() => {
+                                this.setState({ showGroupModal: false })
+                                this.props.screenProps.rootNavigation.navigate('GroupSetting', {
+                                    selectedFriend: this.state.selectedFriend
+                                })
+                            }}
+                        >
                             <Icon name='md-settings' style={{ color: 'gray' }} />
                             <Text style={{ color: 'gray' }}>EDIT GROUP</Text>
                         </Button>

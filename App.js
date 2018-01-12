@@ -86,7 +86,7 @@ export default class App extends Component<{}> {
     renderContent() {
         if(this.state.selectedTab == 'Friends') {
             return (
-                <Contacts onTabClick={this.onTabClick} />
+                <Contacts screenProps={{ rootNavigation: this.props.navigation }} onTabClick={this.onTabClick} />
             )
         } else if (this.state.selectedTab == 'Chats') {
             return (
