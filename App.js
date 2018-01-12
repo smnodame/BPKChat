@@ -32,7 +32,6 @@ import {
   Image
 } from 'react-native';
 import {signIn} from './src/redux/actions.js'
-import {store} from './src/redux'
 import Drawer from 'react-native-drawer'
 
 import ProfileSettings from './src/screens/profile'
@@ -42,6 +41,9 @@ import Chat from './src/screens/chat'
 
 const deviceHeight = Dimensions.get("window").height
 const deviceWidth = Dimensions.get("window").width
+
+import { enterContacts } from './src/redux/actions.js'
+import { store } from './src/redux'
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -63,6 +65,11 @@ export default class App extends Component<{}> {
 
     onLoginClick() {
 
+
+    }
+
+    async componentWillMount() {
+        store.dispatch(enterContacts())
 
     }
 

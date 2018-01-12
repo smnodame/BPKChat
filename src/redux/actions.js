@@ -107,3 +107,10 @@ export const chatLists = (chatLists) => ({
         chatLists
     }
 })
+
+export const showOrHideFriendLists = (isShowFriendLists) => ({
+    type: 'IS_SHOW_FRIEND_LISTS',
+    payload: {
+        isShowFriendLists
+    }
+})

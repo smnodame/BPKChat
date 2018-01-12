@@ -36,8 +36,13 @@ function fetchFriendProfile(userID) {
 }
 
 const getFriends = (state) => {
-    console.log(state)
     return state.friend.friends
+}
+
+const updateProfileImage = () => {
+    return axios.post(`http://itsmartone.com/bpk_connect/api/group/update_picture`, {
+        token: 'asdf1234aaa',
+    })
 }
 
 function addFavoriteApi(user_id, friend_user_id) {

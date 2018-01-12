@@ -26,11 +26,22 @@ const user = (state = {}, action) => {
     }
 }
 
-const system = (state = {}, action) => {
+const system = (state = {
+    isShowFriendLists: {
+        favorite: false,
+        group: false,
+        department: false,
+        other: false
+    }
+}, action) => {
     switch (action.type) {
         case 'LANGUAGES':
             return Object.assign(state, {
                 languages: action.payload.languages
+            })
+        case 'IS_SHOW_FRIEND_LISTS':
+            return Object.assign(state, {
+                isShowFriendLists: action.payload.isShowFriendLists
             })
         default:
             return state

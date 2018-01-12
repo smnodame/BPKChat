@@ -19,7 +19,7 @@ import {Avatar} from '../../components/avatar'
 import {FontAwesome} from '../../assets/icons'
 import { NavigationActions } from 'react-navigation'
 
-import { enterContacts, removeFavorite, addFavorite } from '../../redux/actions.js'
+import { enterContacts, removeFavorite, addFavorite, showOrHideFriendLists } from '../../redux/actions.js'
 import {store} from '../../redux'
 
 export default class Contacts extends React.Component {
@@ -59,6 +59,7 @@ export default class Contacts extends React.Component {
 
     updateData = () => {
         const state = store.getState()
+        console.log(state)
         this.setState({
             friends: _.get(state, 'friend.friends', {
                 favorite: [],
@@ -66,12 +67,15 @@ export default class Contacts extends React.Component {
                 group: [],
                 department: []
             }),
+            showFavoriteFriendLists: _.get(state, 'system.isShowFriendLists.favorite', false),
+            showGroupFriendLists: _.get(state, 'system.isShowFriendLists.group', false),
+            showDepartmentFriendLists: _.get(state, 'system.isShowFriendLists.department', false),
+            showOtherFriendLists: _.get(state, 'system.isShowFriendLists.other', false),
             user: _.get(state, 'user.user', {})
         })
     }
 
 	async componentWillMount() {
-        store.dispatch(enterContacts())
         this.updateData()
 		store.subscribe(() => {
             this.updateData()
@@ -97,6 +101,30 @@ export default class Contacts extends React.Component {
 
     _addFavorite = () => {
         store.dispatch(addFavorite(this.state.user.user_id, this.state.selectedFriend.friend_user_id, this.state.selectedFriend))
+    }
+
+    _showOrHideFriendLists = (type) => {
+        let favorite = this.state.showFavoriteFriendLists
+        let group = this.state.showGroupFriendLists
+        let department = this.state.showDepartmentFriendLists
+        let other = this.state.showOtherFriendLists
+        if(type=='favorite') {
+            favorite = !favorite
+        } else if(type=='group') {
+            group = !group
+        } else if(type=='department') {
+            department = !department
+        } else if(type=='other') {
+            other = !other
+        }
+        store.dispatch(
+            showOrHideFriendLists({
+                favorite,
+                group,
+                department,
+                other,
+            })
+        )
     }
 
     renderGroups = () => {
@@ -438,7 +466,7 @@ export default class Contacts extends React.Component {
                     backgroundColor: '#fafafa', borderBottomColor: '#eaeaea',
                     borderBottomWidth: 0.5, flexDirection: 'row'
                 }}
-                onPress={() => this.setState({ showFavoriteFriendLists: !this.state.showFavoriteFriendLists })}
+                onPress={() => this._showOrHideFriendLists('favorite')}
             >
                 <RkText rkType='header6 hintColor'>Favorites</RkText>
                 <View style={{ flex: 1 }} />
@@ -454,7 +482,7 @@ export default class Contacts extends React.Component {
                     backgroundColor: '#fafafa', borderBottomColor: '#eaeaea',
                     borderBottomWidth: 0.5
                 }}
-                onPress={() => this.setState({ showGroupFriendLists: !this.state.showGroupFriendLists })}
+                onPress={() => this._showOrHideFriendLists('group')}
             >
                 <RkText rkType='header6 hintColor'>Groups</RkText>
             </TouchableOpacity>
@@ -469,7 +497,7 @@ export default class Contacts extends React.Component {
                     backgroundColor: '#fafafa', borderBottomColor: '#eaeaea',
                     borderBottomWidth: 0.5
                 }}
-                onPress={() => this.setState({ showDepartmentFriendLists: !this.state.showDepartmentFriendLists })}
+                onPress={() => this._showOrHideFriendLists('department')}
             >
                 <RkText rkType='header6 hintColor'>Departments</RkText>
             </TouchableOpacity>
@@ -485,7 +513,7 @@ export default class Contacts extends React.Component {
                         backgroundColor: '#fafafa', borderBottomColor: '#eaeaea',
                         borderBottomWidth: 0.5
                     }}
-                    onPress={() => this.setState({ showOtherFriendLists: !this.state.showOtherFriendLists })}
+                    onPress={() => this._showOrHideFriendLists('other')}
                 >
                     <RkText rkType='header6 hintColor'>Friends</RkText>
                 </TouchableOpacity>
