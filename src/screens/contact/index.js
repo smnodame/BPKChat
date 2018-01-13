@@ -51,6 +51,12 @@ export default class Contacts extends React.Component {
             showProfileFriendLists: false,
             selectedFriend: {
                 is_favorite: 'F'
+            },
+            numberOfFriendLists: {
+                favorite: 0,
+                other: 0,
+                group: 0,
+                department: 0
             }
         }
 
@@ -71,7 +77,13 @@ export default class Contacts extends React.Component {
             showGroupFriendLists: _.get(state, 'system.isShowFriendLists.group', false),
             showDepartmentFriendLists: _.get(state, 'system.isShowFriendLists.department', false),
             showOtherFriendLists: _.get(state, 'system.isShowFriendLists.other', false),
-            user: _.get(state, 'user.user', {})
+            user: _.get(state, 'user.user', {}),
+            numberOfFriendLists: {
+                favorite: _.get(state, 'friend.numberOfFriendLists.favorite', 0),
+                other: _.get(state, 'friend.numberOfFriendLists.other', 0),
+                group: _.get(state, 'friend.numberOfFriendLists.group', 0),
+                department: _.get(state, 'friend.numberOfFriendLists.department', 0),
+            }
         })
     }
 
@@ -486,7 +498,7 @@ export default class Contacts extends React.Component {
                 }}
                 onPress={() => this._showOrHideFriendLists('favorite')}
             >
-                <RkText rkType='header6 hintColor'>Favorites</RkText>
+                <RkText rkType='header6 hintColor'>{`Favorites (${this.state.friends.favorite.length})`}</RkText>
                 <View style={{ flex: 1 }} />
             </TouchableOpacity>
             <View style={{ backgroundColor: 'white' }}>
@@ -502,7 +514,7 @@ export default class Contacts extends React.Component {
                 }}
                 onPress={() => this._showOrHideFriendLists('group')}
             >
-                <RkText rkType='header6 hintColor'>Groups</RkText>
+                <RkText rkType='header6 hintColor'>{`Groups (${this.state.numberOfFriendLists.group})`}</RkText>
             </TouchableOpacity>
             <View style={{ backgroundColor: 'white' }}>
                 {
@@ -517,7 +529,7 @@ export default class Contacts extends React.Component {
                 }}
                 onPress={() => this._showOrHideFriendLists('department')}
             >
-                <RkText rkType='header6 hintColor'>Departments</RkText>
+                <RkText rkType='header6 hintColor'>{`Departments (${this.state.numberOfFriendLists.department})`}</RkText>
             </TouchableOpacity>
             <View style={{ backgroundColor: 'white' }}>
                 {
@@ -533,7 +545,7 @@ export default class Contacts extends React.Component {
                     }}
                     onPress={() => this._showOrHideFriendLists('other')}
                 >
-                    <RkText rkType='header6 hintColor'>Friends</RkText>
+                    <RkText rkType='header6 hintColor'>{`Others (${this.state.numberOfFriendLists.other})`}</RkText>
                 </TouchableOpacity>
                 <View style={{ backgroundColor: 'white' }}>
                     {

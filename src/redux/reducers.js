@@ -48,7 +48,14 @@ const system = (state = {
     }
 }
 
-const friend = (state = {}, action) => {
+const friend = (state = {
+    rangeFriendLists: {
+        favorite: 100,
+        group: 20,
+        department: 20,
+        other: 20
+    }
+}, action) => {
     switch (action.type) {
         case 'FRIEND_GROUPS':
             return Object.assign(state, {

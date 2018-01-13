@@ -2,7 +2,7 @@ import _ from "lodash"
 import axios from "axios"
 
 import { all, call, put, takeEvery, takeLatest, take, select } from 'redux-saga/effects'
-import { numberOfFriendLists, signin_error, languages, authenticated, friendGroups, friends, myprofile, signupEror, searchNewFriend, chatLists } from './actions'
+import { numberOfFriendLists, signin_error, languages, authenticated, friendGroups, updateFriendLists, friends, myprofile, signupEror, searchNewFriend, chatLists } from './actions'
 import { NavigationActions } from 'react-navigation'
 
 function login_api(username, password) {
@@ -11,6 +11,10 @@ function login_api(username, password) {
 
 function fetch_language() {
     return axios.get('http://itsmartone.com/bpk_connect/api/user/language_list')
+}
+
+const getFriendGroups = state => {
+    return state.friend.friendGroups
 }
 
 function create_new_account(id, password, display_name, mobile_no, language) {
@@ -27,8 +31,8 @@ function fetchFriendGroups() {
     return axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_type_list')
 }
 
-function fetchFriendLists(group) {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=0&limit=50&filter=&friend_type=${group}`)
+function fetchFriendLists(group, range) {
+    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=0&limit=${range + 15}&filter=&friend_type=${group}`)
 }
 
 function fetchFriendProfile(userID) {
@@ -61,6 +65,14 @@ function removeFavoriteApi(user_id, friend_user_id) {
     })
 }
 
+const getNumberOfGroup = state => {
+    return state.friend.numberOfFriendLists
+}
+
+const getRangeOfGroup = state => {
+    return state.friend.rangeFriendLists
+}
+
 function* addFavoriteSaga() {
     while (true) {
         const { payload: { user_id, friend_user_id, friend_data }} = yield take('ADD_FAVORITE')
@@ -75,13 +87,52 @@ function* removeFavoriteSaga() {
     while (true) {
         const { payload: { user_id, friend_user_id }} = yield take('REMOVE_FAVORITE')
         const friendsData = yield select(getFriends)
-        const favorite = _.get(friends, 'favorite', [])
+        const favorite = _.get(friendsData, 'favorite', [])
         const newFavorite = favorite.filter((friend) => {
             return friend.friend_user_id != friend_user_id
         })
         friendsData.favorite = newFavorite
         yield put(friends(friendsData))
         yield call(removeFavoriteApi, user_id, friend_user_id)
+    }
+}
+
+function checkFriendListsChanged(groups, numberFromStore, numberFromBackend, friendsData, rangeFriendLists) {
+    const promise = []
+    _.forEach(groups, (group) => {
+        if(numberFromStore[group] != numberFromBackend[group]) {
+            promise.push(
+                fetchFriendLists(group, rangeFriendLists[group]).then((res) => {
+                    friendsData[group] = _.get(res, 'data.data', [])
+                })
+            )
+        }
+    })
+    return Promise.all(promise).then(() => {
+        return friendsData
+    })
+}
+
+function* refreshNumberOfFriendLists() {
+    while (true) {
+        
+    }
+}
+function* updateFriendListsSaga() {
+    while (true) {
+        yield take('UPDATE_FRIEND_LISTS')
+        const friendsData = yield select(getFriends)
+        const rangeFriendLists = yield select(getRangeOfGroup)
+        const numberFromStore = yield select(getNumberOfGroup)
+        const numberFromBackend = yield call(fetchNumberOfGroup)
+
+        const groups = yield select(getFriendGroups)
+
+        const newFriendLists = yield call(checkFriendListsChanged, groups, numberFromStore, numberFromBackend, friendsData, rangeFriendLists)
+        console.log(newFriendLists)
+        yield put(friends(newFriendLists))
+
+        yield put(numberOfFriendLists(numberFromBackend))
     }
 }
 
@@ -115,8 +166,6 @@ function* start_app() {
     while (true) {
         yield take('START_APP')
         const { data: { data }} = yield call(fetch_language)
-
-
         yield put(languages(data))
     }
 }
@@ -144,14 +193,10 @@ function* signup() {
     }
 }
 
-const getFriendGroups = state => {
-    return state.friend.friendGroups
-}
-
-const combinedFriends = (groups) => {
+const combinedFriends = (groups, rangeFriendLists) => {
     let promises = []
     _.forEach(groups, (group) => {
-        const promise = fetchFriendLists(group)
+        const promise = fetchFriendLists(group, rangeFriendLists[group])
         promises.push(promise)
     })
     return Promise.all(promises).then(values => {
@@ -171,7 +216,7 @@ const fetchChatLists = () => {
     return axios.get('http://itsmartone.com/bpk_connect/api/chat/chat_list?token=asdf1234aaa&user_id=3963&start=0&limit=20')
 }
 
-const getNumberOfGroup = () => {
+const fetchNumberOfGroup = () => {
     return Promise.all([
         axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_list_count?token=asdf1234aaa&user_id=3963&friend_type=favorite&filter='),
         axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_list_count?token=asdf1234aaa&user_id=3963&friend_type=group&filter='),
@@ -190,11 +235,17 @@ const getNumberOfGroup = () => {
 function* enterContacts() {
     while (true) {
         yield take('ENTER_CONTACTS')
+        // fetch groups
         const resFetchFriendGroups = yield call(fetchFriendGroups)
         const friendGroupsData = _.get(resFetchFriendGroups, 'data.data')
         yield put(friendGroups(friendGroupsData))
-        const friendsData = yield call(combinedFriends, friendGroupsData)
+        //
+        // fetch initial friend lists
+        const rangeFriendLists = yield select(getRangeOfGroup)
+        const friendsData = yield call(combinedFriends, friendGroupsData, rangeFriendLists)
         yield put(friends(friendsData))
+
+        // fetch user profile
         const resFetchMyProfile = yield call(fetchMyProfile)
         yield put(myprofile(_.get(resFetchMyProfile, 'data.data')))
 
@@ -202,7 +253,8 @@ function* enterContacts() {
         const resFetchChatLists = yield call(fetchChatLists)
         yield put(chatLists(_.get(resFetchChatLists, 'data.data')))
 
-        const numberOfFriend = yield call(getNumberOfGroup)
+        // fetch number of friend lists
+        const numberOfFriend = yield call(fetchNumberOfGroup)
         yield put(numberOfFriendLists(numberOfFriend))
     }
 }
@@ -215,6 +267,7 @@ export default function* rootSaga() {
         enterContacts(),
         searchNewFriendSaga(),
         addFavoriteSaga(),
-        removeFavoriteSaga()
+        removeFavoriteSaga(),
+        updateFriendListsSaga()
     ])
 }

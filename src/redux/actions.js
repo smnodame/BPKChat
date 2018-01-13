@@ -121,3 +121,7 @@ export const numberOfFriendLists = (numberOfFriendLists) => ({
         numberOfFriendLists
     }
 })
+
+export const updateFriendLists = () => ({
+    type: 'UPDATE_FRIEND_LISTS'
+})
