@@ -415,6 +415,15 @@ export default class Contacts extends React.Component {
                         alignItems: 'center'
                     }}>
                         <Text>{ this.state.selectedFriend.display_name }</Text>
+                        {
+                            this.state.selectedFriend.chat_room_type == 'C' &&
+                            <View style={{ marginTop: 15 }}>
+                                <Text note>{`Patient Name : ${this.state.selectedFriend.patient_name || '-'}`}</Text>
+                                <Text note>{`HN : ${this.state.selectedFriend.hn || '-'}`}</Text>
+                                <Text note>{`Description : ${this.state.selectedFriend.description || '-'}`}</Text>
+                            </View>
+                        }
+
                     </View>
                     <View style={{ flex: 1}}>
                     </View>
