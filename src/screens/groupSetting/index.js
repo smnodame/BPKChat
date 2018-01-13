@@ -40,26 +40,20 @@ export default class GroupSetting extends React.Component {
 
   updateData = () => {
       const state = store.getState()
-      console.log(this.props.navigation.state.params.selectedFriend)
       this.setState({
           display_name: _.get(this.props.navigation.state.params.selectedFriend, 'display_name', ''),
           wall_pic_url: _.get(this.props.navigation.state.params.selectedFriend, 'wall_pic_url', ''),
           profile_pic_url: _.get(this.props.navigation.state.params.selectedFriend, 'profile_pic_url', ''),
-          patient_name: _.get(this.props.navigation.state.params.selectedFriend, 'profile_pic_url', ''),
+          patient_name: _.get(this.props.navigation.state.params.selectedFriend, 'patient_name', ''),
           hn: _.get(this.props.navigation.state.params.selectedFriend, 'hn', ''),
           description: _.get(this.props.navigation.state.params.selectedFriend, 'description', ''),
-          chat_room_id: this.props.navigation.state.params.selectedFriend.chat_room_id
+          chat_room_id: _.get(this.props.navigation.state.params.selectedFriend, 'chat_room_id', ''),
+          chat_room_type: _.get(this.props.navigation.state.params.selectedFriend, 'chat_room_type', 'Z')
       })
   }
 
   async componentWillMount() {
-      const chat_room_id = this.props.navigation.state.params.selectedFriend.chat_room_id
-      const res = await axios.get(`http://itsmartone.com/bpk_connect/api/chat/data?token=asdf1234aaa&user_id=3963&chat_room_id=${chat_room_id}`)
-      this.setState({
-          chat_room_type: _.get(res, 'data.data.chat_room_type', 'Z')
-      })
       this.updateData()
-      console.log(this.props.navigation.state.params.selectedFriend)
   }
 
   selectProfileImage = () => {
@@ -128,55 +122,16 @@ export default class GroupSetting extends React.Component {
           this.props.navigation.state.params.selectedFriend.wall_pic_url != this.state.wall_pic_url ||
           this.props.navigation.state.params.selectedFriend.profile_pic_url != this.state.profile_pic_url
       ) {
-          if(!this.state.profile_pic_base64) {
-              await RNFetchBlob.config({
-                         fileCache : true
-                    })
-                       .fetch('GET', this.state.profile_pic_url)
-                       // the image is now dowloaded to device's storage
-                       .then((resp) => {
-                           // the image path you can use it directly with Image component
-                           imagePath = resp.path()
-                           console.log(resp.readFile('base64'))
-                           return resp.readFile('base64')
-                       })
-                       .then((base64Data) => {
-                           // here's base64 encoded image
-                           // base64Data
-                           this.setState({
-                               profile_pic_base64: base64Data
-                           })
-                           // remove the file from storage
-                           return fs.unlink(imagePath)
-                       })
+          const data = {
+              chat_room_id: this.state.chat_room_id
           }
-          if(!this.state.wall_pic_base64) {
-              await RNFetchBlob.config({
-                         fileCache : true
-                    })
-                       .fetch('GET', this.state.wall_pic_url)
-                       // the image is now dowloaded to device's storage
-                       .then((resp) => {
-                           // the image path you can use it directly with Image component
-                           imagePath = resp.path()
-                           console.log(resp.readFile('base64'))
-                           return resp.readFile('base64')
-                       })
-                       .then((base64Data) => {
-                           // here's base64 encoded image
-                           // base64Data
-                           this.setState({
-                               wall_pic_base64: base64Data
-                           })
-                           // remove the file from storage
-                           return fs.unlink(imagePath)
-                       })
+          if(this.state.profile_pic_base64) {
+              data.profile_pic_base64 = this.state.profile_pic_base64
           }
-          const resUpdatePicture = await axios.post("http://itsmartone.com/bpk_connect/api/group/update_setting?token=asdf1234aaa", {
-              chat_room_id: this.state.chat_room_id,
-              profile_pic_base64: this.state.profile_pic_base64,
-              wall_pic_base64: this.state.wall_pic_base64
-          })
+          if(this.state.wall_pic_base64) {
+              data.wall_pic_base64 = this.state.wall_pic_base64
+          }
+          const resUpdatePicture = await axios.post("http://itsmartone.com/bpk_connect/api/group/update_setting?token=asdf1234aaa", data)
       }
 
 
@@ -265,6 +220,9 @@ export default class GroupSetting extends React.Component {
                             block
                             transparent
                             dark
+                            onPress={() => {
+                                this.selectProfileImage()
+                            }}
                             style={{
                                 position: 'absolute',
                                 width: 100,
