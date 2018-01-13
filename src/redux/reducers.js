@@ -58,6 +58,10 @@ const friend = (state = {}, action) => {
             return Object.assign(state, {
                 friends: action.payload.friends
             })
+        case 'NUMBER_OF_FRIEND_LISTS':
+            return Object.assign(state, {
+                numberOfFriendLists: action.payload.numberOfFriendLists
+            })
         default:
             return state
     }

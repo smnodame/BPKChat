@@ -2,7 +2,7 @@ import _ from "lodash"
 import axios from "axios"
 
 import { all, call, put, takeEvery, takeLatest, take, select } from 'redux-saga/effects'
-import { signin_error, languages, authenticated, friendGroups, friends, myprofile, signupEror, searchNewFriend, chatLists } from './actions'
+import { numberOfFriendLists, signin_error, languages, authenticated, friendGroups, friends, myprofile, signupEror, searchNewFriend, chatLists } from './actions'
 import { NavigationActions } from 'react-navigation'
 
 function login_api(username, password) {
@@ -171,6 +171,22 @@ const fetchChatLists = () => {
     return axios.get('http://itsmartone.com/bpk_connect/api/chat/chat_list?token=asdf1234aaa&user_id=3963&start=0&limit=20')
 }
 
+const getNumberOfGroup = () => {
+    return Promise.all([
+        axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_list_count?token=asdf1234aaa&user_id=3963&friend_type=favorite&filter='),
+        axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_list_count?token=asdf1234aaa&user_id=3963&friend_type=group&filter='),
+        axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_list_count?token=asdf1234aaa&user_id=3963&friend_type=department&filter='),
+        axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_list_count?token=asdf1234aaa&user_id=3963&friend_type=other&filter=')
+    ]).then((res) => {
+        return {
+            favorite: res[0].data.total_number,
+            group: res[1].data.total_number,
+            department: res[2].data.total_number,
+            other: res[3].data.total_number
+        }
+    })
+}
+
 function* enterContacts() {
     while (true) {
         yield take('ENTER_CONTACTS')
@@ -185,6 +201,9 @@ function* enterContacts() {
         // fetch chat lists
         const resFetchChatLists = yield call(fetchChatLists)
         yield put(chatLists(_.get(resFetchChatLists, 'data.data')))
+
+        const numberOfFriend = yield call(getNumberOfGroup)
+        yield put(numberOfFriendLists(numberOfFriend))
     }
 }
 

@@ -114,3 +114,10 @@ export const showOrHideFriendLists = (isShowFriendLists) => ({
         isShowFriendLists
     }
 })
+
+export const numberOfFriendLists = (numberOfFriendLists) => ({
+    type: 'NUMBER_OF_FRIEND_LISTS',
+    payload: {
+        numberOfFriendLists
+    }
+})
