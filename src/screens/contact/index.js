@@ -19,7 +19,7 @@ import {Avatar} from '../../components/avatar'
 import {FontAwesome} from '../../assets/icons'
 import { NavigationActions } from 'react-navigation'
 
-import { enterContacts, removeFavorite, addFavorite, showOrHideFriendLists } from '../../redux/actions.js'
+import { enterContacts, removeFavorite, addFavorite, showOrHideFriendLists, onLoadMore } from '../../redux/actions.js'
 import {store} from '../../redux'
 
 export default class Contacts extends React.Component {
@@ -113,6 +113,10 @@ export default class Contacts extends React.Component {
 
     _addFavorite = () => {
         store.dispatch(addFavorite(this.state.user.user_id, this.state.selectedFriend.friend_user_id, this.state.selectedFriend))
+    }
+
+    loadmore = (group) => {
+        store.dispatch(onLoadMore(group))
     }
 
     _showOrHideFriendLists = (type) => {
@@ -518,7 +522,19 @@ export default class Contacts extends React.Component {
             </TouchableOpacity>
             <View style={{ backgroundColor: 'white' }}>
                 {
-                    !!this.state.showGroupFriendLists&&this.renderGroups()
+                    !!this.state.showGroupFriendLists&&<View>
+                        {
+                            this.renderGroups()
+                        }
+                        {
+                            this.state.numberOfFriendLists.group > this.state.friends.group.length &&
+                            <View>
+                                <Button block light style={{ backgroundColor: 'white' }} onPress={() => this.loadmore('group')}>
+                                    <Text>Load More</Text>
+                                </Button>
+                            </View>
+                        }
+                    </View>
                 }
             </View>
             <TouchableOpacity
@@ -533,7 +549,19 @@ export default class Contacts extends React.Component {
             </TouchableOpacity>
             <View style={{ backgroundColor: 'white' }}>
                 {
-                    !!this.state.showDepartmentFriendLists&&this.renderDepartment()
+                    !!this.state.showDepartmentFriendLists&&<View>
+                        {
+                            this.renderDepartment()
+                        }
+                        {
+                            this.state.numberOfFriendLists.department > this.state.friends.group.department &&
+                            <View>
+                                <Button block light style={{ backgroundColor: 'white' }} onPress={() => this.loadmore('department')}>
+                                    <Text>Load More</Text>
+                                </Button>
+                            </View>
+                        }
+                    </View>
                 }
             </View>
             <View>
@@ -549,8 +577,21 @@ export default class Contacts extends React.Component {
                 </TouchableOpacity>
                 <View style={{ backgroundColor: 'white' }}>
                     {
-                        !!this.state.showOtherFriendLists&&this.renderOthers()
+                        !!this.state.showOtherFriendLists&&<View>
+                            {
+                                this.renderOthers()
+                            }
+                            {
+                                this.state.numberOfFriendLists.other > this.state.friends.other.length &&
+                                <View>
+                                    <Button block light style={{ backgroundColor: 'white' }} onPress={() => this.loadmore('other')}>
+                                        <Text>Load More</Text>
+                                    </Button>
+                                </View>
+                            }
+                        </View>
                     }
+
                 </View>
             </View>
         </View>

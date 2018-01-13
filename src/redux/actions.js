@@ -125,3 +125,10 @@ export const numberOfFriendLists = (numberOfFriendLists) => ({
 export const updateFriendLists = () => ({
     type: 'UPDATE_FRIEND_LISTS'
 })
+
+export const onLoadMore = (group) => ({
+    type: 'ON_LOAD_MORE',
+    payload: {
+        group: group
+    }
+})

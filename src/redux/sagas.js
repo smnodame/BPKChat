@@ -32,7 +32,7 @@ function fetchFriendGroups() {
 }
 
 function fetchFriendLists(group, range) {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=0&limit=${range + 15}&filter=&friend_type=${group}`)
+    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=0&limit=${range}&filter=&friend_type=${group}`)
 }
 
 function fetchFriendProfile(userID) {
@@ -115,7 +115,7 @@ function checkFriendListsChanged(groups, numberFromStore, numberFromBackend, fri
 
 function* refreshNumberOfFriendLists() {
     while (true) {
-        
+
     }
 }
 function* updateFriendListsSaga() {
@@ -259,6 +259,21 @@ function* enterContacts() {
     }
 }
 
+function* loadmoreSaga() {
+    while (true) {
+        const { payload: { group } } = yield take('ON_LOAD_MORE')
+        
+        const friendsData = yield select(getFriends)
+        const groupFriends = _.get(friendsData, group, [])
+
+        const rangeFriendLists = yield select(getRangeOfGroup)
+        const resFetchFriendLists = yield call(fetchFriendLists, group, groupFriends.length + rangeFriendLists[group])
+
+        friendsData[group] = _.get(resFetchFriendLists, 'data.data', [])
+        yield put(friends(friendsData))
+    }
+}
+
 export default function* rootSaga() {
     yield all([
         signin(),
@@ -268,6 +283,7 @@ export default function* rootSaga() {
         searchNewFriendSaga(),
         addFavoriteSaga(),
         removeFavoriteSaga(),
-        updateFriendListsSaga()
+        updateFriendListsSaga(),
+        loadmoreSaga()
     ])
 }
