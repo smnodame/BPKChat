@@ -459,9 +459,9 @@ export default class Contacts extends React.Component {
                         {
                             this.state.selectedFriend.chat_room_type == 'C' &&
                             <View style={{ marginTop: 15 }}>
-                                <Text note>{`Patient Name : ${this.state.selectedFriend.patient_name || '-'}`}</Text>
-                                <Text note>{`HN : ${this.state.selectedFriend.hn || '-'}`}</Text>
-                                <Text note>{`Description : ${this.state.selectedFriend.description || '-'}`}</Text>
+                                <Text note>{`Patient Name : ${this.state.selectedFriend.c_patient_name || '-'}`}</Text>
+                                <Text note>{`HN : ${this.state.selectedFriend.c_hn || '-'}`}</Text>
+                                <Text note>{`Description : ${this.state.selectedFriend.c_description || '-'}`}</Text>
                             </View>
                         }
 

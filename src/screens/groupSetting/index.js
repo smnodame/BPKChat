@@ -45,9 +45,9 @@ export default class GroupSetting extends React.Component {
           display_name: _.get(this.props.navigation.state.params.selectedFriend, 'display_name', ''),
           wall_pic_url: _.get(this.props.navigation.state.params.selectedFriend, 'wall_pic_url', ''),
           profile_pic_url: _.get(this.props.navigation.state.params.selectedFriend, 'profile_pic_url', ''),
-          patient_name: _.get(this.props.navigation.state.params.selectedFriend, 'patient_name', ''),
-          hn: _.get(this.props.navigation.state.params.selectedFriend, 'hn', ''),
-          description: _.get(this.props.navigation.state.params.selectedFriend, 'description', ''),
+          patient_name: _.get(this.props.navigation.state.params.selectedFriend, 'c_patient_name', ''),
+          hn: _.get(this.props.navigation.state.params.selectedFriend, 'c_hn', ''),
+          description: _.get(this.props.navigation.state.params.selectedFriend, 'c_description', ''),
           chat_room_id: _.get(this.props.navigation.state.params.selectedFriend, 'chat_room_id', ''),
           chat_room_type: _.get(this.props.navigation.state.params.selectedFriend, 'chat_room_type', 'Z')
       })
@@ -155,9 +155,9 @@ export default class GroupSetting extends React.Component {
           {
               wall_pic_url: this.state.wall_pic_url,
               profile_pic_url: this.state.profile_pic_url,
-              hn: this.state.hn,
-              patient_name: this.state.patient_name,
-              description: this.state.description,
+              c_hn: this.state.hn,
+              c_patient_name: this.state.patient_name,
+              c_description: this.state.description,
               display_name: this.state.display_name
           }
       ))
