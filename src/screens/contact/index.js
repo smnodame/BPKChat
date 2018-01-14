@@ -12,7 +12,6 @@ import {
   RkText,
   RkTextInput
 } from 'react-native-ui-kitten'
-import axios from 'axios'
 import Modal from 'react-native-modal'
 import { Thumbnail, Icon, Text, Button } from 'native-base'
 import {data} from '../../data'
@@ -146,7 +145,6 @@ export default class Contacts extends React.Component {
     }
 
     goToGroupSetting = async () => {
-        const res = await axios.get('http://itsmartone.com/bpk_connect/api/user/data/{this.state.selectedFriend.friend_user_id}')
         this.setState({ showGroupModal: false })
         this.props.screenProps.rootNavigation.navigate('GroupSetting', {
             selectedFriend: this.state.selectedFriend,

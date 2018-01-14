@@ -1,68 +1,28 @@
 import _ from "lodash"
-import axios from "axios"
-
 import { all, call, put, takeEvery, takeLatest, take, select } from 'redux-saga/effects'
 import { numberOfFriendLists, signin_error, languages, authenticated, friendGroups, updateFriendLists, friends, myprofile, signupEror, searchNewFriend, chatLists } from './actions'
 import { NavigationActions } from 'react-navigation'
-
-function login_api(username, password) {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/user/check_login?user_id=${username}&password=${password}`)
-}
-
-function fetch_language() {
-    return axios.get('http://itsmartone.com/bpk_connect/api/user/language_list')
-}
+import {
+    fetchMyProfile,
+    fetchChatLists,
+    fetchFriendListCount,
+    fetchFriendGroups,
+    fetchFriendLists,
+    fetchFriendProfile,
+    loginApi,
+    fetchLanguage,
+    updateProfileImage,
+    addFavoriteApi,
+    removeFavoriteApi,
+    createNewAccount
+} from './api'
 
 const getFriendGroups = state => {
     return state.friend.friendGroups
 }
 
-function create_new_account(id, password, display_name, mobile_no, language) {
-    return axios.post('http://itsmartone.com/bpk_connect/api/user/register', {
-        username: id,
-        password,
-        display_name,
-        mobile_no,
-        user_language_id: language
-    })
-}
-
-function fetchFriendGroups() {
-    return axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_type_list')
-}
-
-function fetchFriendLists(group, range, start = 0) {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=${start}&limit=${range}&filter=&friend_type=${group}`)
-}
-
-function fetchFriendProfile(userID) {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/user/data/${userID}`)
-}
-
 const getFriends = (state) => {
     return state.friend.friends
-}
-
-const updateProfileImage = () => {
-    return axios.post(`http://itsmartone.com/bpk_connect/api/group/update_picture`, {
-        token: 'asdf1234aaa',
-    })
-}
-
-function addFavoriteApi(user_id, friend_user_id) {
-    return axios.post('http://itsmartone.com/bpk_connect/api/friend/add_fav', {
-        token: 'asdf1234aaa',
-        user_id,
-        friend_user_id
-    })
-}
-
-function removeFavoriteApi(user_id, friend_user_id) {
-    return axios.post('http://itsmartone.com/bpk_connect/api/friend/remove_fav', {
-        token: 'asdf1234aaa',
-        user_id,
-        friend_user_id
-    })
 }
 
 const getNumberOfGroup = state => {
@@ -147,12 +107,12 @@ function* signin() {
     while (true) {
         const { payload: { username, password } } = yield take('SIGNIN')
         if(username && password) {
-            const res_login_api = yield call(login_api, username, password)
-            if(_.get(res_login_api.data, 'error')) {
-                yield put(signin_error(res_login_api.data.error))
+            const res_loginApi = yield call(loginApi, username, password)
+            if(_.get(res_loginApi.data, 'error')) {
+                yield put(signin_error(res_loginApi.data.error))
                 continue
             }
-            const { data: { token, setting, user } } = res_login_api
+            const { data: { token, setting, user } } = res_loginApi
             yield put(authenticated(token, setting))
 
             yield put(NavigationActions.navigate({ routeName: 'App' }))
@@ -165,7 +125,7 @@ function* signin() {
 function* start_app() {
     while (true) {
         yield take('START_APP')
-        const { data: { data }} = yield call(fetch_language)
+        const { data: { data }} = yield call(fetchLanguage)
         yield put(languages(data))
     }
 }
@@ -179,7 +139,7 @@ function* signup() {
                 yield put(signupEror('Password and Confirm password is not match!'))
                 continue
             }
-            const res_create_new_account = yield call(create_new_account, id, password, display_name, mobile_no, language_id)
+            const res_create_new_account = yield call(createNewAccount, id, password, display_name, mobile_no, language_id)
             if(res_create_new_account.error) {
                 yield put(signupEror(res_create_new_account.error))
                 continue
@@ -208,21 +168,16 @@ const combinedFriends = (groups, rangeFriendLists) => {
     })
 }
 
-const fetchMyProfile = () => {
-    return axios.get('http://itsmartone.com/bpk_connect/api/user/my_profile?token=asdf1234aaa&user_id=3963')
-}
 
-const fetchChatLists = () => {
-    return axios.get('http://itsmartone.com/bpk_connect/api/chat/chat_list?token=asdf1234aaa&user_id=3963&start=0&limit=20')
-}
 
 const fetchNumberOfGroup = () => {
     return Promise.all([
-        axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_list_count?token=asdf1234aaa&user_id=3963&friend_type=favorite&filter='),
-        axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_list_count?token=asdf1234aaa&user_id=3963&friend_type=group&filter='),
-        axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_list_count?token=asdf1234aaa&user_id=3963&friend_type=department&filter='),
-        axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_list_count?token=asdf1234aaa&user_id=3963&friend_type=other&filter=')
+        fetchFriendListCount('favorite'),
+        fetchFriendListCount('group'),
+        fetchFriendListCount('department'),
+        fetchFriendListCount('other')
     ]).then((res) => {
+        console.log(res)
         return {
             favorite: res[0].data.total_number,
             group: res[1].data.total_number,

@@ -32,8 +32,7 @@ import {
   RkAvoidKeyboard,
   RkStyleSheet,
   RkTheme
-} from 'react-native-ui-kitten';
-import axios from "axios"
+} from 'react-native-ui-kitten'
 import { NavigationActions } from 'react-navigation'
 
 import { signin, start_app  } from '../../redux/actions.js'

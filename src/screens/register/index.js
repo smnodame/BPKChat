@@ -24,8 +24,7 @@ import {
 	Tabs,
 	TabHeading,
 	Keyboard
-} from "native-base";
-import axios from "axios"
+} from "native-base"
 import { NavigationActions } from 'react-navigation'
 import {
   RkButton,
