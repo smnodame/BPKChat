@@ -226,6 +226,13 @@ export default class Contacts extends React.Component {
         })
     }
 
+    isInFavorite = () => {
+        const obj = this.state.friends.favorite.find((friend) => {
+            return friend.friend_user_id == this.state.selectedFriend.friend_user_id
+        })
+        return !!obj
+    }
+
   render() {
     return (
         <View>
@@ -355,7 +362,7 @@ export default class Contacts extends React.Component {
                         </Button>
 
                             {
-                                this.state.selectedFriend.is_favorite == 'F' &&
+                                !this.isInFavorite() &&
                                 <Button
                                     transparent
                                     style={{ flexDirection: 'column', marginLeft: 10 }}
@@ -373,7 +380,7 @@ export default class Contacts extends React.Component {
                                 </Button>
                             }
                             {
-                                this.state.selectedFriend.is_favorite == 'T' &&
+                                this.isInFavorite() &&
                                 <Button
                                     transparent
                                     style={{ flexDirection: 'column', marginLeft: 10 }}

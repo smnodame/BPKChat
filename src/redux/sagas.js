@@ -31,8 +31,8 @@ function fetchFriendGroups() {
     return axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_type_list')
 }
 
-function fetchFriendLists(group, range) {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=0&limit=${range}&filter=&friend_type=${group}`)
+function fetchFriendLists(group, range, start = 0) {
+    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=${start}&limit=${range}&filter=&friend_type=${group}`)
 }
 
 function fetchFriendProfile(userID) {
@@ -262,14 +262,14 @@ function* enterContacts() {
 function* loadmoreSaga() {
     while (true) {
         const { payload: { group } } = yield take('ON_LOAD_MORE')
-        
+
         const friendsData = yield select(getFriends)
         const groupFriends = _.get(friendsData, group, [])
 
         const rangeFriendLists = yield select(getRangeOfGroup)
-        const resFetchFriendLists = yield call(fetchFriendLists, group, groupFriends.length + rangeFriendLists[group])
-
-        friendsData[group] = _.get(resFetchFriendLists, 'data.data', [])
+        const resFetchFriendLists = yield call(fetchFriendLists, group, groupFriends.length + rangeFriendLists[group], groupFriends.length)
+        console.log(resFetchFriendLists)
+        friendsData[group] = friendsData[group].concat( _.get(resFetchFriendLists, 'data.data', []))
         yield put(friends(friendsData))
     }
 }
