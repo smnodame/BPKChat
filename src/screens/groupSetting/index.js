@@ -135,9 +135,7 @@ export default class GroupSetting extends React.Component {
           if(this.state.wall_pic_base64) {
               data.wall_pic_base64 = this.state.wall_pic_base64
           }
-          console.log(data)
           const resUpdatePicture = await axios.post("http://itsmartone.com/bpk_connect/api/group/update_picture?token=asdf1234aaa", data)
-          console.log(resUpdatePicture)
       }
 
 
@@ -152,6 +150,19 @@ export default class GroupSetting extends React.Component {
       }, (err) => {
           console.log(err)
       })
+
+      const saveGroupSetting = _.get(this.props.navigation.state.params, 'saveGroupSetting')
+      saveGroupSetting(Object.assign(
+          this.props.navigation.state.params.selectedFriend,
+          {
+              wall_pic_url: this.state.wall_pic_url,
+              profile_pic_url: this.state.profile_pic_url,
+              hn: this.state.hn,
+              patient_name: this.state.patient_name,
+              description: this.state.description,
+              display_name: this.state.display_name
+          }
+      ))
       this.props.navigation.dispatch(NavigationActions.back())
 
   }

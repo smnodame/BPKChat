@@ -59,6 +59,12 @@ export default class Contacts extends React.Component {
         this.renderHeader = this._renderHeader.bind(this)
     }
 
+    saveGroupSetting = (selectedFriend) => {
+        this.setState({
+            selectedFriend: selectedFriend
+        })
+    }
+
     updateData = () => {
         const state = store.getState()
         console.log(state)
@@ -139,11 +145,12 @@ export default class Contacts extends React.Component {
         )
     }
 
-    showGroupModal = async () => {
+    goToGroupSetting = async () => {
         const res = await axios.get('http://itsmartone.com/bpk_connect/api/user/data/{this.state.selectedFriend.friend_user_id}')
         this.setState({ showGroupModal: false })
         this.props.screenProps.rootNavigation.navigate('GroupSetting', {
-            selectedFriend: this.state.selectedFriend
+            selectedFriend: this.state.selectedFriend,
+            saveGroupSetting: this.saveGroupSetting
         })
     }
 
@@ -477,7 +484,7 @@ export default class Contacts extends React.Component {
                             transparent
                             style={{ flexDirection: 'column', marginLeft: 10 }}
                             onPress={() => {
-                                this.showGroupModal()
+                                this.goToGroupSetting()
                             }}
                         >
                             <Icon name='md-settings' style={{ color: 'gray' }} />
