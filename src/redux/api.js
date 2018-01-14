@@ -9,9 +9,7 @@ export const fetchChatLists = () => {
 }
 
 export const fetchFriendListCount = (group) => {
-    console.log('=============')
-    console.log(group)
-    return axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_list_count?token=asdf1234aaa&user_id=3963&friend_type=${group}&filter=')
+    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list_count?token=asdf1234aaa&user_id=3963&friend_type=${group}&filter=`)
 }
 
 export const fetchFriendGroups = () => {

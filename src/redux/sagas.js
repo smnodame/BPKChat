@@ -16,22 +16,12 @@ import {
     removeFavoriteApi,
     createNewAccount
 } from './api'
-
-const getFriendGroups = state => {
-    return state.friend.friendGroups
-}
-
-const getFriends = (state) => {
-    return state.friend.friends
-}
-
-const getNumberOfGroup = state => {
-    return state.friend.numberOfFriendLists
-}
-
-const getRangeOfGroup = state => {
-    return state.friend.rangeFriendLists
-}
+import {
+    getFriendGroups,
+    getFriends,
+    getNumberOfGroup,
+    getRangeOfGroup
+} from './selectors'
 
 function* addFavoriteSaga() {
     while (true) {
