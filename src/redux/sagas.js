@@ -20,8 +20,25 @@ import {
     getFriendGroups,
     getFriends,
     getNumberOfGroup,
-    getRangeOfGroup
+    getRangeOfGroup,
+    getFilterFriend
 } from './selectors'
+
+function* onSearchFriendSata() {
+    while (true) {
+        const { payload: { filter }} = yield take('ON_SEARCH_FRIEND')
+        const groups = yield select(getFriendGroups)
+
+        // fetch initial friend lists
+        const rangeFriendLists = yield select(getRangeOfGroup)
+        const friendsData = yield call(combinedFriends, groups, rangeFriendLists, filter)
+        yield put(friends(friendsData))
+
+        // fetch number of friend lists
+        const numberOfFriend = yield call(fetchNumberOfGroup, filter)
+        yield put(numberOfFriendLists(numberOfFriend))
+    }
+}
 
 function* addFavoriteSaga() {
     while (true) {
@@ -158,10 +175,14 @@ function* signup() {
     }
 }
 
-const combinedFriends = (groups, rangeFriendLists) => {
+const combinedFriends = (groups, rangeFriendLists, filter) => {
+    console.log('===============')
+    console.log(groups)
+    console.log(rangeFriendLists)
+    console.log(filter)
     let promises = []
     _.forEach(groups, (group) => {
-        const promise = fetchFriendLists(group, rangeFriendLists[group])
+        const promise = fetchFriendLists(group, rangeFriendLists[group], 0, filter)
         promises.push(promise)
     })
     return Promise.all(promises).then(values => {
@@ -175,12 +196,12 @@ const combinedFriends = (groups, rangeFriendLists) => {
 
 
 
-const fetchNumberOfGroup = () => {
+const fetchNumberOfGroup = (filter) => {
     return Promise.all([
-        fetchFriendListCount('favorite'),
-        fetchFriendListCount('group'),
-        fetchFriendListCount('department'),
-        fetchFriendListCount('other')
+        fetchFriendListCount('favorite', filter),
+        fetchFriendListCount('group', filter),
+        fetchFriendListCount('department', filter),
+        fetchFriendListCount('other', filter)
     ]).then((res) => {
         console.log(res)
         return {
@@ -195,7 +216,7 @@ const fetchNumberOfGroup = () => {
 function* enterContacts() {
     while (true) {
         yield take('ENTER_CONTACTS')
-
+        const filter = ''
         // fetch groups
         const resFetchFriendGroups = yield call(fetchFriendGroups)
         const friendGroupsData = _.get(resFetchFriendGroups, 'data.data')
@@ -203,7 +224,7 @@ function* enterContacts() {
 
         // fetch initial friend lists
         const rangeFriendLists = yield select(getRangeOfGroup)
-        const friendsData = yield call(combinedFriends, friendGroupsData, rangeFriendLists)
+        const friendsData = yield call(combinedFriends, friendGroupsData, rangeFriendLists, filter)
         yield put(friends(friendsData))
 
         // fetch user profile
@@ -215,7 +236,7 @@ function* enterContacts() {
         yield put(chatLists(_.get(resFetchChatLists, 'data.data')))
 
         // fetch number of friend lists
-        const numberOfFriend = yield call(fetchNumberOfGroup)
+        const numberOfFriend = yield call(fetchNumberOfGroup, filter)
         yield put(numberOfFriendLists(numberOfFriend))
     }
 }
@@ -228,9 +249,12 @@ function* loadmoreSaga() {
         const friendsData = yield select(getFriends)
         const groupFriends = _.get(friendsData, group, [])
 
+        // get filter
+        const filter = yield select(getFilterFriend)
+
         // get range for each group
         const rangeFriendLists = yield select(getRangeOfGroup)
-        const resFetchFriendLists = yield call(fetchFriendLists, group, groupFriends.length + rangeFriendLists[group], groupFriends.length)
+        const resFetchFriendLists = yield call(fetchFriendLists, group, groupFriends.length + rangeFriendLists[group], groupFriends.length, filter)
 
         // add new list in old list
         friendsData[group] = friendsData[group].concat( _.get(resFetchFriendLists, 'data.data', []))
@@ -250,6 +274,7 @@ export default function* rootSaga() {
         addFavoriteSaga(),
         removeFavoriteSaga(),
         updateFriendListsSaga(),
-        loadmoreSaga()
+        loadmoreSaga(),
+        onSearchFriendSata()
     ])
 }

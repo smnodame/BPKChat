@@ -13,3 +13,7 @@ export const getNumberOfGroup = state => {
 export const getRangeOfGroup = state => {
     return state.friend.rangeFriendLists
 }
+
+export const getFilterFriend = state => {
+    return state.friend.filter
+}

@@ -54,7 +54,8 @@ const friend = (state = {
         group: 20,
         department: 20,
         other: 20
-    }
+    },
+    filter: ''
 }, action) => {
     switch (action.type) {
         case 'FRIEND_GROUPS':
@@ -68,6 +69,10 @@ const friend = (state = {
         case 'NUMBER_OF_FRIEND_LISTS':
             return Object.assign(state, {
                 numberOfFriendLists: action.payload.numberOfFriendLists
+            })
+        case 'ON_SEARCH_FRIEND':
+            return Object.assign(state, {
+                filter: action.payload.filter
             })
         default:
             return state

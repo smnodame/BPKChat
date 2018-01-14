@@ -19,7 +19,7 @@ import {Avatar} from '../../components/avatar'
 import {FontAwesome} from '../../assets/icons'
 import { NavigationActions } from 'react-navigation'
 
-import { enterContacts, removeFavorite, addFavorite, showOrHideFriendLists, onLoadMore } from '../../redux/actions.js'
+import { enterContacts, removeFavorite, addFavorite, showOrHideFriendLists, onLoadMore, onSearchFriend } from '../../redux/actions.js'
 import {store} from '../../redux'
 
 export default class Contacts extends React.Component {
@@ -506,12 +506,18 @@ export default class Contacts extends React.Component {
                 this.renderGroupModal()
             }
             <View style={styles.searchContainer}>
-              <RkTextInput autoCapitalize='none'
-                           autoCorrect={false}
-                           onChange={(event) => this._filter(event.nativeEvent.text)}
-                           label={<RkText rkType='awesome'>{FontAwesome.search}</RkText>}
-                           rkType='row'
-                           placeholder='Search'/>
+              <RkTextInput
+                    onSubmitEditing={() =>
+                        store.dispatch(onSearchFriend(this.state.filter))
+                    }
+                    onChangeText={(filter) => this.setState({
+                        filter: filter
+                    })}
+                    autoCapitalize='none'
+                    autoCorrect={false}
+                    label={<RkText rkType='awesome'>{FontAwesome.search}</RkText>}
+                    rkType='row'
+                    placeholder='Search'/>
             </View>
             <View
                 style={{

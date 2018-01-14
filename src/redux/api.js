@@ -8,16 +8,16 @@ export const fetchChatLists = () => {
     return axios.get('http://itsmartone.com/bpk_connect/api/chat/chat_list?token=asdf1234aaa&user_id=3963&start=0&limit=20')
 }
 
-export const fetchFriendListCount = (group) => {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list_count?token=asdf1234aaa&user_id=3963&friend_type=${group}&filter=`)
+export const fetchFriendListCount = (group, filter) => {
+    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list_count?token=asdf1234aaa&user_id=3963&friend_type=${group}&filter=${filter}`)
 }
 
 export const fetchFriendGroups = () => {
     return axios.get('http://itsmartone.com/bpk_connect/api/friend/friend_type_list')
 }
 
-export const fetchFriendLists = (group, range, start = 0) => {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=${start}&limit=${range}&filter=&friend_type=${group}`)
+export const fetchFriendLists = (group, range, start = 0, filter = '') => {
+    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=${start}&limit=${range}&filter=${filter}&friend_type=${group}`)
 }
 
 export const fetchFriendProfile = (userID) => {

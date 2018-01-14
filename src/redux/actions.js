@@ -146,3 +146,10 @@ export const selectedGroup = (friend) => ({
         friend
     }
 })
+
+export const onSearchFriend = (filter) => ({
+    type: 'ON_SEARCH_FRIEND',
+    payload: {
+        filter
+    }
+})
