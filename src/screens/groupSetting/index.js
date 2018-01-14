@@ -22,6 +22,7 @@ import ImagePicker from 'react-native-image-picker'
 import {store} from '../../redux'
 import axios from 'axios'
 import RNFetchBlob from 'react-native-fetch-blob'
+import { updatePicture, updateGroupSetting } from '../../redux/api'
 
 const fs = RNFetchBlob.fs
 
@@ -135,21 +136,18 @@ export default class GroupSetting extends React.Component {
           if(this.state.wall_pic_base64) {
               data.wall_pic_base64 = this.state.wall_pic_base64
           }
-          const resUpdatePicture = await axios.post("http://itsmartone.com/bpk_connect/api/group/update_picture?token=asdf1234aaa", data)
+          const resUpdatePicture = await updatePicture(data)
       }
 
-
-      await axios.post("http://itsmartone.com/bpk_connect/api/group/update_setting?token=asdf1234aaa", {
+      const groupData = {
           chat_room_id: this.state.chat_room_id,
           display_name: this.state.display_name,
           patient_name: this.state.patient_name,
           hn: this.state.hn,
           description: this.state.description
-      }).then((res) => {
-          console.log(res)
-      }, (err) => {
-          console.log(err)
-      })
+      }
+
+      await updateGroupSetting(groupData)
 
       const saveGroupSetting = _.get(this.props.navigation.state.params, 'saveGroupSetting')
       saveGroupSetting(Object.assign(

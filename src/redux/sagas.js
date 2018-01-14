@@ -26,8 +26,14 @@ import {
 function* addFavoriteSaga() {
     while (true) {
         const { payload: { user_id, friend_user_id, friend_data }} = yield take('ADD_FAVORITE')
+
+        // get all friend
         const friendsData = yield select(getFriends)
+
+        // add friend to favorite group
         friendsData.favorite.push(friend_data)
+
+        // update in store
         yield put(friends(friendsData))
         yield call(addFavoriteApi, user_id, friend_user_id)
     }
@@ -36,12 +42,20 @@ function* addFavoriteSaga() {
 function* removeFavoriteSaga() {
     while (true) {
         const { payload: { user_id, friend_user_id }} = yield take('REMOVE_FAVORITE')
+
+        // get all friend
         const friendsData = yield select(getFriends)
+
+        // get favorite friend
         const favorite = _.get(friendsData, 'favorite', [])
+
+        // filter for removing friend in favorite
         const newFavorite = favorite.filter((friend) => {
             return friend.friend_user_id != friend_user_id
         })
         friendsData.favorite = newFavorite
+
+        // update in store
         yield put(friends(friendsData))
         yield call(removeFavoriteApi, user_id, friend_user_id)
     }
@@ -68,6 +82,7 @@ function* refreshNumberOfFriendLists() {
 
     }
 }
+
 function* updateFriendListsSaga() {
     while (true) {
         yield take('UPDATE_FRIEND_LISTS')
@@ -180,11 +195,12 @@ const fetchNumberOfGroup = () => {
 function* enterContacts() {
     while (true) {
         yield take('ENTER_CONTACTS')
+
         // fetch groups
         const resFetchFriendGroups = yield call(fetchFriendGroups)
         const friendGroupsData = _.get(resFetchFriendGroups, 'data.data')
         yield put(friendGroups(friendGroupsData))
-        //
+
         // fetch initial friend lists
         const rangeFriendLists = yield select(getRangeOfGroup)
         const friendsData = yield call(combinedFriends, friendGroupsData, rangeFriendLists)
@@ -208,13 +224,18 @@ function* loadmoreSaga() {
     while (true) {
         const { payload: { group } } = yield take('ON_LOAD_MORE')
 
+        //get all friends
         const friendsData = yield select(getFriends)
         const groupFriends = _.get(friendsData, group, [])
 
+        // get range for each group
         const rangeFriendLists = yield select(getRangeOfGroup)
         const resFetchFriendLists = yield call(fetchFriendLists, group, groupFriends.length + rangeFriendLists[group], groupFriends.length)
-        console.log(resFetchFriendLists)
+
+        // add new list in old list
         friendsData[group] = friendsData[group].concat( _.get(resFetchFriendLists, 'data.data', []))
+
+        // updatet
         yield put(friends(friendsData))
     }
 }

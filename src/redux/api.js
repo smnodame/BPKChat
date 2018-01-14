@@ -63,3 +63,15 @@ export const createNewAccount = (id, password, display_name, mobile_no, language
         user_language_id: language
     })
 }
+
+export const updatePicture = (data) => {
+    return  axios.post("http://itsmartone.com/bpk_connect/api/group/update_picture?token=asdf1234aaa", data)
+}
+
+export const updateGroupSetting = (data) => {
+    return axios.post("http://itsmartone.com/bpk_connect/api/group/update_setting?token=asdf1234aaa", data).then((res) => {
+        console.log(res)
+    }, (err) => {
+        console.log(err)
+    })
+}
