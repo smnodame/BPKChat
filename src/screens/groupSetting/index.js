@@ -63,6 +63,8 @@ export default class GroupSetting extends React.Component {
             skipBackup: true,
             path: 'images'
         },
+        maxWidth: 300,
+        maxHeight: 300,
         mediaType: 'photo',
         noData: false
       }, (response) => {
@@ -89,6 +91,8 @@ export default class GroupSetting extends React.Component {
   selectWallImage = () => {
       ImagePicker.showImagePicker({
           title: 'Select Wall Image',
+          maxWidth: 500,
+          maxHeight: 500,
           storageOptions: {
             skipBackup: true,
             path: 'images'
@@ -131,7 +135,9 @@ export default class GroupSetting extends React.Component {
           if(this.state.wall_pic_base64) {
               data.wall_pic_base64 = this.state.wall_pic_base64
           }
-          const resUpdatePicture = await axios.post("http://itsmartone.com/bpk_connect/api/group/update_setting?token=asdf1234aaa", data)
+          console.log(data)
+          const resUpdatePicture = await axios.post("http://itsmartone.com/bpk_connect/api/group/update_picture?token=asdf1234aaa", data)
+          console.log(resUpdatePicture)
       }
 
 
