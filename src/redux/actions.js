@@ -132,3 +132,17 @@ export const onLoadMore = (group) => ({
         group: group
     }
 })
+
+export const isLoading = () => ({
+    type: 'IS_LOADING',
+    payload: {
+
+    }
+})
+
+export const selectedGroup = (friend) => ({
+    type: 'SELECTED_GROUP',
+    payload: {
+        friend
+    }
+})

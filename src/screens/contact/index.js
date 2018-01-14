@@ -12,6 +12,7 @@ import {
   RkText,
   RkTextInput
 } from 'react-native-ui-kitten'
+import axios from 'axios'
 import Modal from 'react-native-modal'
 import { Thumbnail, Icon, Text, Button } from 'native-base'
 import {data} from '../../data'
@@ -29,11 +30,6 @@ export default class Contacts extends React.Component {
 
     constructor(props) {
         super(props)
-
-        // this.users = data.getUsers();
-        //
-        // let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
-        // data: ds.cloneWithRows(this.users),
 
         this.state = {
             showProfileModal: false,
@@ -143,6 +139,14 @@ export default class Contacts extends React.Component {
         )
     }
 
+    showGroupModal = async () => {
+        const res = await axios.get('http://itsmartone.com/bpk_connect/api/user/data/{this.state.selectedFriend.friend_user_id}')
+        this.setState({ showGroupModal: false })
+        this.props.screenProps.rootNavigation.navigate('GroupSetting', {
+            selectedFriend: this.state.selectedFriend
+        })
+    }
+
     renderGroups = () => {
         return this.state.friends.group.filter((friend) => {
             return true
@@ -233,9 +237,8 @@ export default class Contacts extends React.Component {
         return !!obj
     }
 
-  render() {
-    return (
-        <View>
+    renderFavoriteModal = () => {
+        return (
             <Modal
                 onRequestClose={() => this.setState({ showProfileModal: false })}
                 onBackdropPress={() => this.setState({ showProfileModal: false })}
@@ -304,6 +307,11 @@ export default class Contacts extends React.Component {
                     </View>
                 </View>
             </Modal>
+        )
+    }
+
+    renderFriendModal = () => {
+        return (
             <Modal
                 onRequestClose={() => this.setState({ showFriendModal: false })}
                 onBackdropPress={() => this.setState({ showFriendModal: false })}
@@ -400,6 +408,11 @@ export default class Contacts extends React.Component {
                     </View>
                 </View>
             </Modal>
+        )
+    }
+
+    renderGroupModal = () => {
+        return (
             <Modal
                 onRequestClose={() => this.setState({ showGroupModal: false })}
                 onBackdropPress={() => this.setState({ showGroupModal: false })}
@@ -464,10 +477,7 @@ export default class Contacts extends React.Component {
                             transparent
                             style={{ flexDirection: 'column', marginLeft: 10 }}
                             onPress={() => {
-                                this.setState({ showGroupModal: false })
-                                this.props.screenProps.rootNavigation.navigate('GroupSetting', {
-                                    selectedFriend: this.state.selectedFriend
-                                })
+                                this.showGroupModal()
                             }}
                         >
                             <Icon name='md-settings' style={{ color: 'gray' }} />
@@ -476,6 +486,20 @@ export default class Contacts extends React.Component {
                     </View>
                 </View>
             </Modal>
+        )
+    }
+  render() {
+    return (
+        <View>
+            {
+                this.renderFavoriteModal()
+            }
+            {
+                this.renderFriendModal()
+            }
+            {
+                this.renderGroupModal()
+            }
             <View style={styles.searchContainer}>
               <RkTextInput autoCapitalize='none'
                            autoCorrect={false}
