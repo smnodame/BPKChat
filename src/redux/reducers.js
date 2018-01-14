@@ -43,6 +43,10 @@ const system = (state = {
             return Object.assign(state, {
                 isShowFriendLists: action.payload.isShowFriendLists
             })
+        case 'NAVIGATE':
+            return Object.assign(state, {
+                navigate: action.payload.navigate
+            })
         default:
             return state
     }

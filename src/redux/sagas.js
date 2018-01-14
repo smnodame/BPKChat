@@ -21,7 +21,8 @@ import {
     getFriends,
     getNumberOfGroup,
     getRangeOfGroup,
-    getFilterFriend
+    getFilterFriend,
+    navigateSelector
 } from './selectors'
 
 function* onSearchFriendSata() {
@@ -137,7 +138,15 @@ function* signin() {
             const { data: { token, setting, user } } = res_loginApi
             yield put(authenticated(token, setting))
 
-            yield put(NavigationActions.navigate({ routeName: 'App' }))
+            const navigate = yield select(navigateSelector)
+
+            const resetAction = NavigationActions.reset({
+				index: 0,
+				actions: [
+					NavigationActions.navigate({ routeName: 'App'})
+				]
+			})
+			navigate.dispatch(resetAction)
             continue
         }
         yield put(signin_error('กรุณาระบุ Username เเละ Password'))
@@ -176,10 +185,6 @@ function* signup() {
 }
 
 const combinedFriends = (groups, rangeFriendLists, filter) => {
-    console.log('===============')
-    console.log(groups)
-    console.log(rangeFriendLists)
-    console.log(filter)
     let promises = []
     _.forEach(groups, (group) => {
         const promise = fetchFriendLists(group, rangeFriendLists[group], 0, filter)
@@ -264,6 +269,22 @@ function* loadmoreSaga() {
     }
 }
 
+function* logout() {
+    while (true) {
+        yield take('LOGOUT')
+
+        const navigate = yield select(navigateSelector)
+
+        const resetAction = NavigationActions.reset({
+            index: 0,
+            actions: [
+                NavigationActions.navigate({ routeName: 'Login'})
+            ]
+        })
+        navigate.dispatch(resetAction)
+    }
+}
+
 export default function* rootSaga() {
     yield all([
         signin(),
@@ -275,6 +296,7 @@ export default function* rootSaga() {
         removeFavoriteSaga(),
         updateFriendListsSaga(),
         loadmoreSaga(),
-        onSearchFriendSata()
+        onSearchFriendSata(),
+        logout()
     ])
 }

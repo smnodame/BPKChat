@@ -52,7 +52,8 @@ export default class Contacts extends React.Component {
                 other: 0,
                 group: 0,
                 department: 0
-            }
+            },
+            filter: ''
         }
 
         this.renderHeader = this._renderHeader.bind(this)

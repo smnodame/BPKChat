@@ -35,7 +35,7 @@ import {
 } from 'react-native-ui-kitten'
 import { NavigationActions } from 'react-navigation'
 
-import { signin, start_app  } from '../../redux/actions.js'
+import { signin, start_app, navigate  } from '../../redux/actions.js'
 import {store} from '../../redux'
 
 export default class Login extends React.Component {
@@ -50,6 +50,7 @@ export default class Login extends React.Component {
         }
 		this.openControlPanel = this.openControlPanel.bind(this)
 		this.onLogin = this.onLogin.bind(this)
+		store.dispatch(navigate(this.props.navigation))
     }
 
 	async componentDidMount() {

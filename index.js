@@ -26,7 +26,7 @@ const BPKChat = StackNavigator({
     GroupSetting: { screen: GroupSetting }
 },
 {
-    initialRouteName: "App",
+    initialRouteName: "Login",
     headerMode: "none",
 })
 

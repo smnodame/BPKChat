@@ -17,3 +17,7 @@ export const getRangeOfGroup = state => {
 export const getFilterFriend = state => {
     return state.friend.filter
 }
+
+export const navigateSelector = state => {
+    return state.system.navigate
+}

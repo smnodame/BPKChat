@@ -153,3 +153,14 @@ export const onSearchFriend = (filter) => ({
         filter
     }
 })
+
+export const navigate = (navigate) => ({
+    type: 'NAVIGATE',
+    payload: {
+        navigate
+    }
+})
+
+export const logout = () => ({
+    type: 'LOGOUT'
+})

@@ -29,9 +29,10 @@ import {
   View,
   TouchableOpacity,
   Dimensions,
-  Image
-} from 'react-native';
-import {signIn} from './src/redux/actions.js'
+  Image,
+  Keyboard
+} from 'react-native'
+import { signIn, logout } from './src/redux/actions.js'
 import Drawer from 'react-native-drawer'
 
 import ProfileSettings from './src/screens/profile'
@@ -57,7 +58,8 @@ export default class App extends Component<{}> {
     constructor(props) {
         super(props)
         this.state = {
-          selectedTab: 'Friends'
+          selectedTab: 'Friends',
+          showFooter: true
         }
         this.onTabClick = this.onTabClick.bind(this)
         this.renderContent = this.renderContent.bind(this)
@@ -69,8 +71,22 @@ export default class App extends Component<{}> {
     }
 
     async componentWillMount() {
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this))
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this))
         store.dispatch(enterContacts())
+    }
 
+    componentWillUnmount () {
+        this.keyboardDidShowListener.remove()
+        this.keyboardDidHideListener.remove()
+    }
+
+    _keyboardDidShow () {
+        this.setState({showFooter: false})
+    }
+
+    _keyboardDidHide () {
+        this.setState({showFooter: true})
     }
 
     openControlPanel = () => {
@@ -123,7 +139,7 @@ export default class App extends Component<{}> {
     							<ListItem itemHeader first style={{ paddingBottom: 3 }}>
     								<Text>ACCOUNT</Text>
     							</ListItem>
-    							<ListItem button noBorder onPress={() => this._drawer.close()}>
+    							<ListItem button noBorder onPress={() => store.dispatch(logout())}>
     								<Left>
     									<Icon active name='log-out' style={{ color: "#777", fontSize: 26, width: 30 }} />
     									<Text style={styles.text}>
@@ -154,23 +170,25 @@ export default class App extends Component<{}> {
                   this.renderContent()
               }
               </Content>
-              <Footer style={{ backgroundColor: '#3b5998' }}>
-                <FooterTab style={{ backgroundColor: '#3b5998' }}>
-                  <Button vertical onPress={() => this.onTabClick('Friends')}>
-                    <Icon name="md-contacts" />
-                    <Text>Contacts</Text>
-                  </Button>
-                  <Button badge vertical onPress={() => this.onTabClick('Chats')}>
-                    <Badge ><Text>51</Text></Badge>
-                    <Icon name="md-chatboxes" />
-                    <Text>Chat Lists</Text>
-                  </Button>
-                  <Button vertical onPress={() => this.onTabClick('Profile')}>
-                    <Icon active name="md-settings" />
-                    <Text>SETTINGS</Text>
-                  </Button>
-                </FooterTab>
-              </Footer>
+              {
+                  this.state.showFooter && <Footer style={{ backgroundColor: '#3b5998' }}>
+                    <FooterTab style={{ backgroundColor: '#3b5998' }}>
+                      <Button vertical onPress={() => this.onTabClick('Friends')}>
+                        <Icon name="md-contacts" />
+                        <Text>Contacts</Text>
+                      </Button>
+                      <Button badge vertical onPress={() => this.onTabClick('Chats')}>
+                        <Badge ><Text>51</Text></Badge>
+                        <Icon name="md-chatboxes" />
+                        <Text>Chat Lists</Text>
+                      </Button>
+                      <Button vertical onPress={() => this.onTabClick('Profile')}>
+                        <Icon active name="md-settings" />
+                        <Text>SETTINGS</Text>
+                      </Button>
+                    </FooterTab>
+                  </Footer>
+              }
             </Container>
         </Drawer>
         );
