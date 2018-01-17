@@ -171,7 +171,7 @@ export default class GroupSetting extends React.Component {
         <Header style={{ backgroundColor: '#3b5998' }}>
             <Left>
                 <Button transparent onPress={() => this.props.navigation.dispatch(NavigationActions.back())}>
-                    <Icon name="md-arrow-round-back" />
+                    <Icon style={{ color: 'white' }} name="md-arrow-round-back" />
                 </Button>
             </Left>
             <Body>
@@ -179,7 +179,7 @@ export default class GroupSetting extends React.Component {
             </Body>
             <Right>
                 <Button transparent onPress={() => this._updateGroupSetting() }>
-                    <Icon name="md-checkmark" />
+                    <Icon style={{ color: 'white' }} name="md-checkmark" />
                 </Button>
             </Right>
         </Header>

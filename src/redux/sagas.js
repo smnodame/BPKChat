@@ -138,6 +138,8 @@ function* signin() {
             const { data: { token, setting, user } } = res_loginApi
             yield put(authenticated(token, setting))
 
+            yield put(signin_error(''))
+
             const navigate = yield select(navigateSelector)
 
             const resetAction = NavigationActions.reset({

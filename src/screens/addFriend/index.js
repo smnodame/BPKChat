@@ -70,7 +70,7 @@ export default class AddFriend extends React.Component {
             <Header searchBar rounded>
                 <Left>
                 <Button transparent onPress={() => this.props.navigation.dispatch(NavigationActions.back())}>
-                    <Icon name="md-arrow-round-back" />
+                    <Icon style={{ color: 'white' }} name="md-arrow-round-back" />
                 </Button>
                 </Left>
                 <Body>
@@ -79,12 +79,12 @@ export default class AddFriend extends React.Component {
             </Header>
             <Header searchBar rounded>
                 <Item>
-                    <Icon name="ios-search" />
+                    <Icon style={{ color: 'white' }} name="ios-search" />
                     <Input
                         onSubmitEditing={() => this._submit()}
                         onChangeText={(user) => this.setState({user})}
                         placeholder="Search" />
-                    <Icon name="ios-people" />
+                    <Icon style={{ color: 'white' }} name="ios-people" />
                 </Item>
                 <Button transparent>
                     <Text>Search</Text>

@@ -187,7 +187,7 @@ export default class Chat extends React.Component {
             <Header style={{ backgroundColor: '#3b5998' }}>
                 <Left>
                     <Button transparent onPress={() => this.props.navigation.dispatch(NavigationActions.back())}>
-                        <Icon name="md-arrow-round-back" />
+                        <Icon style={{ color: 'white' }} name="md-arrow-round-back" />
                     </Button>
                 </Left>
                 <Body>
@@ -195,10 +195,10 @@ export default class Chat extends React.Component {
                 </Body>
                 <Right>
                     <Button transparent>
-                        <Icon name="md-call" />
+                        <Icon style={{ color: 'white' }} name="md-call" />
                     </Button>
                     <Button transparent onPress={() => this.setState({ isShowAdditionalHeader: !this.state.isShowAdditionalHeader })}>
-                        <Icon name="md-settings" />
+                        <Icon style={{ color: 'white' }} name="md-settings" />
                     </Button>
                 </Right>
             </Header>

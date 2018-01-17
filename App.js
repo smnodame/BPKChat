@@ -156,7 +156,7 @@ export default class App extends Component<{}> {
               <Header style={{ backgroundColor: '#3b5998' }}>
                   <Left>
                       <Button transparent onPress={() => this.openControlPanel()}>
-                          <Icon name="md-menu" />
+                          <Icon style={{ color: 'white' }} name="md-menu" />
                       </Button>
                   </Left>
                   <Body>
@@ -174,17 +174,17 @@ export default class App extends Component<{}> {
                   this.state.showFooter && <Footer style={{ backgroundColor: '#3b5998' }}>
                     <FooterTab style={{ backgroundColor: '#3b5998' }}>
                       <Button vertical onPress={() => this.onTabClick('Friends')}>
-                        <Icon name="md-contacts" />
-                        <Text>Contacts</Text>
+                        <Icon style={{ color: 'white' }} name="md-contacts" />
+                        <Text style={{ color: 'white' }}>Contacts</Text>
                       </Button>
                       <Button badge vertical onPress={() => this.onTabClick('Chats')}>
                         <Badge ><Text>51</Text></Badge>
-                        <Icon name="md-chatboxes" />
-                        <Text>Chat Lists</Text>
+                        <Icon style={{ color: 'white' }} name="md-chatboxes" />
+                        <Text style={{ color: 'white' }}>Chat Lists</Text>
                       </Button>
                       <Button vertical onPress={() => this.onTabClick('Profile')}>
-                        <Icon active name="md-settings" />
-                        <Text>SETTINGS</Text>
+                        <Icon style={{ color: 'white' }} active name="md-settings" />
+                        <Text style={{ color: 'white' }}>SETTINGS</Text>
                       </Button>
                     </FooterTab>
                   </Footer>
