@@ -74,7 +74,8 @@ export default class Chat extends React.Component {
         const state = store.getState()
         this.setState({
             chat: _.get(state, 'chat.chat', []),
-            chatInfo: _.get(state, 'chat.chatInfo')
+            chatInfo: _.get(state, 'chat.chatInfo'),
+            user: _.get(state, 'user.user')
         })
     }
 
@@ -91,12 +92,8 @@ export default class Chat extends React.Component {
         });
     }
 
-    _keyExtractor(post, index) {
-        return post.id;
-    }
-
     _renderItem(info) {
-        let inMessage = info.item.type === 'in';
+        let inMessage = info.item.username === this.state.user.username;
         let backgroundColor = inMessage
             ? RkTheme.current.colors.chat.messageInBackground
                 : RkTheme.current.colors.chat.messageOutBackground;
@@ -105,35 +102,38 @@ export default class Chat extends React.Component {
         let renderDate = (date) => (
         <View>
             <RkText style={styles.time} rkType='secondary7 hintColor'>
-                {moment().add(date, 'seconds').format('LT')}
+                {moment(date).fromNow()}
             </RkText>
         </View>
     );
-
+    console.log('=========================')
+    console.log(info.item.message_type)
+    console.log(info.item.object_url)
+    console.log(info.item.content)
     return (
       <View style={[styles.item, itemStyle]}>
-        {!inMessage && renderDate(info.item.date)}
+        {!inMessage && renderDate(info.item.create_date)}
         {
-            info.item.format=='text' && <View style={[styles.balloon, {backgroundColor}]}>
+            info.item.message_type=='1' && <View style={[styles.balloon, {backgroundColor}]}>
                 <TouchableWithoutFeedback onLongPress={() => this.setState({showPickerModal: true})}>
-                    <RkText rkType='primary2 mediumLine chat'>{info.item.text}</RkText>
+                    <RkText rkType='primary2 mediumLine chat'>{info.item.content}</RkText>
                 </TouchableWithoutFeedback>
             </View>
         }
         {
-            info.item.format=='image' && <Image
+            info.item.message_type=='2' && <Image
                 style={{ height: 120, width: 120 }}
-                source={{uri: info.item.url }}
+                source={{uri: info.item.object_url }}
             />
         }
         {
-            info.item.format=='sticker' && <Image
+            info.item.message_type=='4' && <Image
                 style={{ height: 100, width: 100 }}
-                source={{uri: info.item.url }}
+                source={{uri: info.item.object_url }}
             />
         }
 
-        {inMessage && renderDate(info.item.date)}
+        {inMessage && renderDate(info.item.create_date)}
       </View>
     )
   }
@@ -199,8 +199,6 @@ export default class Chat extends React.Component {
                     <View style={{
                         height: 400,
                         backgroundColor: 'white',
-                        // justifyContent: 'center',
-                        // alignItems: 'center',
                         borderRadius: 4,
                         borderColor: 'rgba(0, 0, 0, 0.1)',
                     }}>
@@ -241,8 +239,6 @@ export default class Chat extends React.Component {
                     <View style={{
                         height: 400,
                         backgroundColor: 'white',
-                        // justifyContent: 'center',
-                        // alignItems: 'center',
                         borderRadius: 4,
                         borderColor: 'rgba(0, 0, 0, 0.1)',
                     }}>
@@ -283,8 +279,6 @@ export default class Chat extends React.Component {
                     <View style={{
                         height: 400,
                         backgroundColor: 'white',
-                        // justifyContent: 'center',
-                        // alignItems: 'center',
                         borderRadius: 4,
                         borderColor: 'rgba(0, 0, 0, 0.1)',
                     }}>
@@ -352,8 +346,6 @@ export default class Chat extends React.Component {
                 <View style={{
                     height: 400,
                     backgroundColor: 'white',
-                    // justifyContent: 'center',
-                    // alignItems: 'center',
                     borderRadius: 4,
                     borderColor: 'rgba(0, 0, 0, 0.1)',
                 }}>
@@ -468,8 +460,7 @@ export default class Chat extends React.Component {
               <FlatList ref='list'
                         extraData={this.state}
                         style={styles.list}
-                        data={this.state.data.messages}
-                        keyExtractor={this._keyExtractor}
+                        data={this.state.chat}
                         renderItem={this._renderItem.bind(this)}/>
               <View style={styles.footer}>
                 {
