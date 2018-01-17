@@ -19,6 +19,8 @@ import {FontAwesome} from '../../assets/icons';
 import {data} from '../../data';
 let moment = require('moment');
 import Modal from 'react-native-modal';
+
+import { selectChat  } from '../../redux/actions.js'
 import {store} from '../../redux'
 
 export default class ChatList extends React.Component {
@@ -35,20 +37,11 @@ export default class ChatList extends React.Component {
         }
     }
 
-    // componentDidMount() {
-    // // this.chats = data.getChatList();
-    // // this.setState({
-    // //   data: this.chats
-    // // });
-    // }
-
     updateData = () => {
         const state = store.getState()
         this.setState({
             chatLists: _.get(state, 'chat.chatLists', [])
         })
-        console.log('===================')
-        console.log(_.get(state, 'chat.chatLists', []))
     }
 
 	async componentWillMount() {
@@ -69,10 +62,6 @@ export default class ChatList extends React.Component {
 
         this.setState({data: chats});
     }
-
-    // _keyExtractor(item, index) {
-    //     return item.withUser.id;
-    // }
 
     _renderSeparator() {
         return (
@@ -95,9 +84,8 @@ export default class ChatList extends React.Component {
 
     _renderItem(data) {
         const info = data.item
-        console.log(info)
         return (
-            <TouchableWithoutFeedback onPress={() =>  this.props.screenProps.rootNavigation.navigate('Chat')} onLongPress={() => this.setState({showPickerModal: true})}>
+            <TouchableWithoutFeedback onPress={() =>  store.dispatch(selectChat(info.chat_room_id))} onLongPress={() => this.setState({showPickerModal: true})}>
                 <View style={styles.container}>
                     <Thumbnail source={{ uri: info.profile_pic_url }} />
                     <View style={styles.content}>

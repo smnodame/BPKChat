@@ -164,3 +164,24 @@ export const navigate = (navigate) => ({
 export const logout = () => ({
     type: 'LOGOUT'
 })
+
+export const selectChat = (chatRoomId) => ({
+    type: 'SELECT_CHAT',
+    payload: {
+        chatRoomId
+    }
+})
+
+export const chat = (chat) => ({
+    type: 'CHAT',
+    payload: {
+        chat
+    }
+})
+
+export const selectedChatRoomId = (chatRoomId) => ({
+    type: 'SELECTED_CHAT_ROOM_ID',
+    payload: {
+        chatRoomId
+    }
+})

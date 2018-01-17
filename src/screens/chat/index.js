@@ -53,74 +53,61 @@ let getUserId = (navigation) => {
   return navigation.state.params ? navigation.state.params.userId : undefined;
 };
 
-// <Avatar style={styles.avatar} rkType='small' img={user.photo}/>
 export default class Chat extends React.Component {
 
-  // static navigationOptions = ({navigation}) => {
-  //   let renderAvatar = (user) => {
-  //     return (
-  //       <View/>
-  //     );
-  //   };
-  //
-  //   let renderTitle = (user) => {
-  //     return (
-  //       <TouchableOpacity onPress={() => navigation.navigate('ProfileV1', {id: user.id})}>
-  //         <View style={styles.header}>
-  //           <RkText rkType='header5'>{`${user.firstName} ${user.lastName}`}</RkText>
-  //           <RkText rkType='secondary3 secondaryColor'>Online</RkText>
-  //         </View>
-  //       </TouchableOpacity>
-  //     )
-  //   };
-  //
-  //
-  //   let user = data.getUser(getUserId(navigation));
-  //   let rightButton = renderAvatar(user);
-  //   let title = renderTitle(user);
-  //   return (
-  //     {
-  //       headerTitle: title,
-  //       headerRight: rightButton
-  //     });
-  // };
+    constructor(props) {
+        super(props);
 
-  constructor(props) {
-    super(props);
-    // let conversation = data.getConversation(getUserId(this.props.navigation));
-    let conversation = data.getConversation();
+        // let conversation = data.getConversation(getUserId(this.props.navigation));
+        let conversation = data.getConversation();
 
-    this.state = {
-      data: conversation,
-      isShowAdditionalHeader: false
-    };
-    this._renderItem = this._renderItem.bind(this)
-  }
+        this.state = {
+            data: conversation,
+            isShowAdditionalHeader: false
+        };
+        this._renderItem = this._renderItem.bind(this)
+    }
 
-  componentDidMount() {
-    InteractionManager.runAfterInteractions(() => {
-      this.refs.list.scrollToEnd();
-    });
-  }
+    updateData = () => {
+        const state = store.getState()
+        console.log('===================')
+        console.log(state)
+        this.setState({
+            chat: _.get(state, 'chat.chat', [])
+        })
+    }
 
-  _keyExtractor(post, index) {
-    return post.id;
-  }
+	async componentWillMount() {
+        this.updateData()
+		store.subscribe(() => {
+            this.updateData()
+		})
+    }
 
-  _renderItem(info) {
-    let inMessage = info.item.type === 'in';
-    let backgroundColor = inMessage
-      ? RkTheme.current.colors.chat.messageInBackground
-      : RkTheme.current.colors.chat.messageOutBackground;
-    let itemStyle = inMessage ? styles.itemIn : styles.itemOut;
+    componentDidMount() {
+        InteractionManager.runAfterInteractions(() => {
+            this.refs.list.scrollToEnd();
+        });
+    }
 
-    let renderDate = (date) => (
+    _keyExtractor(post, index) {
+        return post.id;
+    }
+
+    _renderItem(info) {
+        let inMessage = info.item.type === 'in';
+        let backgroundColor = inMessage
+            ? RkTheme.current.colors.chat.messageInBackground
+                : RkTheme.current.colors.chat.messageOutBackground;
+        let itemStyle = inMessage ? styles.itemIn : styles.itemOut;
+
+        let renderDate = (date) => (
         <View>
-        <RkText style={styles.time} rkType='secondary7 hintColor'>
-          {moment().add(date, 'seconds').format('LT')}
-        </RkText>
+            <RkText style={styles.time} rkType='secondary7 hintColor'>
+                {moment().add(date, 'seconds').format('LT')}
+            </RkText>
         </View>
-      );
+    );
 
     return (
       <View style={[styles.item, itemStyle]}>

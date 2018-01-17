@@ -1,6 +1,20 @@
 import _ from "lodash"
 import { all, call, put, takeEvery, takeLatest, take, select } from 'redux-saga/effects'
-import { numberOfFriendLists, signin_error, languages, authenticated, friendGroups, updateFriendLists, friends, myprofile, signupEror, searchNewFriend, chatLists } from './actions'
+import {
+    numberOfFriendLists,
+    signin_error,
+    languages,
+    authenticated,
+    friendGroups,
+    updateFriendLists,
+    friends,
+    myprofile,
+    signupEror,
+    searchNewFriend,
+    chatLists,
+    selectedChatRoomId,
+    chat
+} from './actions'
 import { NavigationActions } from 'react-navigation'
 import {
     fetchMyProfile,
@@ -14,7 +28,8 @@ import {
     updateProfileImage,
     addFavoriteApi,
     removeFavoriteApi,
-    createNewAccount
+    createNewAccount,
+    fetchChat
 } from './api'
 import {
     getFriendGroups,
@@ -287,6 +302,24 @@ function* logout() {
     }
 }
 
+function* selectChatSaga() {
+    while (true) {
+        const { payload: { chatRoomId }} = yield take('SELECT_CHAT')
+
+        // fetch chat list from userID
+        const resFetchChat = yield call(fetchChat, chatRoomId)
+        const chatData = _.get(resFetchChat, 'data.data', [])
+
+        // store data in store redux
+        yield put(selectedChatRoomId(chatRoomId))
+        yield put(chat(chatData))
+
+        // navigate to chat page
+        const navigate = yield select(navigateSelector)
+        navigate.dispatch({routeName: 'Chat'})
+    }
+}
+
 export default function* rootSaga() {
     yield all([
         signin(),
@@ -299,6 +332,7 @@ export default function* rootSaga() {
         updateFriendListsSaga(),
         loadmoreSaga(),
         onSearchFriendSata(),
-        logout()
+        logout(),
+        selectChatSaga()
     ])
 }
