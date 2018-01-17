@@ -12,7 +12,7 @@ import {
     signupEror,
     searchNewFriend,
     chatLists,
-    selectedChatRoomId,
+    selectedChatInfo,
     chat
 } from './actions'
 import { NavigationActions } from 'react-navigation'
@@ -304,19 +304,19 @@ function* logout() {
 
 function* selectChatSaga() {
     while (true) {
-        const { payload: { chatRoomId }} = yield take('SELECT_CHAT')
+        const { payload: { chatInfo }} = yield take('SELECT_CHAT')
 
         // fetch chat list from userID
-        const resFetchChat = yield call(fetchChat, chatRoomId)
+        const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id)
         const chatData = _.get(resFetchChat, 'data.data', [])
 
         // store data in store redux
-        yield put(selectedChatRoomId(chatRoomId))
+        yield put(selectedChatInfo(chatInfo))
         yield put(chat(chatData))
 
         // navigate to chat page
         const navigate = yield select(navigateSelector)
-        navigate.dispatch({routeName: 'Chat'})
+        navigate.navigate('Chat')
     }
 }
 

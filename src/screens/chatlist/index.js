@@ -85,7 +85,7 @@ export default class ChatList extends React.Component {
     _renderItem(data) {
         const info = data.item
         return (
-            <TouchableWithoutFeedback onPress={() =>  store.dispatch(selectChat(info.chat_room_id))} onLongPress={() => this.setState({showPickerModal: true})}>
+            <TouchableWithoutFeedback onPress={() =>  store.dispatch(selectChat(info))} onLongPress={() => this.setState({showPickerModal: true})}>
                 <View style={styles.container}>
                     <Thumbnail source={{ uri: info.profile_pic_url }} />
                     <View style={styles.content}>

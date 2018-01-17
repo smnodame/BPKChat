@@ -43,7 +43,9 @@ import realm from '../../data/realm/realm';
 import {FontAwesome} from '../../assets/icons';
 import {data} from '../../data';
 import {scale} from '../../utils/scale';
- import GridView from 'react-native-super-grid';
+import GridView from 'react-native-super-grid';
+
+import {store} from '../../redux'
 
 import { NavigationActions } from 'react-navigation'
 let moment = require('moment');
@@ -70,10 +72,9 @@ export default class Chat extends React.Component {
 
     updateData = () => {
         const state = store.getState()
-        console.log('===================')
-        console.log(state)
         this.setState({
-            chat: _.get(state, 'chat.chat', [])
+            chat: _.get(state, 'chat.chat', []),
+            chatInfo: _.get(state, 'chat.chatInfo')
         })
     }
 
@@ -178,7 +179,7 @@ export default class Chat extends React.Component {
                     </Button>
                 </Left>
                 <Body>
-                    <Title>SMNODAME</Title>
+                    <Title>{ this.state.chatInfo.display_name }</Title>
                 </Body>
                 <Right>
                     <Button transparent>

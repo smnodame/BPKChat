@@ -165,10 +165,10 @@ export const logout = () => ({
     type: 'LOGOUT'
 })
 
-export const selectChat = (chatRoomId) => ({
+export const selectChat = (chatInfo) => ({
     type: 'SELECT_CHAT',
     payload: {
-        chatRoomId
+        chatInfo
     }
 })
 
@@ -179,9 +179,9 @@ export const chat = (chat) => ({
     }
 })
 
-export const selectedChatRoomId = (chatRoomId) => ({
-    type: 'SELECTED_CHAT_ROOM_ID',
+export const selectedChatInfo = (chatInfo) => ({
+    type: 'SELECTED_CHAT_INFO',
     payload: {
-        chatRoomId
+        chatInfo
     }
 })

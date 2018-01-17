@@ -93,9 +93,9 @@ const chat = (state = {}, action) => {
             return Object.assign(state, {
                 chat: action.payload.chat
             })
-        case 'SELECTED_CHAT_ROOM_ID':
+        case 'SELECTED_CHAT_INFO':
             return Object.assign(state, {
-                chatRoomId: action.payload.chatRoomId
+                chatInfo: action.payload.chatInfo
             })
         default:
             return state

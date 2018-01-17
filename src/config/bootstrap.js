@@ -134,7 +134,6 @@ export let bootstrap = () => {
   RkTheme.setType('RkText', 'primary2', {
     fontSize: theme => theme.fonts.sizes.p2,
     fontFamily: theme => {
-        console.log('======== 2 ')
         return theme.fonts.family.regular
     }
   });
