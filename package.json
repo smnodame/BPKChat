@@ -24,7 +24,8 @@
     "react-redux": "^5.0.6",
     "realm": "^1.8.0",
     "redux": "^3.7.2",
-    "redux-saga": "^0.16.0"
+    "redux-saga": "^0.16.0",
+    "socket.io": "^2.0.4"
   },
   "devDependencies": {
     "babel-jest": "21.2.0",

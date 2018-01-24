@@ -12,9 +12,18 @@ import SignUp from './src/screens/register'
 import GroupSetting from './src/screens/groupSetting'
 import {store} from './src/redux'
 import { start_app  } from './src/redux/actions.js'
+import {start_socket} from './src/redux/socket.js'
 
-bootstrap();
-data.populateRealm();
+// start socket io
+start_socket()
+
+// start material UI
+bootstrap()
+
+// start Realm
+data.populateRealm()
+
+// call first action that should do
 store.dispatch(start_app())
 
 const BPKChat = StackNavigator({
@@ -26,7 +35,7 @@ const BPKChat = StackNavigator({
     GroupSetting: { screen: GroupSetting }
 },
 {
-    initialRouteName: "Login",
+    initialRouteName: "App",
     headerMode: "none",
 })
 
