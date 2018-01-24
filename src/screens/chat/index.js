@@ -46,6 +46,7 @@ import {scale} from '../../utils/scale';
 import GridView from 'react-native-super-grid';
 
 import {store} from '../../redux'
+import {sendTheMessage} from '../../redux/api'
 
 import { NavigationActions } from 'react-navigation'
 let moment = require('moment');
@@ -143,9 +144,18 @@ export default class Chat extends React.Component {
         }
     }
 
-    _pushMessage() {
+    async _pushMessage() {
         if (!this.state.message)
             return
+        const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '1', this.state.message, '', '')
+
+        if(_.get(resSendTheMessage.data, 'error')) {
+            return;
+        }
+
+        this.setState({
+            message: ''
+        })
 
         this._scroll(true)
     }
