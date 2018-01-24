@@ -47,7 +47,7 @@ import GridView from 'react-native-super-grid';
 
 import {store} from '../../redux'
 import {sendTheMessage} from '../../redux/api'
-import {emit_update_friend_chat_list} from '../../redux/socket.js'
+import { emit_update_friend_chat_list, emit_unsubscribe } from '../../redux/socket.js'
 
 import { NavigationActions } from 'react-navigation'
 let moment = require('moment');
@@ -168,7 +168,10 @@ export default class Chat extends React.Component {
         <Container>
             <Header style={{ backgroundColor: '#3b5998' }}>
                 <Left>
-                    <Button transparent onPress={() => this.props.navigation.dispatch(NavigationActions.back())}>
+                    <Button transparent onPress={() => {
+                        emit_unsubscribe(this.state.chatInfo.chat_room_id)
+                        this.props.navigation.dispatch(NavigationActions.back())
+                    }}>
                         <Icon style={{ color: 'white' }} name="md-arrow-round-back" />
                     </Button>
                 </Left>

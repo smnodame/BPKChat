@@ -13,16 +13,14 @@ export const on_message = () => {
     })
 }
 
-export const emit_subscribe = (user_id, chat_room_id) => {
+export const emit_subscribe = (chat_room_id) => {
     socket.emit('subscribe', {
-        user_id,
         chat_room_id
     })
 }
 
-export const emit_unsubscribe = (user_id, chat_room_id) => {
+export const emit_unsubscribe = (chat_room_id) => {
     socket.emit('unsubscribe', {
-        user_id,
         chat_room_id
     })
 }
