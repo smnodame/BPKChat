@@ -32,7 +32,7 @@ import {
   Image,
   Keyboard
 } from 'react-native'
-import { signIn, logout } from './src/redux/actions.js'
+import { signIn, logout, navigate } from './src/redux/actions.js'
 import Drawer from 'react-native-drawer'
 
 import ProfileSettings from './src/screens/profile'
@@ -63,6 +63,8 @@ export default class App extends Component<{}> {
         }
         this.onTabClick = this.onTabClick.bind(this)
         this.renderContent = this.renderContent.bind(this)
+
+        store.dispatch(navigate(this.props.navigation))
     }
 
     async componentWillMount() {

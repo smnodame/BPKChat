@@ -106,10 +106,7 @@ export default class Chat extends React.Component {
             </RkText>
         </View>
     );
-    console.log('=========================')
-    console.log(info.item.message_type)
-    console.log(info.item.object_url)
-    console.log(info.item.content)
+    
     return (
       <View style={[styles.item, itemStyle]}>
         {!inMessage && renderDate(info.item.create_date)}

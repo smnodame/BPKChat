@@ -305,18 +305,22 @@ function* logout() {
 function* selectChatSaga() {
     while (true) {
         const { payload: { chatInfo }} = yield take('SELECT_CHAT')
-
         // fetch chat list from userID
-        const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id)
-        const chatData = _.get(resFetchChat, 'data.data', [])
+        try {
+            const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id)
+            const chatData = _.get(resFetchChat, 'data.data', [])
 
-        // store data in store redux
-        yield put(selectedChatInfo(chatInfo))
-        yield put(chat(chatData))
+            // store data in store redux
+            yield put(selectedChatInfo(chatInfo))
+            yield put(chat(chatData))
 
-        // navigate to chat page
-        const navigate = yield select(navigateSelector)
-        navigate.navigate('Chat')
+            // navigate to chat page
+            const navigate = yield select(navigateSelector)
+            navigate.navigate('Chat')
+        } catch (err) {
+
+            console.log(err)
+        }
     }
 }
 

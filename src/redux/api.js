@@ -77,7 +77,7 @@ export const updateGroupSetting = (data) => {
 }
 
 export const fetchChat = (chatRoomId) => {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/message/message_list?token=asdf1234aaa&user_id=3963&chat_room_id=${chatRoomId}&after_chat_message_id=&before_chat_message_id=1715&limit=50`).then((res) => {
+    return axios.get(`http://itsmartone.com/bpk_connect/api/message/message_list?token=asdf1234aaa&user_id=3963&chat_room_id=${chatRoomId}&after_chat_message_id=&before_chat_message_id=&limit=50`).then((res) => {
         return res
     }, (err) => {
         return err
