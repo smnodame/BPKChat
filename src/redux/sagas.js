@@ -313,7 +313,7 @@ function* selectChatSaga() {
             // store data in store redux
             yield put(selectedChatInfo(chatInfo))
             yield put(chat(chatData))
-
+            
             // navigate to chat page
             const navigate = yield select(navigateSelector)
             navigate.navigate('Chat')

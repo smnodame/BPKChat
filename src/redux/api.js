@@ -83,3 +83,13 @@ export const fetchChat = (chatRoomId) => {
         return err
     })
 }
+
+export const sendTheMessage = (chat_room_id, message_type, content, sticker_path, image_base64) => {
+    return axios.post(`http://itsmartone.com/bpk_connect/api/message/send?token=asdf1234aaa` ,
+        { user_id: '3963', chat_room_id, message_type, content, sticker_path: '', image_base64: ''}
+    ).then((res) => {
+        return res
+    }, (err) => {
+        return err
+    })
+}

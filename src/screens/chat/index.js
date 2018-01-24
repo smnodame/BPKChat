@@ -106,7 +106,7 @@ export default class Chat extends React.Component {
             </RkText>
         </View>
     );
-    
+
     return (
       <View style={[styles.item, itemStyle]}>
         {!inMessage && renderDate(info.item.create_date)}
@@ -135,36 +135,20 @@ export default class Chat extends React.Component {
     )
   }
 
-  _scroll() {
-    if (Platform.OS === 'ios') {
-      this.refs.list.scrollToEnd();
-    } else {
-      _.delay(() => this.refs.list.scrollToEnd(), 100);
+    _scroll() {
+        if (Platform.OS === 'ios') {
+            this.refs.list.scrollToEnd();
+        } else {
+            _.delay(() => this.refs.list.scrollToEnd(), 100);
+        }
     }
-  }
 
-  _pushMessage() {
-    if (!this.state.message)
-      return;
-    let msg = {
-      id: this.state.data.messages.length,
-      time: 0,
-      type: 'out',
-      text: this.state.message
-    };
+    _pushMessage() {
+        if (!this.state.message)
+            return
 
-
-    let data = this.state.data;
-    realm.write(() => {
-      data.messages.push(msg);
-    });
-
-    this.setState({
-      data,
-      message: ''
-    });
-    this._scroll(true);
-  }
+        this._scroll(true)
+    }
 
   render() {
     return (
@@ -503,7 +487,7 @@ export default class Chat extends React.Component {
                   rkType='row sticker'
                   placeholder="Add a comment..."/>
                   <RkButton style={styles.plus} rkType='clear' onPress={() => this.setState({ isShowPhoto: !this.state.isShowPhoto})}>
-                    <Icon ios='attachment' android="md-happy" style={{fontSize: 20, color: 'gray'}}/>
+                        <Icon ios='attachment' android="md-happy" style={{fontSize: 20, color: 'gray'}}/>
                   </RkButton>
 
                 <RkButton onPress={() => this._pushMessage()} style={styles.send} rkType='circle highlight'>
