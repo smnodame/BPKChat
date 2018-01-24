@@ -255,7 +255,7 @@ function* enterContacts() {
 
         // fetch chat lists
         const resFetchChatLists = yield call(fetchChatLists)
-        yield put(chatLists(_.get(resFetchChatLists, 'data.data')))
+        yield put(chatLists(_.get(resFetchChatLists, 'data.data', [])))
 
         // fetch number of friend lists
         const numberOfFriend = yield call(fetchNumberOfGroup, filter)
@@ -308,7 +308,7 @@ function* selectChatSaga() {
         // fetch chat list from userID
         try {
             const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id)
-            const chatData = _.get(resFetchChat, 'data.data', [])
+            const chatData = _.get(resFetchChat, 'data.data', []).reverse()
 
             // store data in store redux
             yield put(selectedChatInfo(chatInfo))
