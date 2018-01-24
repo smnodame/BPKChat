@@ -1,5 +1,9 @@
 import SocketIOClient from 'socket.io-client'
 
+import { fetchChatLists } from './api.js'
+import { chatLists } from './actions.js'
+import { store } from './index.js'
+
 const socket = SocketIOClient('http://192.168.1.39:4444/')
 const user_id = '3963'
 
@@ -48,7 +52,10 @@ export const emit_update_friend_chat_list = (user_id, friend_user_id) => {
 
 export const on_update_friend_chat_list = () => {
     socket.on('updateFriendChatList', () => {
-        console.log(' ---- update friend chat list ----')
+        fetchChatLists().then((res) => {
+            store.dispatch(chatLists(_.get(res, 'data.data', [])))
+        })
+
     })
 }
 
@@ -85,5 +92,4 @@ export const start_socket = () => {
 
     emit_subscribe_chat_list(user_id)
     on_update_friend_chat_list()
-    emit_update_friend_chat_list(user_id, user_id)
 }
