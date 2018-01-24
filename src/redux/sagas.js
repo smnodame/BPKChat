@@ -39,7 +39,7 @@ import {
     getFilterFriend,
     navigateSelector
 } from './selectors'
-import { emit_subscribe } from './socket.js'
+import { emit_subscribe, on_message } from './socket.js'
 
 function* onSearchFriendSata() {
     while (true) {
@@ -315,6 +315,8 @@ function* selectChatSaga() {
             yield put(selectedChatInfo(chatInfo))
             yield put(chat(chatData))
 
+            // subscribe socket io
+            on_message()
             emit_subscribe(chatInfo.chat_room_id)
 
             // navigate to chat page

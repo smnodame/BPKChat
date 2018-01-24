@@ -47,7 +47,7 @@ import GridView from 'react-native-super-grid';
 
 import {store} from '../../redux'
 import {sendTheMessage} from '../../redux/api'
-import { emit_update_friend_chat_list, emit_unsubscribe } from '../../redux/socket.js'
+import { emit_update_friend_chat_list, emit_unsubscribe, emit_message } from '../../redux/socket.js'
 
 import { NavigationActions } from 'react-navigation'
 let moment = require('moment');
@@ -154,11 +154,12 @@ export default class Chat extends React.Component {
             return;
         }
 
+        emit_update_friend_chat_list('3963', '3963')
+        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
+
         this.setState({
             message: ''
         })
-
-        emit_update_friend_chat_list('3963', '3963')
 
         this._scroll(true)
     }
