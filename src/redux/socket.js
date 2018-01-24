@@ -1,7 +1,8 @@
+import _ from 'lodash'
 import SocketIOClient from 'socket.io-client'
 
-import { fetchChatLists } from './api.js'
-import { chatLists } from './actions.js'
+import { fetchChatLists, fetchChat } from './api.js'
+import { chatLists, chat } from './actions.js'
 import { store } from './index.js'
 
 const socket = SocketIOClient('http://192.168.1.39:4444/')
@@ -10,6 +11,15 @@ const user_id = '3963'
 export const on_message = () => {
     socket.on('message', function(data) {
         console.log('Incoming message:', data)
+
+        const state = store.getState()
+        const chatInfo = _.get(state, 'chat.chatInfo')
+
+        fetchChat(chatInfo.chat_room_id).then((res) => {
+            const chatData = _.get(res, 'data.data', []).reverse()
+            // store data in store redux
+            store.dispatch(chat(chatData))
+        })
     })
 }
 
