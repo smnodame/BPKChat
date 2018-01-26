@@ -647,6 +647,46 @@ export default class Chat extends React.Component {
                                 </View>
                             )}
                         />
+                        <View style={[styles.footer, { backgroundColor: 'white',  borderColor: '#d3d3d3', borderTopWidth: 0.5, backgroundColor: '#d3d3d300' }]}>
+                            <FlatList
+                                horizontal={true}
+                                data={[
+                                    'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
+                                    'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
+                                    'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png',
+                                    'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
+                                    'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
+                                    'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png',
+                                    'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
+                                    'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
+                                    'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png',
+                                    'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
+                                    'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
+                                    'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png',
+                                    'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
+                                    'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
+                                    'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png',
+                                    'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
+                                    'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
+                                    'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png',
+                                    'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
+                                    'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
+                                    'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png'
+                                ]}
+                                renderItem={({item}) => {
+                                    console.log('========================')
+                                    console.log(item)
+                                    return (
+                                        <View style={{ marginRight: 12 }}>
+                                            <Image
+                                                style={{ height: 40, width: 40 }}
+                                                source={{uri: item}}
+                                            />
+                                        </View>
+                                    )
+                                }}
+                            />
+                        </View>
                   </View>
               }
 
