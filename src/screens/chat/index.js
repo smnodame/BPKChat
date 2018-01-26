@@ -49,6 +49,8 @@ import {store} from '../../redux'
 import {sendTheMessage} from '../../redux/api'
 import { emit_update_friend_chat_list, emit_unsubscribe, emit_message } from '../../redux/socket.js'
 
+import ImagePicker from 'react-native-image-picker'
+
 import { NavigationActions } from 'react-navigation'
 let moment = require('moment');
 
@@ -520,12 +522,66 @@ export default class Chat extends React.Component {
                     </RkButton>
                 }
                 {
-                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear'>
+                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => {
+                        // Launch Camera:
+                        ImagePicker.launchCamera({
+                            title: 'Select Profile Image',
+                            storageOptions: {
+                              skipBackup: true,
+                              path: 'images'
+                          },
+                          maxWidth: 300,
+                          maxHeight: 300,
+                          mediaType: 'photo',
+                          noData: false
+                        }, (response)  => {
+                          // Same code as in above section!
+                            if (response.didCancel) {
+                                console.log('User cancelled image picker')
+                            } else if (response.error) {
+                                console.log('ImagePicker Error: ', response.error)
+                            } else if (response.customButton) {
+                                console.log('User tapped custom button: ', response.customButton)
+                            } else {
+                                this.setState({
+                                    profile_pic_url: response.uri,
+                                    profile_pic_base64: response.data || ''
+                                })
+                            }
+                        });
+                    }}>
                         <Icon ios='md-camera' android="md-camera" style={{fontSize: 20, color: 'gray'}}/>
                     </RkButton>
                 }
                 {
-                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear'>
+                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => {
+                        // Launch Camera:
+                        ImagePicker.launchImageLibrary({
+                            title: 'Select Profile Image',
+                            storageOptions: {
+                              skipBackup: true,
+                              path: 'images'
+                          },
+                          maxWidth: 300,
+                          maxHeight: 300,
+                          mediaType: 'photo',
+                          noData: false
+                        }, (response)  => {
+                          // Same code as in above section!
+                            if (response.didCancel) {
+                                console.log('User cancelled image picker')
+                            } else if (response.error) {
+                                console.log('ImagePicker Error: ', response.error)
+                            } else if (response.customButton) {
+                                console.log('User tapped custom button: ', response.customButton)
+                            } else {
+                                this.setState({
+                                    profile_pic_url: response.uri,
+                                    profile_pic_base64: response.data || ''
+                                })
+                            }
+                        });
+                    }}>
                         <Icon ios='md-photos' android="md-photos" style={{fontSize: 20, color: 'gray'}}/>
                     </RkButton>
                 }
