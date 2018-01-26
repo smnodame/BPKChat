@@ -97,6 +97,10 @@ const chat = (state = {}, action) => {
             return Object.assign(state, {
                 chatInfo: action.payload.chatInfo
             })
+        case 'STICKER':
+            return Object.assign(state, {
+                sticker: action.payload.sticker
+            })
         default:
             return state
     }

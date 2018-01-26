@@ -93,3 +93,7 @@ export const sendTheMessage = (chat_room_id, message_type, content, sticker_path
         return err
     })
 }
+
+export const fetchSticker = () => {
+    return axios.get('http://itsmartone.com/bpk_connect/api/message/sticker_list?token=asdf1234aaa&user_id=3963')
+}

@@ -185,3 +185,14 @@ export const selectedChatInfo = (chatInfo) => ({
         chatInfo
     }
 })
+
+export const onSticker = () => ({
+    type: 'ON_STICKER'
+})
+
+export const sticker = (stickerData) => ({
+    type: 'STICKER',
+    payload: {
+        sticker: stickerData
+    }
+})

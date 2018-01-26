@@ -13,7 +13,9 @@ import {
     searchNewFriend,
     chatLists,
     selectedChatInfo,
-    chat
+    chat,
+    onSticker,
+    sticker
 } from './actions'
 import { NavigationActions } from 'react-navigation'
 import {
@@ -29,7 +31,8 @@ import {
     addFavoriteApi,
     removeFavoriteApi,
     createNewAccount,
-    fetchChat
+    fetchChat,
+    fetchSticker
 } from './api'
 import {
     getFriendGroups,
@@ -40,6 +43,20 @@ import {
     navigateSelector
 } from './selectors'
 import { emit_subscribe, on_message } from './socket.js'
+
+function* onStickerSaga() {
+    while (true) {
+        yield take('ON_STICKER')
+
+        const stickerData = yield call(fetchSticker)
+        const stickerObj = {
+            sticker_base_url: stickerData.data.sticker_base_url,
+            collections: stickerData.data.data
+        }
+        console.log(' ========  ON_STICKER ===========')
+        yield put(sticker(stickerObj))
+    }
+}
 
 function* onSearchFriendSata() {
     while (true) {
@@ -261,6 +278,9 @@ function* enterContacts() {
         // fetch number of friend lists
         const numberOfFriend = yield call(fetchNumberOfGroup, filter)
         yield put(numberOfFriendLists(numberOfFriend))
+
+        // fetch sticker
+        yield put(onSticker())
     }
 }
 
@@ -343,6 +363,7 @@ export default function* rootSaga() {
         loadmoreSaga(),
         onSearchFriendSata(),
         logout(),
-        selectChatSaga()
+        selectChatSaga(),
+        onStickerSaga()
     ])
 }

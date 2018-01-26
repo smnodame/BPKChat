@@ -99,11 +99,6 @@ export default class Chat extends React.Component {
     }
 
     _renderItem(info) {
-        console.log('================')
-        console.log(info)
-        console.log(info.item.message_type)
-        console.log(info.item.username)
-        console.log(this.state.user.username)
         let inMessage = info.item.username != this.state.user.username;
         let backgroundColor = inMessage
             ? RkTheme.current.colors.chat.messageInBackground
@@ -674,8 +669,6 @@ export default class Chat extends React.Component {
                                     'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png'
                                 ]}
                                 renderItem={({item}) => {
-                                    console.log('========================')
-                                    console.log(item)
                                     return (
                                         <View style={{ marginRight: 12 }}>
                                             <Image
