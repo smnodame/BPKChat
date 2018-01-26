@@ -141,7 +141,10 @@ export default class Chat extends React.Component {
             />
         }
         {
-            info.item.message_type=='3' && <View />
+            info.item.message_type=='3' &&
+            <View style={[{ width: 200, height: 50, backgroundColor: 'white', borderRadius: 5 }, {backgroundColor}]}>
+            </View>
+
         }
         {
             info.item.message_type=='5' && <View style={[styles.balloon, {backgroundColor}]}>
