@@ -52,6 +52,8 @@ import { emit_update_friend_chat_list, emit_unsubscribe, emit_message } from '..
 import { NavigationActions } from 'react-navigation'
 let moment = require('moment');
 
+import * as mime from 'react-native-mime-types'
+import RNFetchBlob from 'react-native-fetch-blob'
 
 let getUserId = (navigation) => {
   return navigation.state.params ? navigation.state.params.userId : undefined;
@@ -141,7 +143,32 @@ export default class Chat extends React.Component {
         }
         {
             info.item.message_type=='5' && <View style={[styles.balloon, {backgroundColor}]}>
-                <TouchableWithoutFeedback onLongPress={() => this.setState({showPickerModal: true})}>
+                <TouchableWithoutFeedback
+                    onPress={() => {
+                        const url = info.item.object_url
+                        const arr = url.split('.')
+                        const filetype = arr[arr.length - 1]
+
+                        RNFetchBlob
+                        .config({
+                            addAndroidDownloads : {
+                                useDownloadManager : true, // <-- this is the only thing required
+                                // Optional, override notification setting (default to true)
+                                notification : true,
+                                // Optional, but recommended since android DownloadManager will fail when
+                                // the url does not contains a file extension, by default the mime type will be text/plain
+                                title: info.item.file_name,
+                                mime : mime.lookup(filetype),
+                                description : 'File downloaded by download manager.'
+                            }
+                        })
+                        .fetch('GET', url)
+                        .then((resp) => {
+                          // the path of downloaded file
+                          resp.path()
+                        })
+                    }}
+                >
                 <View>
                     <RkText rkType='primary2 mediumLine chat' style={{ marginBottom: 8 }}>
                         {  `${info.item.file_name}`}

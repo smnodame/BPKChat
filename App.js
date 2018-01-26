@@ -93,22 +93,8 @@ export default class App extends Component<{}> {
 	}
 
     onTabClick(selectedTab) {
-        RNFetchBlob
-        .config({
-            addAndroidDownloads : {
-                useDownloadManager : true, // <-- this is the only thing required
-                // Optional, override notification setting (default to true)
-                notification : true,
-                // Optional, but recommended since android DownloadManager will fail when
-                // the url does not contains a file extension, by default the mime type will be text/plain
-                mime : 'text/plain',
-                description : 'File downloaded by download manager.'
-            }
-        })
-        .fetch('GET', 'https://hdwallsource.com/img/2014/7/sea-water-hd-33447-34204-hd-wallpapers.jpg')
-        .then((resp) => {
-          // the path of downloaded file
-          resp.path()
+        this.setState({
+            selectedTab
         })
     }
 
