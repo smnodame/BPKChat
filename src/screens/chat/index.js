@@ -10,7 +10,7 @@ import {
   ScrollView,
   StyleSheet
 } from 'react-native';
-import {InteractionManager} from 'react-native';
+import { InteractionManager, WebView } from 'react-native';
 import {
   RkButton,
   RkText,
@@ -95,7 +95,12 @@ export default class Chat extends React.Component {
     }
 
     _renderItem(info) {
-        let inMessage = info.item.username === this.state.user.username;
+        console.log('================')
+        console.log(info)
+        console.log(info.item.message_type)
+        console.log(info.item.username)
+        console.log(this.state.user.username)
+        let inMessage = info.item.username != this.state.user.username;
         let backgroundColor = inMessage
             ? RkTheme.current.colors.chat.messageInBackground
                 : RkTheme.current.colors.chat.messageOutBackground;
@@ -131,7 +136,23 @@ export default class Chat extends React.Component {
                 source={{uri: info.item.object_url }}
             />
         }
-
+        {
+            info.item.message_type=='3' && <View />
+        }
+        {
+            info.item.message_type=='5' && <View style={[styles.balloon, {backgroundColor}]}>
+                <TouchableWithoutFeedback onLongPress={() => this.setState({showPickerModal: true})}>
+                <View>
+                    <RkText rkType='primary2 mediumLine chat' style={{ marginBottom: 8 }}>
+                        {  `${info.item.file_name}`}
+                    </RkText>
+                    <RkText rkType='secondary4 hintColor'>
+                        {  `file extension: ${info.item.file_extension}`}
+                    </RkText>
+                    </View>
+                </TouchableWithoutFeedback>
+            </View>
+        }
         {inMessage && renderDate(info.item.create_date)}
       </View>
     )
