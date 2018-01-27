@@ -626,7 +626,12 @@ export default class Chat extends React.Component {
                     </RkButton>
                 }
                 {
-                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear'>
+                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => {
+                        this.setState({
+                            isShowRecord: !this.state.isShowRecord,
+                            isShowPhoto: false
+                        })
+                    }}>
                         <Icon ios='attachment' android="md-mic" style={{fontSize: 20, color: 'gray'}}/>
                     </RkButton>
                 }
@@ -656,7 +661,7 @@ export default class Chat extends React.Component {
                   value={this.state.message}
                   rkType='row sticker'
                   placeholder="Add a comment..."/>
-                  <RkButton style={styles.plus} rkType='clear' onPress={() => this.setState({ isShowPhoto: !this.state.isShowPhoto})}>
+                  <RkButton style={styles.plus} rkType='clear' onPress={() => this.setState({ isShowPhoto: !this.state.isShowPhoto, isShowRecord: false })}>
                         <Icon ios='attachment' android="md-happy" style={{fontSize: 20, color: 'gray'}}/>
                   </RkButton>
 
@@ -702,7 +707,19 @@ export default class Chat extends React.Component {
                         </View>
                   </View>
               }
+              {
+                  this.state.isShowRecord && <View style={{ height: 200, backgroundColor: '#f9f9f9' }}>
+                        <View style={{ height: 50, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text>0:00</Text>
+                        </View>
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                            <View style={{ backgroundColor: '#ff6666', width: 120, height: 120, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: 'white' }}>Record</Text>
+                            </View>
+                        </View>
 
+                  </View>
+              }
             </RkAvoidKeyboard>
         </Container>
     )
