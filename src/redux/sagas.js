@@ -49,12 +49,27 @@ function* onStickerSaga() {
         yield take('ON_STICKER')
 
         const stickerData = yield call(fetchSticker)
-        const stickerObj = {
-            sticker_base_url: stickerData.data.sticker_base_url,
-            collections: stickerData.data.data
-        }
-        console.log(' ========  ON_STICKER ===========')
-        yield put(sticker(stickerObj))
+
+        const sticker_base_url = _.get(stickerData, 'data.sticker_base_url')
+        const collections = _.get(stickerData, 'data.data', [])
+
+        const collectionsLists = collections.map((c) => {
+            const stickerLists = c.sticker_file_list.split(',')
+            const stickerObj = stickerLists.map((s) => {
+                return {
+                    url: `${sticker_base_url}/${c.sticker_folder}/${s}`,
+                    file: s
+                }
+            })
+            return {
+                sticker_collection_id: c.sticker_collection_id,
+                collection_image_url: `${sticker_base_url}/${c.sticker_folder}/${stickerLists[0]}`,
+                sticker_collection_name: c.sticker_collection_name,
+                sticker_lists: stickerObj
+            }
+        })
+
+        yield put(sticker(collectionsLists))
     }
 }
 

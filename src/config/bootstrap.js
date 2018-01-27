@@ -91,7 +91,6 @@ export let bootstrap = () => {
   RkTheme.setType('RkText', 'header5', {
     fontSize: theme => theme.fonts.sizes.h5,
     fontFamily: theme => {
-        console.log(' bold ')
         return theme.fonts.family.bold
     }
   });
@@ -140,7 +139,6 @@ export let bootstrap = () => {
   RkTheme.setType('RkText', 'primary3', {
     fontSize: theme => theme.fonts.sizes.p3,
     fontFamily: theme => {
-        console.log(' primary3')
         return theme.fonts.family.light
     }
   });

@@ -78,6 +78,7 @@ export default class Chat extends React.Component {
 
     updateData = () => {
         const state = store.getState()
+
         this.setState({
             chat: _.get(state, 'chat.chat', []),
             chatInfo: _.get(state, 'chat.chatInfo'),
@@ -225,7 +226,7 @@ export default class Chat extends React.Component {
                     </Button>
                 </Left>
                 <Body>
-                    <Title>{ this.state.chatInfo.display_name }</Title>
+                    <Title>{ _.get(this.state, 'chatInfo.display_name', '') }</Title>
                 </Body>
                 <Right>
                     <Button transparent>
@@ -649,24 +650,7 @@ export default class Chat extends React.Component {
                                     'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
                                     'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
                                     'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png',
-                                    'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
-                                    'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
-                                    'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png',
-                                    'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
-                                    'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
-                                    'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png',
-                                    'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
-                                    'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
-                                    'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png',
-                                    'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
-                                    'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
-                                    'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png',
-                                    'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
-                                    'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
-                                    'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png',
-                                    'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
-                                    'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
-                                    'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png'
+                                    'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg'
                                 ]}
                                 renderItem={({item}) => {
                                     return (
