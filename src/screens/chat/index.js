@@ -156,7 +156,24 @@ export default class Chat extends React.Component {
         }
         {
             info.item.message_type=='3' &&
-            <View style={[{ width: 200, height: 50, backgroundColor: 'white', borderRadius: 5 }, {backgroundColor}]}>
+            <View style={[styles.balloon, { width: 150, height: 100 }, {backgroundColor}, { padding: 5 }]}>
+                <View style={{ flex: 1, flexDirection: 'column' }}>
+                    <View style={{ flex: 1, borderColor: '#C0C0C0', borderBottomWidth: 0.5, marginBottom: 2, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ color: '#C0C0C0', fontSize: 20 }}>10:50</Text>
+                    </View>
+                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ flex: 1, borderColor: '#C0C0C0', borderRightWidth: 0.5, justifyContent: 'center', alignItems: 'center' }}>
+                            <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
+                                <Icon name='md-play' style={{ color: '#C0C0C0' }}/>
+                            </Button>
+                        </View>
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
+                                <Icon name='md-download' style={{ color: '#C0C0C0' }}/>
+                            </Button>
+                        </View>
+                    </View>
+                </View>
             </View>
 
         }
@@ -188,13 +205,19 @@ export default class Chat extends React.Component {
                         })
                     }}
                 >
-                <View>
-                    <RkText rkType='primary2 mediumLine chat' style={{ marginBottom: 8 }}>
-                        {  `${info.item.file_name}`}
-                    </RkText>
-                    <RkText rkType='secondary4 hintColor'>
-                        {  `file extension: ${info.item.file_extension}`}
-                    </RkText>
+                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                        <View style={{ width: 30 }}>
+                            <Icon name='md-list-box' style={{ color: '#A9A9A9' }}/>
+                        </View>
+                        <View>
+                            <RkText rkType='primary2 mediumLine chat' style={{ marginBottom: 8, height: 22 }}>
+
+                                {  `${info.item.file_name}`}
+                            </RkText>
+                            <RkText rkType='secondary4 hintColor'>
+                                {  `file extension: ${info.item.file_extension}`}
+                            </RkText>
+                        </View>
                     </View>
                 </TouchableWithoutFeedback>
             </View>
