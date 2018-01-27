@@ -121,109 +121,116 @@ export default class Chat extends React.Component {
     );
 
     return (
-      <View style={[styles.item, itemStyle]}>
-        {!inMessage && renderDate(info.item.create_date)}
-        {
-            info.item.message_type=='1' && <View style={[styles.balloon, {backgroundColor}]}>
-                <TouchableWithoutFeedback onLongPress={() => this.setState({showPickerModal: true})}>
-                    <RkText rkType='primary2 mediumLine chat'>{info.item.content}</RkText>
-                </TouchableWithoutFeedback>
-            </View>
-        }
-        {
-            info.item.message_type=='2' && <TouchableWithoutFeedback
-                onPress={() => {
-                    this.setState({
-                        selectedPhotoUrl: info.item.object_url
-                    })
-                    this.setState({
-                        showImageView: true
-                    })
-                }}
-            >
-                <Image
-                    style={{ height: 120, width: 120 }}
-                    source={{uri: info.item.object_url }}
-                    resizeMethod={'resize'}
-                />
-            </TouchableWithoutFeedback>
-        }
-        {
-            info.item.message_type=='4' && <Image
-                style={{ height: 100, width: 100 }}
-                source={{uri: info.item.object_url }}
-            />
-        }
-        {
-            info.item.message_type=='3' &&
-            <View style={[styles.balloon, { width: 150, height: 100 }, {backgroundColor}, { padding: 5 }]}>
-                <View style={{ flex: 1, flexDirection: 'column' }}>
-                    <View style={{ flex: 1, borderColor: '#C0C0C0', borderBottomWidth: 0.5, marginBottom: 2, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ color: '#C0C0C0', fontSize: 20 }}>10:50</Text>
-                    </View>
-                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                        <View style={{ flex: 1, borderColor: '#C0C0C0', borderRightWidth: 0.5, justifyContent: 'center', alignItems: 'center' }}>
-                            <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
-                                <Icon name='md-play' style={{ color: '#C0C0C0' }}/>
-                            </Button>
-                        </View>
-                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                            <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
-                                <Icon name='md-download' style={{ color: '#C0C0C0' }}/>
-                            </Button>
-                        </View>
-                    </View>
-                </View>
-            </View>
+        <TouchableWithoutFeedback  onPress={() => this.setState({
+            isShowPhoto: false,
+            isShowRecord: false
+        })}>
+        <View style={{  width: '100%'}}>
+        <View style={[styles.item, itemStyle]}>
+          {!inMessage && renderDate(info.item.create_date)}
+          {
+              info.item.message_type=='1' && <View style={[styles.balloon, {backgroundColor}]}>
+                  <TouchableWithoutFeedback onLongPress={() => this.setState({showPickerModal: true})}>
+                      <RkText rkType='primary2 mediumLine chat'>{info.item.content}</RkText>
+                  </TouchableWithoutFeedback>
+              </View>
+          }
+          {
+              info.item.message_type=='2' && <TouchableWithoutFeedback
+                  onPress={() => {
+                      this.setState({
+                          selectedPhotoUrl: info.item.object_url
+                      })
+                      this.setState({
+                          showImageView: true
+                      })
+                  }}
+              >
+                  <Image
+                      style={{ height: 120, width: 120 }}
+                      source={{uri: info.item.object_url }}
+                      resizeMethod={'resize'}
+                  />
+              </TouchableWithoutFeedback>
+          }
+          {
+              info.item.message_type=='4' && <Image
+                  style={{ height: 100, width: 100 }}
+                  source={{uri: info.item.object_url }}
+              />
+          }
+          {
+              info.item.message_type=='3' &&
+              <View style={[styles.balloon, { width: 150, height: 100 }, {backgroundColor}, { padding: 5 }]}>
+                  <View style={{ flex: 1, flexDirection: 'column' }}>
+                      <View style={{ flex: 1, borderColor: '#C0C0C0', borderBottomWidth: 0.5, marginBottom: 2, justifyContent: 'center', alignItems: 'center' }}>
+                          <Text style={{ color: '#C0C0C0', fontSize: 20 }}>10:50</Text>
+                      </View>
+                      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                          <View style={{ flex: 1, borderColor: '#C0C0C0', borderRightWidth: 0.5, justifyContent: 'center', alignItems: 'center' }}>
+                              <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
+                                  <Icon name='md-play' style={{ color: '#C0C0C0' }}/>
+                              </Button>
+                          </View>
+                          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                              <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
+                                  <Icon name='md-download' style={{ color: '#C0C0C0' }}/>
+                              </Button>
+                          </View>
+                      </View>
+                  </View>
+              </View>
 
-        }
-        {
-            info.item.message_type=='5' && <View style={[styles.balloon, {backgroundColor}]}>
-                <TouchableWithoutFeedback
-                    onPress={() => {
-                        const url = info.item.object_url
-                        const arr = url.split('.')
-                        const filetype = arr[arr.length - 1]
+          }
+          {
+              info.item.message_type=='5' && <View style={[styles.balloon, {backgroundColor}]}>
+                  <TouchableWithoutFeedback
+                      onPress={() => {
+                          const url = info.item.object_url
+                          const arr = url.split('.')
+                          const filetype = arr[arr.length - 1]
 
-                        RNFetchBlob
-                        .config({
-                            addAndroidDownloads : {
-                                useDownloadManager : true, // <-- this is the only thing required
-                                // Optional, override notification setting (default to true)
-                                notification : true,
-                                // Optional, but recommended since android DownloadManager will fail when
-                                // the url does not contains a file extension, by default the mime type will be text/plain
-                                title: info.item.file_name,
-                                mime : mime.lookup(filetype),
-                                description : 'File downloaded by download manager.'
-                            }
-                        })
-                        .fetch('GET', url)
-                        .then((resp) => {
-                          // the path of downloaded file
-                          resp.path()
-                        })
-                    }}
-                >
-                    <View style={{ flex: 1, flexDirection: 'row' }}>
-                        <View style={{ width: 30 }}>
-                            <Icon name='md-list-box' style={{ color: '#A9A9A9' }}/>
-                        </View>
-                        <View>
-                            <RkText rkType='primary2 mediumLine chat' style={{ marginBottom: 8, height: 22 }}>
+                          RNFetchBlob
+                          .config({
+                              addAndroidDownloads : {
+                                  useDownloadManager : true, // <-- this is the only thing required
+                                  // Optional, override notification setting (default to true)
+                                  notification : true,
+                                  // Optional, but recommended since android DownloadManager will fail when
+                                  // the url does not contains a file extension, by default the mime type will be text/plain
+                                  title: info.item.file_name,
+                                  mime : mime.lookup(filetype),
+                                  description : 'File downloaded by download manager.'
+                              }
+                          })
+                          .fetch('GET', url)
+                          .then((resp) => {
+                            // the path of downloaded file
+                            resp.path()
+                          })
+                      }}
+                  >
+                      <View style={{ flex: 1, flexDirection: 'row' }}>
+                          <View style={{ width: 30 }}>
+                              <Icon name='md-list-box' style={{ color: '#A9A9A9' }}/>
+                          </View>
+                          <View>
+                              <RkText rkType='primary2 mediumLine chat' style={{ marginBottom: 8, height: 22 }}>
 
-                                {  `${info.item.file_name}`}
-                            </RkText>
-                            <RkText rkType='secondary4 hintColor'>
-                                {  `file extension: ${info.item.file_extension}`}
-                            </RkText>
-                        </View>
-                    </View>
-                </TouchableWithoutFeedback>
-            </View>
-        }
-        {inMessage && renderDate(info.item.create_date)}
-      </View>
+                                  {  `${info.item.file_name}`}
+                              </RkText>
+                              <RkText rkType='secondary4 hintColor'>
+                                  {  `file extension: ${info.item.file_extension}`}
+                              </RkText>
+                          </View>
+                      </View>
+                  </TouchableWithoutFeedback>
+              </View>
+          }
+          {inMessage && renderDate(info.item.create_date)}
+        </View>
+        </View>
+        </TouchableWithoutFeedback>
     )
   }
 
