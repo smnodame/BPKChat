@@ -57,9 +57,11 @@ let moment = require('moment');
 import * as mime from 'react-native-mime-types'
 import RNFetchBlob from 'react-native-fetch-blob'
 
+import ImageView from 'react-native-image-view'
+
 let getUserId = (navigation) => {
   return navigation.state.params ? navigation.state.params.userId : undefined;
-};
+}
 
 export default class Chat extends React.Component {
 
@@ -72,8 +74,10 @@ export default class Chat extends React.Component {
         this.state = {
             data: conversation,
             isShowAdditionalHeader: false,
-            collectionKeySelected: 0
-        };
+            collectionKeySelected: 0,
+            showImageView: false
+        }
+
         this._renderItem = this._renderItem.bind(this)
     }
 
@@ -127,10 +131,21 @@ export default class Chat extends React.Component {
             </View>
         }
         {
-            info.item.message_type=='2' && <Image
-                style={{ height: 120, width: 120 }}
-                source={{uri: info.item.object_url }}
-            />
+            info.item.message_type=='2' && <TouchableWithoutFeedback
+                onPress={() => {
+                    this.setState({
+                        selectedPhotoUrl: info.item.object_url
+                    })
+                    this.setState({
+                        showImageView: true
+                    })
+                }}
+            >
+                <Image
+                    style={{ height: 120, width: 120 }}
+                    source={{uri: info.item.object_url }}
+                />
+            </TouchableWithoutFeedback>
         }
         {
             info.item.message_type=='4' && <Image
@@ -597,6 +612,15 @@ export default class Chat extends React.Component {
                     </RkButton>
                 }
 
+                <ImageView
+                  source={{uri: this.state.selectedPhotoUrl}}
+                  isVisible={this.state.showImageView}
+                  onClose={() => {
+                      this.setState({
+                          showImageView: false
+                      })
+                  }}
+                />
 
                 <RkTextInput
                   onFocus={() => {
