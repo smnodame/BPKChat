@@ -106,10 +106,12 @@ export default class AddFriend extends React.Component {
                     }}>
                         <View style={{ height: 220 }}>
                             <Image
+                                resizeMethod={'resize'}
                                 style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
                                 source={{uri: 'https://images.alphacoders.com/685/685151.jpg'}}
                             />
                             <Image
+                                resizeMethod={'resize'}
                                 style={{
                                     width: 110,
                                     height: 110,

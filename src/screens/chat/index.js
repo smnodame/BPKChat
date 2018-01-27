@@ -144,6 +144,7 @@ export default class Chat extends React.Component {
                 <Image
                     style={{ height: 120, width: 120 }}
                     source={{uri: info.item.object_url }}
+                    resizeMethod={'resize'}
                 />
             </TouchableWithoutFeedback>
         }

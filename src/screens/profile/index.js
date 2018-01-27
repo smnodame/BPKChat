@@ -117,6 +117,7 @@ export default class ProfileSettings extends React.Component {
         <RkAvoidKeyboard>
         <View style={{ height: 220 , backgroundColor: '#fafafa'}}>
             <Image
+                resizeMethod={'resize'}
                 style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
                 source={{uri: this.state.wall_pic_url}}
             />
@@ -153,6 +154,7 @@ export default class ProfileSettings extends React.Component {
              >
                 <View>
                     <Image
+                        resizeMethod={'resize'}
                         style={{
                             width: 110,
                             height: 110,

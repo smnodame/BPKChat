@@ -260,10 +260,12 @@ export default class Contacts extends React.Component {
                 }}>
                     <View style={{ height: 220 }}>
                         <Image
+                            resizeMethod={'resize'}
                             style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
                             source={{uri: this.state.user.wall_pic_url}}
                         />
                         <Image
+                            resizeMethod={'resize'}
                             style={{
                                 width: 110,
                                 height: 110,
@@ -333,10 +335,12 @@ export default class Contacts extends React.Component {
                 }}>
                 <View style={{ height: 220 }}>
                     <Image
+                        resizeMethod={'resize'}
                         style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
                         source={{uri: this.state.selectedFriend.wall_pic_url}}
                     />
                     <Image
+                        resizeMethod={'resize'}
                         style={{
                             width: 110,
                             height: 110,
@@ -434,10 +438,12 @@ export default class Contacts extends React.Component {
                 }}>
                     <View style={{ height: 220 }}>
                         <Image
+                            resizeMethod={'resize'}
                             style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
                             source={{uri: this.state.selectedFriend.wall_pic_url}}
                         />
                         <Image
+                            resizeMethod={'resize'}
                             style={{
                                 width: 110,
                                 height: 110,
