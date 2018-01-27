@@ -71,7 +71,8 @@ export default class Chat extends React.Component {
 
         this.state = {
             data: conversation,
-            isShowAdditionalHeader: false
+            isShowAdditionalHeader: false,
+            collectionKeySelected: 0
         };
         this._renderItem = this._renderItem.bind(this)
     }
@@ -82,7 +83,8 @@ export default class Chat extends React.Component {
         this.setState({
             chat: _.get(state, 'chat.chat', []),
             chatInfo: _.get(state, 'chat.chatInfo'),
-            user: _.get(state, 'user.user')
+            user: _.get(state, 'user.user'),
+            sticker: _.get(state, 'chat.sticker', [])
         })
     }
 
@@ -618,27 +620,12 @@ export default class Chat extends React.Component {
                   this.state.isShowPhoto&&<View style={{ height: 200 }}>
                         <GridView
                             itemWidth={70}
-                            items={[
-                                'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
-                                'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
-                                'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png',
-                                'https://i.pinimg.com/236x/1e/6a/53/1e6a5385351b530f2f3ac337e1e86dd6--emoticon-facebook.jpg',
-
-                                'http://www.stickersort.com/wp-content/uploads/2014/12/381Sortlist-Facebook-Stickers.png',
-                                'http://123emoji.com/wp-content/uploads/2016/08/1943126362207548576.png',
-                                'http://www.stickersort.com/wp-content/uploads/2014/12/378Sortlist-Facebook-Stickers.png',
-                                'http://123emoji.com/wp-content/uploads/2016/08/1943126362080881922.png',
-
-                                'https://i.pinimg.com/236x/d7/e2/01/d7e20133528e631bc1a51f9b6b4c931d--emoticon-emojis.jpg',
-                                'https://www.google.co.th/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwicvKfDm7LYAhUEuI8KHWxVBuUQjBwIBA&url=https%3A%2F%2Flookaside.fbsbx.com%2Flookaside%2Fcrawler%2Fmedia%2F%3Fmedia_id%3D422317134532796&psig=AOvVaw3R7xvS0nxP6itWM50HuYPj&ust=1514739663079103',
-                                'https://pic.chinesefontdesign.com/uploads/2014/04/022.png',
-                                'http://www.stickersort.com/wp-content/uploads/2014/12/388Sortlist-Facebook-Stickers.png'
-                            ]}
+                            items={this.state.sticker[this.state.collectionKeySelected].sticker_lists}
                             renderItem={item => (
                                 <View>
                                     <Image
                                         style={{ height: 70 }}
-                                        source={{uri: item}}
+                                        source={{uri: item.url}}
                                     />
                                 </View>
                             )}
@@ -646,19 +633,20 @@ export default class Chat extends React.Component {
                         <View style={[styles.footer, { backgroundColor: 'white',  borderColor: '#d3d3d3', borderTopWidth: 0.5, backgroundColor: '#d3d3d300' }]}>
                             <FlatList
                                 horizontal={true}
-                                data={[
-                                    'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg',
-                                    'https://pbs.twimg.com/profile_images/637621688260128768/7Umrx0Dt_400x400.png',
-                                    'https://pbs.twimg.com/profile_images/378800000130832007/5a3f14d4f63adfc402c854ae025aeada_400x400.png',
-                                    'http://cdn-th.tunwalai.net/files/member/2781675/1747465371-member.jpg'
-                                ]}
+                                data={this.state.sticker}
                                 renderItem={({item}) => {
                                     return (
                                         <View style={{ marginRight: 12 }}>
-                                            <Image
-                                                style={{ height: 40, width: 40 }}
-                                                source={{uri: item}}
-                                            />
+                                            <TouchableOpacity onPress={() => {
+                                                this.setState({
+                                                    collectionKeySelected: item.key
+                                                })
+                                            }}>
+                                                <Image
+                                                    style={{ height: 40, width: 40 }}
+                                                    source={{uri: item.collection_image_url}}
+                                                />
+                                            </TouchableOpacity>
                                         </View>
                                     )
                                 }}
