@@ -196,3 +196,7 @@ export const sticker = (stickerData) => ({
         sticker: stickerData
     }
 })
+
+export const onLoadMoreMessageLists = () => ({
+    type: 'ON_LOAD_MORE_MESSAGE_LIST'
+})

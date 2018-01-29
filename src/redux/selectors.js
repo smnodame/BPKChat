@@ -21,3 +21,11 @@ export const getFilterFriend = state => {
 export const navigateSelector = state => {
     return state.system.navigate
 }
+
+export const getMessageLists = state => {
+    return state.chat.chat
+}
+
+export const getChatInfo = state => {
+    return state.chat.chatInfo
+}

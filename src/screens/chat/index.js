@@ -46,6 +46,7 @@ import {scale} from '../../utils/scale';
 import GridView from 'react-native-super-grid';
 
 import {store} from '../../redux'
+import { onLoadMoreMessageLists } from '../../redux/actions'
 import {sendTheMessage} from '../../redux/api'
 import { emit_update_friend_chat_list, emit_unsubscribe, emit_message } from '../../redux/socket.js'
 
@@ -121,7 +122,7 @@ export default class Chat extends React.Component {
     );
 
     return (
-        <TouchableWithoutFeedback  onPress={() => this.setState({
+        <TouchableWithoutFeedback key={info.item.chat_message_id}  onPress={() => this.setState({
             isShowPhoto: false,
             isShowRecord: false
         })}>
@@ -553,6 +554,11 @@ export default class Chat extends React.Component {
                 </View>
             }
               <FlatList ref='list'
+                        onScroll={(e) => {
+                            if(e.nativeEvent.contentOffset.y == 0) {
+                                store.dispatch(onLoadMoreMessageLists())
+                            }
+                        }}
                         extraData={this.state}
                         style={styles.list}
                         data={this.state.chat}

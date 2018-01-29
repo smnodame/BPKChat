@@ -40,7 +40,9 @@ import {
     getNumberOfGroup,
     getRangeOfGroup,
     getFilterFriend,
-    navigateSelector
+    navigateSelector,
+    getMessageLists,
+    getChatInfo
 } from './selectors'
 import { emit_subscribe, on_message } from './socket.js'
 
@@ -365,6 +367,22 @@ function* selectChatSaga() {
     }
 }
 
+function* onLoadMoreMessageListsSaga() {
+    while (true) {
+        yield take('ON_LOAD_MORE_MESSAGE_LIST')
+        const chatInfo = yield select(getChatInfo)
+        const messageLists = yield select(getMessageLists)
+
+        const topChatMessageId = messageLists[0].chat_message_id
+
+        const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, topChatMessageId)
+        const chatData = _.get(resFetchChat, 'data.data', []).reverse()
+
+        const newMessageLists = chatData.concat(messageLists)
+        yield put(chat(newMessageLists))
+    }
+}
+
 
 export default function* rootSaga() {
     yield all([
@@ -380,6 +398,7 @@ export default function* rootSaga() {
         onSearchFriendSata(),
         logout(),
         selectChatSaga(),
-        onStickerSaga()
+        onStickerSaga(),
+        onLoadMoreMessageListsSaga()
     ])
 }
