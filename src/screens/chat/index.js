@@ -91,6 +91,7 @@ export default class Chat extends React.Component {
             user: _.get(state, 'user.user'),
             sticker: _.get(state, 'chat.sticker', [])
         })
+        // this.flatListRef.scrollToIndex({animated: true, index: "" + randomIndex})
     }
 
 	async componentWillMount() {
@@ -101,9 +102,19 @@ export default class Chat extends React.Component {
     }
 
     componentDidMount() {
-        InteractionManager.runAfterInteractions(() => {
-            this.refs.list.scrollToEnd();
-        });
+        // InteractionManager.runAfterInteractions(() => {
+        //     this.refs.list.scrollToEnd();
+        // });
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        // const prevChatLength = prevState.chat.length || 0
+        // const currentChatLength = this.state.chat.length || 0
+        // if (prevChatLength !== currentChatLength) {
+        //     setTimeout(() => {
+        //         this.refs.list.scrollToIndex({animated: false, index: "" + currentChatLength - prevChatLength + 1})
+        //     }, 100)
+        // }
     }
 
     _renderItem(info) {
@@ -122,12 +133,16 @@ export default class Chat extends React.Component {
     );
 
     return (
-        <TouchableWithoutFeedback key={info.item.chat_message_id}  onPress={() => this.setState({
-            isShowPhoto: false,
-            isShowRecord: false
-        })}>
-        <View style={{  width: '100%'}}>
-        <View style={[styles.item, itemStyle]}>
+        <TouchableWithoutFeedback
+
+            key={info.item.chat_message_id}
+            onPress={() => this.setState({
+                isShowPhoto: false,
+                isShowRecord: false
+            })
+        }>
+            <View style={{  width: '100%'}}>
+            <View style={[styles.item, itemStyle]}>
           {!inMessage && renderDate(info.item.create_date)}
           {
               info.item.message_type=='1' && <View style={[styles.balloon, {backgroundColor}]}>
@@ -236,11 +251,11 @@ export default class Chat extends React.Component {
   }
 
     _scroll() {
-        if (Platform.OS === 'ios') {
-            this.refs.list.scrollToEnd();
-        } else {
-            _.delay(() => this.refs.list.scrollToEnd(), 100);
-        }
+        // if (Platform.OS === 'ios') {
+        //     this.refs.list.scrollToEnd();
+        // } else {
+        //     _.delay(() => this.refs.list.scrollToEnd(), 100);
+        // }
     }
 
     async _pushMessage() {
@@ -260,6 +275,42 @@ export default class Chat extends React.Component {
         })
 
         this._scroll(true)
+    }
+
+    async _pushSticker(sticker_path) {
+        const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '4', '', sticker_path, '')
+
+        if(_.get(resSendTheMessage.data, 'error')) {
+            return;
+        }
+
+        emit_update_friend_chat_list('3963', '3963')
+        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
+
+        this.setState({
+            message: ''
+        })
+
+        this._scroll(true)
+
+    }
+
+    async _pushPhoto(base64) {
+        const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '2', '', '', base64)
+
+        if(_.get(resSendTheMessage.data, 'error')) {
+            return;
+        }
+
+        emit_update_friend_chat_list('3963', '3963')
+        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
+
+        this.setState({
+            message: ''
+        })
+
+        this._scroll(true)
+
     }
 
   render() {
@@ -554,10 +605,17 @@ export default class Chat extends React.Component {
                 </View>
             }
               <FlatList ref='list'
+                        getItemLayout={(data, index) => (
+                            {length: 100, offset: 100 * index, index}
+                        )}
                         onScroll={(e) => {
+                            console.log(e.nativeEvent)
                             if(e.nativeEvent.contentOffset.y == 0) {
                                 store.dispatch(onLoadMoreMessageLists())
                             }
+                        }}
+                        keyExtractor={(post) => {
+                            return post.chat_message_id
                         }}
                         extraData={this.state}
                         style={styles.list}
@@ -596,10 +654,7 @@ export default class Chat extends React.Component {
                             } else if (response.customButton) {
                                 console.log('User tapped custom button: ', response.customButton)
                             } else {
-                                this.setState({
-                                    profile_pic_url: response.uri,
-                                    profile_pic_base64: response.data || ''
-                                })
+                                this._pushPhoto(response.data)
                             }
                         });
                     }}>
@@ -628,10 +683,7 @@ export default class Chat extends React.Component {
                             } else if (response.customButton) {
                                 console.log('User tapped custom button: ', response.customButton)
                             } else {
-                                this.setState({
-                                    profile_pic_url: response.uri,
-                                    profile_pic_base64: response.data || ''
-                                })
+                                this._pushPhoto(response.data)
                             }
                         });
                     }}>
@@ -689,10 +741,14 @@ export default class Chat extends React.Component {
                             items={this.state.sticker[this.state.collectionKeySelected].sticker_lists}
                             renderItem={item => (
                                 <View>
-                                    <Image
-                                        style={{ height: 70 }}
-                                        source={{uri: item.url}}
-                                    />
+                                    <TouchableOpacity onPress={() => {
+                                        this._pushSticker(item.path)
+                                    }}>
+                                        <Image
+                                            style={{ height: 70 }}
+                                            source={{uri: item.url}}
+                                        />
+                                    </TouchableOpacity>
                                 </View>
                             )}
                         />

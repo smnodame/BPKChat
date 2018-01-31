@@ -60,7 +60,8 @@ function* onStickerSaga() {
             const stickerObj = stickerLists.map((s) => {
                 return {
                     url: `${sticker_base_url}/${c.sticker_folder}/${s}`,
-                    file: s
+                    file: s,
+                    path: `${c.sticker_folder}/${s}`
                 }
             })
             return {
