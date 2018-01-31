@@ -19,7 +19,7 @@ import {Avatar} from '../../components/avatar'
 import {FontAwesome} from '../../assets/icons'
 import { NavigationActions } from 'react-navigation'
 
-import { enterContacts, removeFavorite, addFavorite, showOrHideFriendLists, onLoadMore, onSearchFriend } from '../../redux/actions.js'
+import { enterContacts, removeFavorite, addFavorite, showOrHideFriendLists, onLoadMore, onSearchFriend, selectChat } from '../../redux/actions.js'
 import {store} from '../../redux'
 
 export default class Contacts extends React.Component {
@@ -370,7 +370,12 @@ export default class Contacts extends React.Component {
                             justifyContent: 'center', alignItems: 'flex-end', padding: 15
                         }}
                     >
-                        <Button transparent style={{ flexDirection: 'column' }}>
+                        <Button transparent style={{ flexDirection: 'column' }} onPress={() =>  {
+                            this.setState({
+                                showFriendModal: false
+                            })
+                            store.dispatch(selectChat(this.state.selectedFriend))
+                        }}>
                             <Icon name='md-chatboxes' style={{ color: 'gray' }} />
                             <Text style={{ color: 'gray' }}>CHAT</Text>
                         </Button>
@@ -481,7 +486,12 @@ export default class Contacts extends React.Component {
                             justifyContent: 'center', alignItems: 'flex-end', padding: 15
                         }}
                     >
-                        <Button transparent style={{ flexDirection: 'column' }}>
+                        <Button transparent style={{ flexDirection: 'column' }} onPress={() =>  {
+                            this.setState({
+                                showGroupModal: false
+                            })
+                            store.dispatch(selectChat(this.state.selectedFriend))
+                        }}>
                             <Icon name='md-chatboxes' style={{ color: 'gray' }} />
                             <Text style={{ color: 'gray' }}>CHAT</Text>
                         </Button>
