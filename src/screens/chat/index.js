@@ -6,9 +6,9 @@ import {
   Image,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  Keyboard,
   ScrollView,
-  StyleSheet
+  StyleSheet,
+  Keyboard
 } from 'react-native';
 import { InteractionManager, WebView } from 'react-native';
 import {
@@ -136,11 +136,14 @@ export default class Chat extends React.Component {
         <TouchableWithoutFeedback
 
             key={info.item.chat_message_id}
-            onPress={() => this.setState({
-                isShowPhoto: false,
-                isShowRecord: false
-            })
-        }>
+            onPress={() => {
+                this.setState({
+                    isShowPhoto: false,
+                    isShowRecord: false
+                })
+                Keyboard.dismiss()
+            }}
+        >
             <View style={{  width: '100%'}}>
             <View style={[styles.item, itemStyle]}>
           {!inMessage && renderDate(info.item.create_date)}
@@ -634,6 +637,7 @@ export default class Chat extends React.Component {
                 }
                 {
                     this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => {
+                        Keyboard.dismiss()
                         // Launch Camera:
                         ImagePicker.launchCamera({
                             title: 'Select Profile Image',
@@ -663,6 +667,7 @@ export default class Chat extends React.Component {
                 }
                 {
                     this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => {
+                        Keyboard.dismiss()
                         // Launch Camera:
                         ImagePicker.launchImageLibrary({
                             title: 'Select Profile Image',
@@ -692,6 +697,7 @@ export default class Chat extends React.Component {
                 }
                 {
                     this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => {
+                        Keyboard.dismiss()
                         this.setState({
                             isShowRecord: !this.state.isShowRecord,
                             isShowPhoto: false
@@ -726,7 +732,10 @@ export default class Chat extends React.Component {
                   value={this.state.message}
                   rkType='row sticker'
                   placeholder="Add a comment..."/>
-                  <RkButton style={styles.plus} rkType='clear' onPress={() => this.setState({ isShowPhoto: !this.state.isShowPhoto, isShowRecord: false })}>
+                  <RkButton style={styles.plus} rkType='clear' onPress={() => {
+                      Keyboard.dismiss()
+                      this.setState({ isShowPhoto: !this.state.isShowPhoto, isShowRecord: false })
+                  }}>
                         <Icon ios='attachment' android="md-happy" style={{fontSize: 20, color: 'gray'}}/>
                   </RkButton>
 
