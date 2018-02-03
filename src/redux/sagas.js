@@ -15,7 +15,8 @@ import {
     selectedChatInfo,
     chat,
     onSticker,
-    sticker
+    sticker,
+    onIsShowActionChat
 } from './actions'
 import { NavigationActions } from 'react-navigation'
 import {
@@ -32,7 +33,8 @@ import {
     removeFavoriteApi,
     createNewAccount,
     fetchChat,
-    fetchSticker
+    fetchSticker,
+    muteChat
 } from './api'
 import {
     getFriendGroups,
@@ -42,7 +44,8 @@ import {
     getFilterFriend,
     navigateSelector,
     getMessageLists,
-    getChatInfo
+    getChatInfo,
+    getSelectedActionChatRoomId
 } from './selectors'
 import { emit_subscribe, on_message } from './socket.js'
 
@@ -384,6 +387,18 @@ function* onLoadMoreMessageListsSaga() {
     }
 }
 
+function* onMuteChatSaga() {
+    while (true) {
+        yield take('ON_MUTE_CHAT')
+        const chatRoomId = yield select(getSelectedActionChatRoomId)
+        const resMuteChat = yield call(muteChat, chatRoomId)
+
+        /** hide modal after click some event */
+        yield put(onIsShowActionChat(false, ''))
+
+        console.log(`[onMuteChatSaga] mute chat room id ${chatRoomId}`)
+    }
+}
 
 export default function* rootSaga() {
     yield all([
@@ -400,6 +415,7 @@ export default function* rootSaga() {
         logout(),
         selectChatSaga(),
         onStickerSaga(),
-        onLoadMoreMessageListsSaga()
+        onLoadMoreMessageListsSaga(),
+        onMuteChatSaga()
     ])
 }

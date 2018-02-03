@@ -99,9 +99,13 @@ export const fetchSticker = () => {
 }
 
 export const muteChat = (chat_room_id) => {
-    return axios.post(`http://itsmartone.com/bpk_connect/api/chat/hide?token=asdf1234aaa`, {
+    return axios.post(`http://itsmartone.com/bpk_connect/api/chat/mute?token=asdf1234aaa`, {
         chat_room_id,
         user_id: '3963'
+    }).then((res) => {
+        return res
+    }, (err) => {
+        return err
     })
 }
 

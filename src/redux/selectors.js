@@ -29,3 +29,7 @@ export const getMessageLists = state => {
 export const getChatInfo = state => {
     return state.chat.chatInfo
 }
+
+export const getSelectedActionChatRoomId = state => {
+    return state.chat.selectedChatRoomId
+}
