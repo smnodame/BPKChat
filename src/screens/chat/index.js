@@ -92,6 +92,7 @@ export default class Chat extends React.Component {
             sticker: _.get(state, 'chat.sticker', [])
         })
         // this.flatListRef.scrollToIndex({animated: true, index: "" + randomIndex})
+        console.log(data)
     }
 
 	async componentWillMount() {

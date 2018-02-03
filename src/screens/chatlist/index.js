@@ -22,6 +22,7 @@ import Modal from 'react-native-modal';
 
 import { selectChat  } from '../../redux/actions.js'
 import {store} from '../../redux'
+import { muteChat } from '../../redux/api.js'
 
 export default class ChatList extends React.Component {
     static navigationOptions = {
@@ -85,7 +86,7 @@ export default class ChatList extends React.Component {
     _renderItem(data) {
         const info = data.item
         return (
-            <TouchableWithoutFeedback onPress={() =>  store.dispatch(selectChat(info))} onLongPress={() => this.setState({showPickerModal: true})}>
+            <TouchableWithoutFeedback onPress={() =>  store.dispatch(selectChat(info))} onLongPress={() => this.setState({ showPickerModal: true, selectedChatRoomId: info.chat_room_id })}>
                 <View style={styles.container}>
                     <Thumbnail source={{ uri: info.profile_pic_url }} />
                     <View style={styles.content}>
@@ -122,8 +123,12 @@ export default class ChatList extends React.Component {
                   borderRadius: 4,
                   borderColor: 'rgba(0, 0, 0, 0.1)',
               }}>
-                <Button block light>
-                    <Text>Chat</Text>
+                <Button block light onPress={() => {
+                    muteChat(this.state.selectedChatRoomId).then(() => {
+                        this.setState({ showPickerModal: false })
+                    })
+                }}>
+                    <Text>Hide</Text>
                 </Button>
                 <Button block light>
                     <Text>Mute</Text>
