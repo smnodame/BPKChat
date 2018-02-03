@@ -13,7 +13,7 @@ import {
   RkTextInput,
   RkButton
 } from 'react-native-ui-kitten';
-import { Thumbnail, Button, Text } from 'native-base';
+import { Thumbnail, Button, Text, Badge } from 'native-base';
 import {Avatar} from '../../components';
 import {FontAwesome} from '../../assets/icons';
 import {data} from '../../data';
@@ -93,12 +93,18 @@ export default class ChatList extends React.Component {
                     <Thumbnail source={{ uri: info.profile_pic_url }} />
                     <View style={styles.content}>
                         <View style={styles.contentHeader}>
-                            <RkText rkType='header5'>{ info.display_name }</RkText>
+                            <RkText numberOfLines={1} style={{ width: '60%' }} rkType='header5'>{ info.display_name }</RkText>
                             <RkText rkType='secondary4 hintColor'>
                                 {moment(info.last_chat).fromNow()}
                             </RkText>
                         </View>
-                        <RkText numberOfLines={2} rkType='primary3 mediumLine'>{ info.last_message }</RkText>
+                        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <RkText style={{ width: '70%' }} numberOfLines={2} rkType='primary3 mediumLine'>{ info.last_message }</RkText>
+                            <Badge warning>
+                                <Text>2</Text>
+                            </Badge>
+                        </View>
+
                     </View>
                 </View>
             </TouchableWithoutFeedback>
@@ -138,7 +144,7 @@ export default class ChatList extends React.Component {
                 <Button block light onPress={() => {
                     store.dispatch(onBlockChat())
                 }}>
-                    <Text>Block Chat</Text>
+                    <Text>Block</Text>
                 </Button>
                 <Button block light onPress={() => {
                     store.dispatch(onDeleteChat())
