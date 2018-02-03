@@ -220,3 +220,7 @@ export const onHideChat = () => ({
 export const onBlockChat = () => ({
     type: 'ON_BLOCK_CHAT'
 })
+
+export const onDeleteChat = () => ({
+    type: 'ON_DELETE_CHAT'
+})

@@ -36,7 +36,8 @@ import {
     fetchSticker,
     muteChat,
     hideChat,
-    blockChat
+    blockChat,
+    deleteChat
 } from './api'
 import {
     getFriendGroups,
@@ -428,6 +429,19 @@ function* onBlockChatSaga() {
     }
 }
 
+function* onDeleteChatSaga() {
+    while (true) {
+        yield take('ON_DELETE_CHAT')
+        const chatRoomId = yield select(getSelectedActionChatRoomId)
+        const resDeleteChat = yield call(deleteChat, chatRoomId)
+
+        /** hide modal after click some event */
+        yield put(onIsShowActionChat(false, ''))
+
+        console.log(`[onDeleteChatSaga] delete chat room id ${chatRoomId}`)
+    }
+}
+
 export default function* rootSaga() {
     yield all([
         signin(),
@@ -446,6 +460,7 @@ export default function* rootSaga() {
         onLoadMoreMessageListsSaga(),
         onMuteChatSaga(),
         onHideChatSaga(),
-        onBlockChatSaga()
+        onBlockChatSaga(),
+        onDeleteChatSaga()
     ])
 }

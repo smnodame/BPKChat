@@ -20,7 +20,7 @@ import {data} from '../../data';
 let moment = require('moment');
 import Modal from 'react-native-modal';
 
-import { selectChat, onIsShowActionChat, onMuteChat, onHideChat, onBlockChat  } from '../../redux/actions.js'
+import { selectChat, onIsShowActionChat, onMuteChat, onHideChat, onBlockChat, onDeleteChat  } from '../../redux/actions.js'
 import {store} from '../../redux'
 import { muteChat } from '../../redux/api.js'
 
@@ -141,7 +141,7 @@ export default class ChatList extends React.Component {
                     <Text>Block Chat</Text>
                 </Button>
                 <Button block light onPress={() => {
-
+                    store.dispatch(onDeleteChat())
                 }}>
                     <Text>Delete</Text>
                 </Button>
