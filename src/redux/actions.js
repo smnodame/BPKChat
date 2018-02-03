@@ -216,3 +216,7 @@ export const onMuteChat = () => ({
 export const onHideChat = () => ({
     type: 'ON_HIDE_CHAT'
 })
+
+export const onBlockChat = () => ({
+    type: 'ON_BLOCK_CHAT'
+})
