@@ -212,3 +212,7 @@ export const onIsShowActionChat = (isShowActionChat, selectedChatRoomId) => ({
 export const onMuteChat = () => ({
     type: 'ON_MUTE_CHAT'
 })
+
+export const onHideChat = () => ({
+    type: 'ON_HIDE_CHAT'
+})

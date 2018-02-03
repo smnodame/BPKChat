@@ -20,7 +20,7 @@ import {data} from '../../data';
 let moment = require('moment');
 import Modal from 'react-native-modal';
 
-import { selectChat, onIsShowActionChat, onMuteChat  } from '../../redux/actions.js'
+import { selectChat, onIsShowActionChat, onMuteChat, onHideChat  } from '../../redux/actions.js'
 import {store} from '../../redux'
 import { muteChat } from '../../redux/api.js'
 
@@ -126,11 +126,7 @@ export default class ChatList extends React.Component {
                   borderColor: 'rgba(0, 0, 0, 0.1)',
               }}>
                 <Button block light onPress={() => {
-                    // muteChat(this.state.selectedChatRoomId).then(() => {
-                    //     this.setState({ showPickerModal: false })
-                    // })
-                    // store.dispatch(onMuteChat())
-                    // console.log(onMuteChat)
+                    store.dispatch(onHideChat())
                 }}>
                     <Text>Hide</Text>
                 </Button>

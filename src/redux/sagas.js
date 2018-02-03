@@ -34,7 +34,8 @@ import {
     createNewAccount,
     fetchChat,
     fetchSticker,
-    muteChat
+    muteChat,
+    hideChat
 } from './api'
 import {
     getFriendGroups,
@@ -400,6 +401,20 @@ function* onMuteChatSaga() {
     }
 }
 
+function* onHideChatSaga() {
+    while (true) {
+        yield take('ON_HIDE_CHAT')
+        const chatRoomId = yield select(getSelectedActionChatRoomId)
+        const resHideChat = yield call(hideChat, chatRoomId)
+
+        /** hide modal after click some event */
+        yield put(onIsShowActionChat(false, ''))
+
+        console.log(`[onHideChatSaga] hide chat room id ${chatRoomId}`)
+    }
+}
+
+
 export default function* rootSaga() {
     yield all([
         signin(),
@@ -416,6 +431,7 @@ export default function* rootSaga() {
         selectChatSaga(),
         onStickerSaga(),
         onLoadMoreMessageListsSaga(),
-        onMuteChatSaga()
+        onMuteChatSaga(),
+        onHideChatSaga()
     ])
 }
