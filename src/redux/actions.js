@@ -200,3 +200,11 @@ export const sticker = (stickerData) => ({
 export const onLoadMoreMessageLists = () => ({
     type: 'ON_LOAD_MORE_MESSAGE_LIST'
 })
+
+export const onIsShowActionChat = (isShowActionChat, selectedChatRoomId) => ({
+    type: 'IS_SHOW_ACTION_CHAT',
+    payload: {
+        isShowActionChat,
+        selectedChatRoomId
+    }
+})

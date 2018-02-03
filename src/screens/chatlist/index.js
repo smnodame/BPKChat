@@ -20,7 +20,7 @@ import {data} from '../../data';
 let moment = require('moment');
 import Modal from 'react-native-modal';
 
-import { selectChat  } from '../../redux/actions.js'
+import { selectChat, onIsShowActionChat  } from '../../redux/actions.js'
 import {store} from '../../redux'
 import { muteChat } from '../../redux/api.js'
 
@@ -41,7 +41,9 @@ export default class ChatList extends React.Component {
     updateData = () => {
         const state = store.getState()
         this.setState({
-            chatLists: _.get(state, 'chat.chatLists', [])
+            chatLists: _.get(state, 'chat.chatLists', []),
+            showPickerModal: _.get(state, 'chat.isShowActionChat', false),
+            selectedChatRoomId: _.get(state, 'chat.selectedChatRoomId', '')
         })
     }
 
@@ -86,7 +88,7 @@ export default class ChatList extends React.Component {
     _renderItem(data) {
         const info = data.item
         return (
-            <TouchableWithoutFeedback onPress={() =>  store.dispatch(selectChat(info))} onLongPress={() => this.setState({ showPickerModal: true, selectedChatRoomId: info.chat_room_id })}>
+            <TouchableWithoutFeedback onPress={() =>  store.dispatch(selectChat(info))} onLongPress={() =>  store.dispatch(onIsShowActionChat(true, info.chat_room_id))}>
                 <View style={styles.container}>
                     <Thumbnail source={{ uri: info.profile_pic_url }} />
                     <View style={styles.content}>
@@ -114,8 +116,8 @@ export default class ChatList extends React.Component {
           ItemSeparatorComponent={this._renderSeparator}
           renderItem={this.renderItem}/>
           <Modal
-              onRequestClose={() => this.setState({ showPickerModal: false })}
-              onBackdropPress={() => this.setState({ showPickerModal: false })}
+              onRequestClose={() => store.dispatch(onIsShowActionChat(false, ''))}
+              onBackdropPress={() => store.dispatch(onIsShowActionChat(false, ''))}
               isVisible={this.state.showPickerModal}
           >
               <View style={{
@@ -124,19 +126,25 @@ export default class ChatList extends React.Component {
                   borderColor: 'rgba(0, 0, 0, 0.1)',
               }}>
                 <Button block light onPress={() => {
-                    muteChat(this.state.selectedChatRoomId).then(() => {
-                        this.setState({ showPickerModal: false })
-                    })
+                    // muteChat(this.state.selectedChatRoomId).then(() => {
+                    //     this.setState({ showPickerModal: false })
+                    // })
                 }}>
                     <Text>Hide</Text>
                 </Button>
-                <Button block light>
+                <Button block light onPress={() => {
+
+                }}>
                     <Text>Mute</Text>
                 </Button>
-                <Button block light>
+                <Button block light onPress={() => {
+
+                }}>
                     <Text>Block Chat</Text>
                 </Button>
-                <Button block light>
+                <Button block light onPress={() => {
+
+                }}>
                     <Text>Delete</Text>
                 </Button>
               </View>

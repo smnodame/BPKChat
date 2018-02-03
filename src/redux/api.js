@@ -104,3 +104,24 @@ export const muteChat = (chat_room_id) => {
         user_id: '3963'
     })
 }
+
+export const deleteChat = (chat_room_id) => {
+    return axios.post(`http://itsmartone.com/bpk_connect/api/chat/delete?token=asdf1234aaa`, {
+        chat_room_id,
+        user_id: '3963'
+    })
+}
+
+export const hideChat = (chat_room_id) => {
+    return axios.post(`http://itsmartone.com/bpk_connect/api/chat/hide?token=asdf1234aaa`, {
+        chat_room_id,
+        user_id: '3963'
+    })
+}
+
+export const blockChat = (chat_room_id) => {
+    return axios.post(`http://itsmartone.com/bpk_connect/api/chat/block?token=asdf1234aaa`, {
+        chat_room_id,
+        user_id: '3963'
+    })
+}

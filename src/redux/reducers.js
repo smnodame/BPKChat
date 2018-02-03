@@ -83,7 +83,10 @@ const friend = (state = {
     }
 }
 
-const chat = (state = {}, action) => {
+const chat = (state = {
+    isShowActionChat: false,
+    selectedChatRoomId: ''
+}, action) => {
     switch (action.type) {
         case 'CHAT_LISTS':
             return Object.assign(state, {
@@ -100,6 +103,11 @@ const chat = (state = {}, action) => {
         case 'STICKER':
             return Object.assign(state, {
                 sticker: action.payload.sticker
+            })
+        case 'IS_SHOW_ACTION_CHAT':
+            return Object.assign(state, {
+                isShowActionChat: action.payload.isShowActionChat,
+                selectedChatRoomId: action.payload.selectedChatRoomId
             })
         default:
             return state
