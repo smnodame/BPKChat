@@ -89,7 +89,8 @@ export default class Chat extends React.Component {
             chat: _.get(state, 'chat.chat', []),
             chatInfo: _.get(state, 'chat.chatInfo'),
             user: _.get(state, 'user.user'),
-            sticker: _.get(state, 'chat.sticker', [])
+            sticker: _.get(state, 'chat.sticker', []),
+            isGroup: _.get(state, 'chat.chatInfo.friend_user_id', 'F')[0] == 'G',
         })
         // this.flatListRef.scrollToIndex({animated: true, index: "" + randomIndex})
         console.log(data)
@@ -120,6 +121,15 @@ export default class Chat extends React.Component {
 
     _renderItem(info) {
         let inMessage = info.item.username != this.state.user.username;
+        let seenMessage = ''
+        const reader = info.item.who_read.filter((id) => {
+            return id != this.state.user.user_id
+        })
+        if(this.state.isGroup && reader.length != 0) {
+            seenMessage = `seen by ${reader.length}`
+        } else if(!this.state.isGroup && reader.length != 0){
+            seenMessage = `seen`
+        }
         let backgroundColor = inMessage
             ? RkTheme.current.colors.chat.messageInBackground
                 : RkTheme.current.colors.chat.messageOutBackground;
@@ -127,9 +137,16 @@ export default class Chat extends React.Component {
 
         let renderDate = (date) => (
         <View>
-            <RkText style={styles.time} rkType='secondary7 hintColor'>
-                {moment(date).fromNow()}
+            <RkText style={{ marginLeft: 15, marginRight: 15, marginTop: 10 }} rkType='secondary7 hintColor'>
+                { `${moment(date).fromNow()}` }
             </RkText>
+            {
+                (!inMessage||this.state.isGroup)&&<RkText style={{ marginLeft: 15, paddingRight: 30, width: '100%', textAlign: inMessage? 'left' : 'right' }} rkType='secondary7 hintColor'>
+                    {
+                        seenMessage
+                    }
+                </RkText>
+            }
         </View>
     );
 
