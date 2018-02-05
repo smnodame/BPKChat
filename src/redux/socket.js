@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import SocketIOClient from 'socket.io-client'
 
-import { fetchChatLists, fetchChat } from './api.js'
+import { fetchChatLists, fetchChat, setAsSeen } from './api.js'
 import { chatLists, chat } from './actions.js'
 import { store } from './index.js'
 
@@ -20,6 +20,33 @@ export const on_message = () => {
             // store data in store redux
             store.dispatch(chat(chatData))
         })
+
+        setAsSeen(chatInfo.chat_room_id).then(() => {
+            emit_as_seen(chatInfo.chat_room_id)
+        })
+    })
+}
+
+export const emit_as_seen = (chat_room_id) => {
+    socket.emit('read_all', {
+        chat_room_id,
+        user_id: '3963'
+    })
+}
+
+export const on_as_seen = () => {
+    socket.on('read_all', (user_id) => {
+        // fetch new message if is not own message
+        if(user_id != '3963') {
+            const state = store.getState()
+            const chatInfo = _.get(state, 'chat.chatInfo')
+
+            fetchChat(chatInfo.chat_room_id).then((res) => {
+                const chatData = _.get(res, 'data.data', []).reverse()
+                // store data in store redux
+                store.dispatch(chat(chatData))
+            })
+        }
     })
 }
 
@@ -74,20 +101,19 @@ export const emit_message = (message, chat_room_id) => {
     })
 }
 
-export const emit_read_message = (user_id, chat_room_id) => {
-    socket.emit('read_message', {
-        user_id,
-        chat_room_id
-    })
-}
-
-export const emit_read_all = (user_id, chat_room_id) => {
-    socket.emit('read_all', {
-        user_id,
-        chat_room_id
-    })
-}
-
+// export const emit_read_message = (user_id, chat_room_id) => {
+//     socket.emit('read_message', {
+//         user_id,
+//         chat_room_id
+//     })
+// }
+//
+// export const emit_read_all = (user_id, chat_room_id) => {
+//     socket.emit('read_all', {
+//         user_id,
+//         chat_room_id
+//     })
+// }
 
 export const start_socket = () => {
     // Connect!
@@ -100,4 +126,5 @@ export const start_socket = () => {
 
     emit_subscribe_chat_list(user_id)
     on_update_friend_chat_list()
+    on_as_seen()
 }

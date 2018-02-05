@@ -37,7 +37,8 @@ import {
     muteChat,
     hideChat,
     blockChat,
-    deleteChat
+    deleteChat,
+    setAsSeen
 } from './api'
 import {
     getFriendGroups,
@@ -364,6 +365,9 @@ function* selectChatSaga() {
             // subscribe socket io
             on_message()
             emit_subscribe(chatInfo.chat_room_id)
+
+            // call set as setAsSeen
+            yield call(setAsSeen, chatInfo.chat_room_id)
 
             // navigate to chat page
             const navigate = yield select(navigateSelector)
