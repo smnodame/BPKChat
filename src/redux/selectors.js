@@ -33,3 +33,7 @@ export const getChatInfo = state => {
 export const getSelectedActionChatRoomId = state => {
     return state.chat.selectedChatRoomId
 }
+
+export const getChatLists = state => {
+    return state.chat.chatLists
+}

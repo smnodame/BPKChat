@@ -48,7 +48,8 @@ import {
     navigateSelector,
     getMessageLists,
     getChatInfo,
-    getSelectedActionChatRoomId
+    getSelectedActionChatRoomId,
+    getChatLists
 } from './selectors'
 import { emit_subscribe, on_message } from './socket.js'
 
@@ -413,6 +414,14 @@ function* onHideChatSaga() {
         yield put(onIsShowActionChat(false, ''))
 
         console.log(`[onHideChatSaga] hide chat room id ${chatRoomId}`)
+
+
+        const chatListsFromStore = yield select(getChatLists)
+
+        const chatListsFilterHide = chatListsFromStore.filter((chat) => {
+            return chatRoomId != chat.chat_room_id
+        })
+        yield put(chatLists(chatListsFilterHide))
     }
 }
 
@@ -439,6 +448,13 @@ function* onDeleteChatSaga() {
         yield put(onIsShowActionChat(false, ''))
 
         console.log(`[onDeleteChatSaga] delete chat room id ${chatRoomId}`)
+
+        const chatListsFromStore = yield select(getChatLists)
+
+        const chatListsFilterHide = chatListsFromStore.filter((chat) => {
+            return chatRoomId != chat.chat_room_id
+        })
+        yield put(chatLists(chatListsFilterHide))
     }
 }
 
