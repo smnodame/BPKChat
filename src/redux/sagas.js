@@ -38,7 +38,9 @@ import {
     hideChat,
     blockChat,
     deleteChat,
-    setAsSeen
+    setAsSeen,
+    unblockChat,
+    unmuteChat
 } from './api'
 import {
     getFriendGroups,
@@ -408,6 +410,19 @@ function* onMuteChatSaga() {
     }
 }
 
+function* onUnmuteChatSaga() {
+    while (true) {
+        yield take('ON_UNMUTE_CHAT')
+        const chatRoomId = yield select(getSelectedActionChatRoomId)
+        const resUnMuteChat = yield call(unmuteChat, chatRoomId)
+
+        /** hide modal after click some event */
+        yield put(onIsShowActionChat(false, ''))
+
+        console.log(`[onUnMuteChatSaga] unmute chat room id ${chatRoomId}`)
+    }
+}
+
 function* onHideChatSaga() {
     while (true) {
         yield take('ON_HIDE_CHAT')
@@ -439,6 +454,19 @@ function* onBlockChatSaga() {
         yield put(onIsShowActionChat(false, ''))
 
         console.log(`[onBlockChatSaga] block chat room id ${chatRoomId}`)
+    }
+}
+
+function* onUnblockChatSaga() {
+    while (true) {
+        yield take('ON_UNBLOCK_CHAT')
+        const chatRoomId = yield select(getSelectedActionChatRoomId)
+        const resUnBlockChat = yield call(unblockChat, chatRoomId)
+
+        /** hide modal after click some event */
+        yield put(onIsShowActionChat(false, ''))
+
+        console.log(`[onUnblockChatSaga] unblock chat room id ${chatRoomId}`)
     }
 }
 
@@ -481,6 +509,8 @@ export default function* rootSaga() {
         onMuteChatSaga(),
         onHideChatSaga(),
         onBlockChatSaga(),
-        onDeleteChatSaga()
+        onDeleteChatSaga(),
+        onUnblockChatSaga(),
+        onUnmuteChatSaga()
     ])
 }

@@ -213,12 +213,20 @@ export const onMuteChat = () => ({
     type: 'ON_MUTE_CHAT'
 })
 
+export const onUnmuteChat = () => ({
+    type: 'ON_UNMUTE_CHAT'
+})
+
 export const onHideChat = () => ({
     type: 'ON_HIDE_CHAT'
 })
 
 export const onBlockChat = () => ({
     type: 'ON_BLOCK_CHAT'
+})
+
+export const onUnblockChat = () => ({
+    type: 'ON_UNBLOCK_CHAT'
 })
 
 export const onDeleteChat = () => ({

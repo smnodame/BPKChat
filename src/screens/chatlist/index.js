@@ -19,8 +19,7 @@ import {FontAwesome} from '../../assets/icons';
 import {data} from '../../data';
 let moment = require('moment');
 import Modal from 'react-native-modal';
-
-import { selectChat, onIsShowActionChat, onMuteChat, onHideChat, onBlockChat, onDeleteChat  } from '../../redux/actions.js'
+import { selectChat, onIsShowActionChat, onMuteChat, onHideChat, onBlockChat, onDeleteChat, onUnblockChat, onUnmuteChat  } from '../../redux/actions.js'
 import {store} from '../../redux'
 import { muteChat } from '../../redux/api.js'
 
@@ -42,8 +41,8 @@ export default class ChatList extends React.Component {
         const state = store.getState()
         this.setState({
             chatLists: _.get(state, 'chat.chatLists', []),
-            showPickerModal: _.get(state, 'chat.isShowActionChat', false),
-            selectedChatRoomId: _.get(state, 'chat.selectedChatRoomId', '')
+            selectedChatRoomId: _.get(state, 'chat.selectedChatRoomId', ''),
+            showPickerModal: _.get(state, 'chat.isShowActionChat', false)
         })
     }
 
@@ -52,6 +51,20 @@ export default class ChatList extends React.Component {
 		store.subscribe(() => {
             this.updateData()
 		})
+    }
+
+    isBlocked = () => {
+        const selectedChatRoom = this.state.chatLists.find((chat) => {
+            return chat.chat_room_id == this.state.selectedChatRoomId
+        })
+        return _.get(selectedChatRoom, 'is_blocked', '0') == '1'
+    }
+
+    isMute = () => {
+        const selectedChatRoom = this.state.chatLists.find((chat) => {
+            return chat.chat_room_id == this.state.selectedChatRoomId
+        })
+        return selectedChatRoom.is_mute == '1'
     }
 
     _filter(text) {
@@ -88,7 +101,12 @@ export default class ChatList extends React.Component {
     _renderItem(data) {
         const info = data.item
         return (
-            <TouchableWithoutFeedback onPress={() =>  store.dispatch(selectChat(info))} onLongPress={() =>  store.dispatch(onIsShowActionChat(true, info.chat_room_id))}>
+            <TouchableWithoutFeedback onPress={() =>  store.dispatch(selectChat(info))} onLongPress={() =>  {
+                this.setState({
+                    selectedChatRoomId: info.chat_room_id
+                })
+                store.dispatch(onIsShowActionChat(true, info.chat_room_id))
+            }}>
                 <View style={styles.container}>
                     <Thumbnail source={{ uri: info.profile_pic_url }} />
                     <View style={styles.content}>
@@ -141,11 +159,20 @@ export default class ChatList extends React.Component {
                 }}>
                     <Text>Mute</Text>
                 </Button>
-                <Button block light onPress={() => {
-                    store.dispatch(onBlockChat())
-                }}>
-                    <Text>Block</Text>
-                </Button>
+                {
+                    !this.isBlocked()&&<Button block light onPress={() => {
+                        store.dispatch(onUnblockChat())
+                    }}>
+                        <Text>Unblock</Text>
+                    </Button>
+                }
+                {
+                    this.isBlocked()&&<Button block light onPress={() => {
+                        store.dispatch(onBlockChat())
+                    }}>
+                        <Text>Block</Text>
+                    </Button>
+                }
                 <Button block light onPress={() => {
                     store.dispatch(onDeleteChat())
                 }}>
