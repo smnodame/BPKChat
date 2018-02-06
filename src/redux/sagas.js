@@ -406,6 +406,17 @@ function* onMuteChatSaga() {
         /** hide modal after click some event */
         yield put(onIsShowActionChat(false, ''))
 
+        /** change status */
+        const chatListsFromStore = yield select(getChatLists)
+
+        for(let i = 0; i < chatListsFromStore.length; i++ ) {
+            if(chatListsFromStore[i].chat_room_id == chatRoomId) {
+                chatListsFromStore[i].is_mute = '1'
+            }
+        }
+
+        yield put(chatLists(chatListsFromStore))
+
         console.log(`[onMuteChatSaga] mute chat room id ${chatRoomId}`)
     }
 }
@@ -418,6 +429,17 @@ function* onUnmuteChatSaga() {
 
         /** hide modal after click some event */
         yield put(onIsShowActionChat(false, ''))
+
+        /** change status */
+        const chatListsFromStore = yield select(getChatLists)
+
+        for(let i = 0; i < chatListsFromStore.length; i++ ) {
+            if(chatListsFromStore[i].chat_room_id == chatRoomId) {
+                chatListsFromStore[i].is_mute = '0'
+            }
+        }
+
+        yield put(chatLists(chatListsFromStore))
 
         console.log(`[onUnMuteChatSaga] unmute chat room id ${chatRoomId}`)
     }
@@ -452,6 +474,15 @@ function* onBlockChatSaga() {
 
         /** hide modal after click some event */
         yield put(onIsShowActionChat(false, ''))
+        /** change status */
+        const chatListsFromStore = yield select(getChatLists)
+        for(let i = 0; i < chatListsFromStore.length; i++ ) {
+            if(chatListsFromStore[i].chat_room_id == chatRoomId) {
+                chatListsFromStore[i].is_blocked = '1'
+            }
+        }
+
+        yield put(chatLists(chatListsFromStore))
 
         console.log(`[onBlockChatSaga] block chat room id ${chatRoomId}`)
     }
@@ -465,6 +496,17 @@ function* onUnblockChatSaga() {
 
         /** hide modal after click some event */
         yield put(onIsShowActionChat(false, ''))
+
+        /** change status */
+        const chatListsFromStore = yield select(getChatLists)
+
+        for(let i = 0; i < chatListsFromStore.length; i++ ) {
+            if(chatListsFromStore[i].chat_room_id == chatRoomId) {
+                chatListsFromStore[i].is_blocked = '0'
+            }
+        }
+
+        yield put(chatLists(chatListsFromStore))
 
         console.log(`[onUnblockChatSaga] unblock chat room id ${chatRoomId}`)
     }

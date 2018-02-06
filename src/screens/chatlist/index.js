@@ -64,7 +64,7 @@ export default class ChatList extends React.Component {
         const selectedChatRoom = this.state.chatLists.find((chat) => {
             return chat.chat_room_id == this.state.selectedChatRoomId
         })
-        return selectedChatRoom.is_mute == '1'
+        return _.get(selectedChatRoom, 'is_mute', '0') == '1'
     }
 
     _filter(text) {
@@ -154,20 +154,29 @@ export default class ChatList extends React.Component {
                 }}>
                     <Text>Hide</Text>
                 </Button>
-                <Button block light onPress={() => {
-                    store.dispatch(onMuteChat())
-                }}>
-                    <Text>Mute</Text>
-                </Button>
                 {
-                    !this.isBlocked()&&<Button block light onPress={() => {
+                    !this.isMute()&&<Button block light onPress={() => {
+                        store.dispatch(onMuteChat())
+                    }}>
+                        <Text>Mute</Text>
+                    </Button>
+                }
+                {
+                    this.isMute()&&<Button block light onPress={() => {
+                        store.dispatch(onUnmuteChat())
+                    }}>
+                        <Text>UnMute</Text>
+                    </Button>
+                }
+                {
+                    this.isBlocked()&&<Button block light onPress={() => {
                         store.dispatch(onUnblockChat())
                     }}>
                         <Text>Unblock</Text>
                     </Button>
                 }
                 {
-                    this.isBlocked()&&<Button block light onPress={() => {
+                    !this.isBlocked()&&<Button block light onPress={() => {
                         store.dispatch(onBlockChat())
                     }}>
                         <Text>Block</Text>
