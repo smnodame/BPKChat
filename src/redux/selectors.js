@@ -41,3 +41,7 @@ export const getChatLists = state => {
 export const getUserInfo = state => {
     return state.user.user
 }
+
+export const getInviteFriendLists = state => {
+    return state.chat.inviteFriends
+}

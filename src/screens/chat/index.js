@@ -47,7 +47,7 @@ import {scale} from '../../utils/scale';
 import GridView from 'react-native-super-grid';
 
 import {store} from '../../redux'
-import { onLoadMoreMessageLists, onFetchInviteFriend } from '../../redux/actions'
+import { onLoadMoreMessageLists, onFetchInviteFriend, loadMoreInviteFriends } from '../../redux/actions'
 import {sendTheMessage} from '../../redux/api'
 import { emit_update_friend_chat_list, emit_unsubscribe, emit_message } from '../../redux/socket.js'
 
@@ -77,7 +77,8 @@ export default class Chat extends React.Component {
             data: conversation,
             isShowAdditionalHeader: false,
             collectionKeySelected: 0,
-            showImageView: false
+            showImageView: false,
+            page: 0
         }
 
         this._renderItem = this._renderItem.bind(this)
@@ -122,7 +123,11 @@ export default class Chat extends React.Component {
     }
 
     loadMoreInviteFriendLists = () => {
-        store.dispatch(onFetchInviteFriend())
+        const page = this.state.page + 30
+        this.setState({
+            page: page + 1
+        })
+        store.dispatch(loadMoreInviteFriends(page))
     }
 
     _renderItem(info) {

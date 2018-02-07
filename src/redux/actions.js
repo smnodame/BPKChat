@@ -243,3 +243,10 @@ export const inviteFriends = (friends) => ({
         friends
     }
 })
+
+export const loadMoreInviteFriends = (page) => ({
+    type: 'LOAD_MORE_INVITE_FRIENDS',
+    payload: {
+        page
+    }
+})

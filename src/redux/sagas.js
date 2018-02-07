@@ -55,7 +55,8 @@ import {
     getChatInfo,
     getSelectedActionChatRoomId,
     getChatLists,
-    getUserInfo
+    getUserInfo,
+    getInviteFriendLists
 } from './selectors'
 import { emit_subscribe, on_message } from './socket.js'
 
@@ -546,6 +547,21 @@ function* onFetchInviteFriendSaga() {
         yield put(inviteFriends(_.get(resFetchInviteFriend, 'data.data', [])))
     }
 }
+
+function* loadMoreInviteFriendsSaga() {
+    while (true) {
+        const { payload : { page } } = yield take('LOAD_MORE_INVITE_FRIENDS')
+        const chatInfo = yield select(getChatInfo)
+        const userInfo = yield select(getUserInfo)
+        const inviteFriendsFromStore = yield select(getInviteFriendLists)
+        const resFetchInviteFriend = yield call(fetchInviteFriend, chatInfo.chat_room_id, userInfo.user_id, page, page + 30, '')
+
+        const allInviteFriendLists = inviteFriendsFromStore.data.concat(_.get(resFetchInviteFriend, 'data.data.data', []))
+        inviteFriendsFromStore.data = allInviteFriendLists
+        yield put(inviteFriends(inviteFriendsFromStore))
+    }
+}
+
 export default function* rootSaga() {
     yield all([
         signin(),
@@ -568,6 +584,7 @@ export default function* rootSaga() {
         onDeleteChatSaga(),
         onUnblockChatSaga(),
         onUnmuteChatSaga(),
-        onFetchInviteFriendSaga()
+        onFetchInviteFriendSaga(),
+        loadMoreInviteFriendsSaga()
     ])
 }
