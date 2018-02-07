@@ -157,7 +157,8 @@ export default class Chat extends React.Component {
             onPress={() => {
                 this.setState({
                     isShowPhoto: false,
-                    isShowRecord: false
+                    isShowRecord: false,
+                    isShowAdditionalHeader: false
                 })
                 Keyboard.dismiss()
             }}
@@ -353,7 +354,13 @@ export default class Chat extends React.Component {
                     <Button transparent>
                         <Icon style={{ color: 'white' }} name="md-call" />
                     </Button>
-                    <Button transparent onPress={() => this.setState({ isShowAdditionalHeader: !this.state.isShowAdditionalHeader })}>
+                    <Button transparent onPress={() =>
+                        this.setState({
+                            isShowAdditionalHeader: !this.state.isShowAdditionalHeader, 
+                            isShowPhoto: false,
+                            isShowRecord: false
+                        })
+                    }>
                         <Icon style={{ color: 'white' }} name="md-settings" />
                     </Button>
                 </Right>
@@ -718,7 +725,8 @@ export default class Chat extends React.Component {
                         Keyboard.dismiss()
                         this.setState({
                             isShowRecord: !this.state.isShowRecord,
-                            isShowPhoto: false
+                            isShowPhoto: false,
+                            isShowAdditionalHeader: false
                         })
                     }}>
                         <Icon ios='attachment' android="md-mic" style={{fontSize: 20, color: 'gray'}}/>
@@ -752,7 +760,7 @@ export default class Chat extends React.Component {
                   placeholder="Add a comment..."/>
                   <RkButton style={styles.plus} rkType='clear' onPress={() => {
                       Keyboard.dismiss()
-                      this.setState({ isShowPhoto: !this.state.isShowPhoto, isShowRecord: false })
+                      this.setState({ isShowPhoto: !this.state.isShowPhoto, isShowRecord: false, isShowAdditionalHeader: false })
                   }}>
                         <Icon ios='attachment' android="md-happy" style={{fontSize: 20, color: 'gray'}}/>
                   </RkButton>
