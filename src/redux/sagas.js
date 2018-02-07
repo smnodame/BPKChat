@@ -16,7 +16,8 @@ import {
     chat,
     onSticker,
     sticker,
-    onIsShowActionChat
+    onIsShowActionChat,
+    inviteFriends
 } from './actions'
 import { NavigationActions } from 'react-navigation'
 import {
@@ -40,7 +41,8 @@ import {
     deleteChat,
     setAsSeen,
     unblockChat,
-    unmuteChat
+    unmuteChat,
+    fetchInviteFriend
 } from './api'
 import {
     getFriendGroups,
@@ -52,7 +54,8 @@ import {
     getMessageLists,
     getChatInfo,
     getSelectedActionChatRoomId,
-    getChatLists
+    getChatLists,
+    getUserInfo
 } from './selectors'
 import { emit_subscribe, on_message } from './socket.js'
 
@@ -532,6 +535,17 @@ function* onDeleteChatSaga() {
     }
 }
 
+function* onFetchInviteFriendSaga() {
+    while (true) {
+        yield take('ON_FETCH_INVITE_FRIEND')
+        const chatInfo = yield select(getChatInfo)
+        const userInfo = yield select(getUserInfo)
+
+        const resFetchInviteFriend = yield call(fetchInviteFriend, chatInfo.chat_room_id, userInfo.user_id)
+
+        yield put(inviteFriends(_.get(resFetchInviteFriend, 'data.data', [])))
+    }
+}
 export default function* rootSaga() {
     yield all([
         signin(),
@@ -553,6 +567,7 @@ export default function* rootSaga() {
         onBlockChatSaga(),
         onDeleteChatSaga(),
         onUnblockChatSaga(),
-        onUnmuteChatSaga()
+        onUnmuteChatSaga(),
+        onFetchInviteFriendSaga()
     ])
 }

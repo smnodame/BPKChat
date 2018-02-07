@@ -150,3 +150,7 @@ export const setAsSeen = (chat_room_id) => {
         user_id: '3963'
     })
 }
+
+export const fetchInviteFriend = (chat_room_id, user_id, start=0, limit=30, filter='') => {
+    return  axios.get(`http://itsmartone.com/bpk_connect/api/group/friend_list_for_invite?token=asdf1234aaa&chat_room_id=${chat_room_id}&user_id=${user_id}&start=${start}&limit=${limit}&filter=${filter}`)
+}

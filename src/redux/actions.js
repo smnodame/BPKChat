@@ -232,3 +232,14 @@ export const onUnblockChat = () => ({
 export const onDeleteChat = () => ({
     type: 'ON_DELETE_CHAT'
 })
+
+export const onFetchInviteFriend = () => ({
+    type: 'ON_FETCH_INVITE_FRIEND'
+})
+
+export const inviteFriends = (friends) => ({
+    type: 'INVITE_FRIENDS',
+    payload: {
+        friends
+    }
+})

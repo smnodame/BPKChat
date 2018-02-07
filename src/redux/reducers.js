@@ -109,6 +109,10 @@ const chat = (state = {
                 isShowActionChat: action.payload.isShowActionChat,
                 selectedChatRoomId: action.payload.selectedChatRoomId
             })
+        case 'INVITE_FRIENDS':
+            return Object.assign(state, {
+                inviteFriends: action.payload.friends
+            })
         default:
             return state
     }

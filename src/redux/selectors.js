@@ -37,3 +37,7 @@ export const getSelectedActionChatRoomId = state => {
 export const getChatLists = state => {
     return state.chat.chatLists
 }
+
+export const getUserInfo = state => {
+    return state.user.user
+}
