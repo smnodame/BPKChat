@@ -8,7 +8,8 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   StyleSheet,
-  Keyboard
+  Keyboard,
+  Modal as ModalNative
 } from 'react-native';
 import { InteractionManager, WebView } from 'react-native';
 import {
@@ -356,7 +357,7 @@ export default class Chat extends React.Component {
                     </Button>
                     <Button transparent onPress={() =>
                         this.setState({
-                            isShowAdditionalHeader: !this.state.isShowAdditionalHeader, 
+                            isShowAdditionalHeader: !this.state.isShowAdditionalHeader,
                             isShowPhoto: false,
                             isShowRecord: false
                         })
@@ -366,17 +367,31 @@ export default class Chat extends React.Component {
                 </Right>
             </Header>
             {
-                this.state.showInviteModal && <Modal
+                this.state.showInviteModal && <ModalNative
                     onRequestClose={() => this.setState({ showInviteModal: false })}
                     onBackdropPress={() => this.setState({ showInviteModal: false })}
                     isVisible={true}
                 >
                     <View style={{
-                        height: 400,
                         backgroundColor: 'white',
                         borderRadius: 4,
                         borderColor: 'rgba(0, 0, 0, 0.1)',
                     }}>
+                    <Header style={{ backgroundColor: '#3b5998' }}>
+                        <Left>
+                            <Button transparent onPress={() => {
+                                this.setState({ showInviteModal: false })
+                            }}>
+                                <Icon style={{ color: 'white' }} name="md-close" />
+                            </Button>
+                        </Left>
+                        <Body>
+                            <Title>Invite</Title>
+                        </Body>
+                        <Right>
+
+                        </Right>
+                    </Header>
                         <View style={[styles.searchContainer, { borderRadius: 4 }]}>
                           <RkTextInput autoCapitalize='none'
                                        autoCorrect={false}
@@ -403,7 +418,7 @@ export default class Chat extends React.Component {
                             </List>
                         </ScrollView>
                     </View>
-                </Modal>
+                </ModalNative>
             }
             {
                 this.state.showRemoveInviteModal && <Modal
@@ -572,7 +587,7 @@ export default class Chat extends React.Component {
               Keyboard.dismiss();
             }}>
             {
-                this.state.isShowAdditionalHeader&&<View style={styles.additionHeader}>
+                this.state.isShowAdditionalHeader&&<View style={[styles.additionHeader, { backgroundColor: 'white',  borderColor: '#d3d3d3', borderBottomWidth: 0.5 }]}>
                     <GridView
                         itemWidth={70}
                         items={[
@@ -599,7 +614,7 @@ export default class Chat extends React.Component {
                             },
                             {
                                 icon: 'md-search',
-                                name: 'Search Text',
+                                name: 'Search',
                                 event: () => {
 
                                 }
