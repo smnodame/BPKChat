@@ -387,21 +387,21 @@ export default class Chat extends React.Component {
                         borderRadius: 4,
                         borderColor: 'rgba(0, 0, 0, 0.1)',
                     }}>
-                    <Header style={{ backgroundColor: '#3b5998' }}>
-                        <Left>
-                            <Button transparent onPress={() => {
-                                this.setState({ showInviteModal: false })
-                            }}>
-                                <Icon style={{ color: 'white' }} name="md-close" />
-                            </Button>
-                        </Left>
-                        <Body>
-                            <Title>Invite</Title>
-                        </Body>
-                        <Right>
+                        <Header style={{ backgroundColor: '#3b5998' }}>
+                            <Left>
+                                <Button transparent onPress={() => {
+                                    this.setState({ showInviteModal: false })
+                                }}>
+                                    <Icon style={{ color: 'white' }} name="md-close" />
+                                </Button>
+                            </Left>
+                            <Body>
+                                <Title>Invite</Title>
+                            </Body>
+                            <Right>
 
-                        </Right>
-                    </Header>
+                            </Right>
+                        </Header>
                         <View style={[styles.searchContainer, { borderRadius: 4 }]}>
                           <RkTextInput autoCapitalize='none'
                                        autoCorrect={false}
@@ -409,24 +409,27 @@ export default class Chat extends React.Component {
                                        rkType='row'
                                        placeholder='Search'/>
                         </View>
-                        <List>
-                            <FlatList
-                                data={this.state.inviteFriends}
-                                onEndReached={() => this.loadMoreInviteFriendLists()}
-                                onEndReachedThreshold={0.2}
-                                renderItem={({item}) => (
-                                    <ListItem avatar>
-                                        <Left>
-                                            <Thumbnail source={{ uri: item.profile_pic_url }} />
-                                        </Left>
-                                        <Body>
-                                            <Text>{ item.display_name }</Text>
-                                            <Text note style={{ marginLeft: 2 }}>{ item.status_quote }</Text>
-                                        </Body>
-                                    </ListItem>
-                                )}
-                            />
-                        </List>
+                        <View style={{ marginBottom: 40 }}>
+
+                            <List>
+                                <FlatList
+                                    data={this.state.inviteFriends}
+                                    onEndReached={() => this.loadMoreInviteFriendLists()}
+                                    onEndReachedThreshold={0.4}
+                                    renderItem={({item}) => (
+                                        <ListItem avatar>
+                                            <Left>
+                                                <Thumbnail source={{ uri: item.profile_pic_url }} />
+                                            </Left>
+                                            <Body>
+                                                <Text>{ item.display_name }</Text>
+                                                <Text note style={{ marginLeft: 2 }}>{ item.status_quote }</Text>
+                                            </Body>
+                                        </ListItem>
+                                    )}
+                                />
+                            </List>
+                        </View>
                     </View>
                 </ModalNative>
             }
