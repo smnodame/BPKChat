@@ -662,12 +662,11 @@ export default class Chat extends React.Component {
                         getItemLayout={(data, index) => (
                             {length: 100, offset: 100 * index, index}
                         )}
-                        onScroll={(e) => {
-                            console.log(e.nativeEvent)
-                            if(e.nativeEvent.contentOffset.y == 0) {
-                                store.dispatch(onLoadMoreMessageLists())
-                            }
+                        inverted={true}
+                        onEndReached={() => {
+                            store.dispatch(onLoadMoreMessageLists())
                         }}
+                        onEndReachedThreshold={0.3}
                         keyExtractor={(post) => {
                             return post.chat_message_id
                         }}

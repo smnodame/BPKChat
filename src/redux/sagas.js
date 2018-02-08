@@ -362,7 +362,7 @@ function* selectChatSaga() {
         // fetch chat list from userID
         try {
             const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id)
-            const chatData = _.get(resFetchChat, 'data.data', []).reverse()
+            const chatData = _.get(resFetchChat, 'data.data', [])
 
             // store data in store redux
             yield put(selectedChatInfo(chatInfo))
@@ -391,12 +391,13 @@ function* onLoadMoreMessageListsSaga() {
         const chatInfo = yield select(getChatInfo)
         const messageLists = yield select(getMessageLists)
 
-        const topChatMessageId = messageLists[0].chat_message_id
+        const topChatMessageId = messageLists[messageLists.length - 1].chat_message_id
 
         const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, topChatMessageId)
-        const chatData = _.get(resFetchChat, 'data.data', []).reverse()
+        const chatData = _.get(resFetchChat, 'data.data', [])
 
-        const newMessageLists = chatData.concat(messageLists)
+        const newMessageLists = messageLists.concat(chatData)
+
         yield put(chat(newMessageLists))
     }
 }
