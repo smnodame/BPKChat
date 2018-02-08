@@ -47,7 +47,7 @@ import {scale} from '../../utils/scale';
 import GridView from 'react-native-super-grid';
 
 import {store} from '../../redux'
-import { onLoadMoreMessageLists, onFetchInviteFriend, loadMoreInviteFriends } from '../../redux/actions'
+import { onLoadMoreMessageLists, onFetchInviteFriend, loadMoreInviteFriends, onInviteFriendToGroup } from '../../redux/actions'
 import {sendTheMessage} from '../../redux/api'
 import { emit_update_friend_chat_list, emit_unsubscribe, emit_message } from '../../redux/socket.js'
 
@@ -107,19 +107,11 @@ export default class Chat extends React.Component {
     }
 
     componentDidMount() {
-        // InteractionManager.runAfterInteractions(() => {
-        //     this.refs.list.scrollToEnd();
-        // });
+
     }
 
     componentDidUpdate(prevProps, prevState) {
-        // const prevChatLength = prevState.chat.length || 0
-        // const currentChatLength = this.state.chat.length || 0
-        // if (prevChatLength !== currentChatLength) {
-        //     setTimeout(() => {
-        //         this.refs.list.scrollToIndex({animated: false, index: "" + currentChatLength - prevChatLength + 1})
-        //     }, 100)
-        // }
+
     }
 
     loadMoreInviteFriendLists = () => {
@@ -284,11 +276,7 @@ export default class Chat extends React.Component {
   }
 
     _scroll() {
-        // if (Platform.OS === 'ios') {
-        //     this.refs.list.scrollToEnd();
-        // } else {
-        //     _.delay(() => this.refs.list.scrollToEnd(), 100);
-        // }
+
     }
 
     async _pushMessage() {
@@ -416,14 +404,15 @@ export default class Chat extends React.Component {
                                        placeholder='Search'/>
                         </View>
                         <View style={{ marginBottom: 40 }}>
-
                             <List>
                                 <FlatList
                                     data={this.state.inviteFriends}
                                     onEndReached={() => this.loadMoreInviteFriendLists()}
                                     onEndReachedThreshold={0.4}
                                     renderItem={({item}) => (
-                                        <ListItem avatar>
+                                        <ListItem avatar onPress={() => {
+                                            store.dispatch(onInviteFriendToGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
+                                        }}>
                                             <Left>
                                                 <Thumbnail source={{ uri: item.profile_pic_url }} />
                                             </Left>

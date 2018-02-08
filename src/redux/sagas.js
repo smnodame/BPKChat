@@ -42,7 +42,8 @@ import {
     setAsSeen,
     unblockChat,
     unmuteChat,
-    fetchInviteFriend
+    fetchInviteFriend,
+    inviteFriendToGroup
 } from './api'
 import {
     getFriendGroups,
@@ -58,7 +59,7 @@ import {
     getUserInfo,
     getInviteFriendLists
 } from './selectors'
-import { emit_subscribe, on_message } from './socket.js'
+import { emit_subscribe, on_message, emit_message } from './socket.js'
 
 function* onStickerSaga() {
     while (true) {
@@ -555,11 +556,26 @@ function* loadMoreInviteFriendsSaga() {
         const chatInfo = yield select(getChatInfo)
         const userInfo = yield select(getUserInfo)
         const inviteFriendsFromStore = yield select(getInviteFriendLists)
-        const resFetchInviteFriend = yield call(fetchInviteFriend, chatInfo.chat_room_id, userInfo.user_id, page, 30, inviteFriendSeachText)
+        const resFetchInviteFriend = yield call(fetchInviteFriend, chatInfo.chat_room_id, userInfo.user_id, inviteFriendsFromStore.length, 30, inviteFriendSeachText)
 
         const allInviteFriendLists = inviteFriendsFromStore.data.concat(_.get(resFetchInviteFriend, 'data.data.data', []))
         inviteFriendsFromStore.data = allInviteFriendLists
         yield put(inviteFriends(inviteFriendsFromStore))
+    }
+}
+
+function* inviteFriendToGroupSaga() {
+    while (true) {
+        const { payload: { chat_room_id, friend_user_id }} = yield take('ON_INVITE_FRIEND_TO_GROUP')
+
+        const resInviteFriendToGroup = yield call(inviteFriendToGroup, chat_room_id, friend_user_id)
+        // resInviteFriendToGroup.data.data.new_chat_room_id
+        console.log('===============')
+        console.log(resInviteFriendToGroup)
+        // yield put(selectChat(info))
+        emit_message('', chat_room_id)
+
+        continue
     }
 }
 
@@ -586,6 +602,7 @@ export default function* rootSaga() {
         onUnblockChatSaga(),
         onUnmuteChatSaga(),
         onFetchInviteFriendSaga(),
-        loadMoreInviteFriendsSaga()
+        loadMoreInviteFriendsSaga(),
+        inviteFriendToGroupSaga()
     ])
 }

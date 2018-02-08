@@ -254,3 +254,11 @@ export const loadMoreInviteFriends = (page, inviteFriendSeachText) => ({
         inviteFriendSeachText
     }
 })
+
+export const onInviteFriendToGroup = (chat_room_id, friend_user_id) => ({
+    type: 'ON_INVITE_FRIEND_TO_GROUP',
+    payload: {
+        chat_room_id,
+        friend_user_id
+    }
+})
