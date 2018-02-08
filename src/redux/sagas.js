@@ -150,7 +150,7 @@ function checkFriendListsChanged(groups, numberFromStore, numberFromBackend, fri
     _.forEach(groups, (group) => {
         if(numberFromStore[group] != numberFromBackend[group]) {
             promise.push(
-                fetchFriendLists(group, rangeFriendLists[group]).then((res) => {
+                fetchFriendLists(group, null).then((res) => {
                     friendsData[group] = _.get(res, 'data.data', [])
                 })
             )
@@ -330,7 +330,7 @@ function* loadmoreSaga() {
 
         // get range for each group
         const rangeFriendLists = yield select(getRangeOfGroup)
-        const resFetchFriendLists = yield call(fetchFriendLists, group, groupFriends.length + rangeFriendLists[group], groupFriends.length, filter)
+        const resFetchFriendLists = yield call(fetchFriendLists, group, null, groupFriends.length, filter)
 
         // add new list in old list
         friendsData[group] = friendsData[group].concat( _.get(resFetchFriendLists, 'data.data', []))
@@ -555,7 +555,7 @@ function* loadMoreInviteFriendsSaga() {
         const chatInfo = yield select(getChatInfo)
         const userInfo = yield select(getUserInfo)
         const inviteFriendsFromStore = yield select(getInviteFriendLists)
-        const resFetchInviteFriend = yield call(fetchInviteFriend, chatInfo.chat_room_id, userInfo.user_id, page, page + 30, '')
+        const resFetchInviteFriend = yield call(fetchInviteFriend, chatInfo.chat_room_id, userInfo.user_id, page, 30, '')
 
         const allInviteFriendLists = inviteFriendsFromStore.data.concat(_.get(resFetchInviteFriend, 'data.data.data', []))
         inviteFriendsFromStore.data = allInviteFriendLists

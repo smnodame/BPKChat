@@ -17,7 +17,7 @@ export const fetchFriendGroups = () => {
 }
 
 export const fetchFriendLists = (group, range, start = 0, filter = '') => {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=${start}&limit=${range}&filter=${filter}&friend_type=${group}`)
+    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=${start}&limit=50&filter=${filter}&friend_type=${group}`)
 }
 
 export const fetchFriendProfile = (userID) => {
