@@ -127,7 +127,7 @@ export default class Chat extends React.Component {
         this.setState({
             page: page + 1
         })
-        store.dispatch(loadMoreInviteFriends(page))
+        store.dispatch(loadMoreInviteFriends(page, this.state.inviteFriendSeachText))
     }
 
     _renderItem(info) {
@@ -405,6 +405,12 @@ export default class Chat extends React.Component {
                         <View style={[styles.searchContainer, { borderRadius: 4 }]}>
                           <RkTextInput autoCapitalize='none'
                                        autoCorrect={false}
+                                       onSubmitEditing={() => {
+                                           store.dispatch(onFetchInviteFriend(this.state.inviteFriendSeachText))
+                                       }}
+                                       onChangeText={(inviteFriendSeachText) => this.setState({
+                                           inviteFriendSeachText
+                                       })}
                                        label={<RkText rkType='awesome'>{FontAwesome.search}</RkText>}
                                        rkType='row'
                                        placeholder='Search'/>

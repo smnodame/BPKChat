@@ -539,11 +539,11 @@ function* onDeleteChatSaga() {
 
 function* onFetchInviteFriendSaga() {
     while (true) {
-        yield take('ON_FETCH_INVITE_FRIEND')
+        const { payload: { inviteFriendSeachText } } = yield take('ON_FETCH_INVITE_FRIEND')
         const chatInfo = yield select(getChatInfo)
         const userInfo = yield select(getUserInfo)
 
-        const resFetchInviteFriend = yield call(fetchInviteFriend, chatInfo.chat_room_id, userInfo.user_id)
+        const resFetchInviteFriend = yield call(fetchInviteFriend, chatInfo.chat_room_id, userInfo.user_id, 0, 30, inviteFriendSeachText)
 
         yield put(inviteFriends(_.get(resFetchInviteFriend, 'data.data', [])))
     }
@@ -551,11 +551,11 @@ function* onFetchInviteFriendSaga() {
 
 function* loadMoreInviteFriendsSaga() {
     while (true) {
-        const { payload : { page } } = yield take('LOAD_MORE_INVITE_FRIENDS')
+        const { payload : { page, inviteFriendSeachText } } = yield take('LOAD_MORE_INVITE_FRIENDS')
         const chatInfo = yield select(getChatInfo)
         const userInfo = yield select(getUserInfo)
         const inviteFriendsFromStore = yield select(getInviteFriendLists)
-        const resFetchInviteFriend = yield call(fetchInviteFriend, chatInfo.chat_room_id, userInfo.user_id, page, 30, '')
+        const resFetchInviteFriend = yield call(fetchInviteFriend, chatInfo.chat_room_id, userInfo.user_id, page, 30, inviteFriendSeachText)
 
         const allInviteFriendLists = inviteFriendsFromStore.data.concat(_.get(resFetchInviteFriend, 'data.data.data', []))
         inviteFriendsFromStore.data = allInviteFriendLists

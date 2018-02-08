@@ -233,8 +233,11 @@ export const onDeleteChat = () => ({
     type: 'ON_DELETE_CHAT'
 })
 
-export const onFetchInviteFriend = () => ({
-    type: 'ON_FETCH_INVITE_FRIEND'
+export const onFetchInviteFriend = (inviteFriendSeachText) => ({
+    type: 'ON_FETCH_INVITE_FRIEND',
+    payload: {
+        inviteFriendSeachText
+    }
 })
 
 export const inviteFriends = (friends) => ({
@@ -244,9 +247,10 @@ export const inviteFriends = (friends) => ({
     }
 })
 
-export const loadMoreInviteFriends = (page) => ({
+export const loadMoreInviteFriends = (page, inviteFriendSeachText) => ({
     type: 'LOAD_MORE_INVITE_FRIENDS',
     payload: {
-        page
+        page,
+        inviteFriendSeachText
     }
 })
