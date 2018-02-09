@@ -45,7 +45,8 @@ import {
     unmuteChat,
     fetchInviteFriend,
     inviteFriendToGroup,
-    fetchChatInfo
+    fetchChatInfo,
+    removeFriendFromGroup
 } from './api'
 import {
     getFriendGroups,
@@ -596,6 +597,26 @@ function* inviteFriendToGroupSaga() {
     }
 }
 
+function* removeFriendFromGroupSaga() {
+    while (true) {
+        const { payload: { chat_room_id, friend_user_id }} = yield take('REMOVE_FRIEND_FROM_GROUP')
+        const resRemoveFriendFromGroup = yield call(removeFriendFromGroup, chat_room_id, friend_user_id)
+        const inviteFriendLists = yield select(getInviteFriendLists)
+
+        const chatInfo = yield select(getChatInfo)
+
+        if(chatInfo.chat_room_type == 'G') {
+            inviteFriendLists.data.forEach((friend, index) => {
+                if(inviteFriendLists.data[index].friend_user_id == friend_user_id) {
+                    inviteFriendLists.data[index].status_quote = 'Tap to invite'
+                    inviteFriendLists.data[index].Invited == false
+                }
+            })
+            yield put(inviteFriends(inviteFriendLists))
+        }
+    }
+}
+
 export default function* rootSaga() {
     yield all([
         signin(),
@@ -620,6 +641,7 @@ export default function* rootSaga() {
         onUnmuteChatSaga(),
         onFetchInviteFriendSaga(),
         loadMoreInviteFriendsSaga(),
-        inviteFriendToGroupSaga()
+        inviteFriendToGroupSaga(),
+        removeFriendFromGroupSaga()
     ])
 }

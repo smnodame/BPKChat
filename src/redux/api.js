@@ -165,3 +165,11 @@ export const inviteFriendToGroup = (chat_room_id, friend_user_id) => {
         friend_user_id
     })
 }
+
+export const removeFriendFromGroup = (chat_room_id, friend_user_id) => {
+    return axios.post(`http://itsmartone.com/bpk_connect/api/group/remove_from_group?token=asdf1234aaa`, {
+        chat_room_id,
+        user_id: '3963',
+        friend_user_id
+    })
+}
