@@ -46,7 +46,8 @@ import {
     fetchInviteFriend,
     inviteFriendToGroup,
     fetchChatInfo,
-    removeFriendFromGroup
+    removeFriendFromGroup,
+    exitTheGroup
 } from './api'
 import {
     getFriendGroups,
@@ -618,14 +619,29 @@ function* removeFriendFromGroupSaga() {
                 }
             })
             yield put(inviteFriends(inviteFriendLists))
-            
+
             // update chat list
             emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
         }
     }
 }
 
+function* onExitTheGroupSaga() {
+    while (true) {
+        const { payload: { chat_room_id }} = yield take('ON_EXIT_THE_GROUP')
 
+        yield call(exitTheGroup, chat_room_id)
+
+        const userInfo = yield select(getUserInfo)
+
+        const navigate = yield select(navigateSelector)
+
+        navigate.dispatch(NavigationActions.back())
+
+        // update chat list
+        emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
+    }
+}
 
 export default function* rootSaga() {
     yield all([
@@ -652,6 +668,7 @@ export default function* rootSaga() {
         onFetchInviteFriendSaga(),
         loadMoreInviteFriendsSaga(),
         inviteFriendToGroupSaga(),
-        removeFriendFromGroupSaga()
+        removeFriendFromGroupSaga(),
+        onExitTheGroupSaga()
     ])
 }

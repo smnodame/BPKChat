@@ -270,3 +270,10 @@ export const onRemoveFriendFromGroup = (chat_room_id, friend_user_id) => ({
         friend_user_id
     }
 })
+
+export const onExitTheGroup = (chat_room_id) => ({
+    type: 'ON_EXIT_THE_GROUP',
+    payload: {
+        chat_room_id
+    }
+})

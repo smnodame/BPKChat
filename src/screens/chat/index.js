@@ -47,7 +47,7 @@ import {scale} from '../../utils/scale';
 import GridView from 'react-native-super-grid';
 
 import {store} from '../../redux'
-import { onLoadMoreMessageLists, onFetchInviteFriend, loadMoreInviteFriends, onInviteFriendToGroup, onRemoveFriendFromGroup } from '../../redux/actions'
+import { onLoadMoreMessageLists, onFetchInviteFriend, loadMoreInviteFriends, onInviteFriendToGroup, onRemoveFriendFromGroup, onExitTheGroup } from '../../redux/actions'
 import {sendTheMessage} from '../../redux/api'
 import { emit_update_friend_chat_list, emit_unsubscribe, emit_message } from '../../redux/socket.js'
 
@@ -411,8 +411,6 @@ export default class Chat extends React.Component {
                                     onEndReachedThreshold={0.4}
                                     renderItem={({item}) => (
                                         <ListItem avatar onPress={() => {
-                                            console.log('============')
-                                            console.log(item)
                                             if(item.invited) {
                                                 store.dispatch(onRemoveFriendFromGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
                                             } else {
@@ -651,7 +649,7 @@ export default class Chat extends React.Component {
                                 icon: 'md-log-out',
                                 name: 'Exit Group',
                                 event: () => {
-
+                                    store.dispatch(onExitTheGroup(this.state.chatInfo.chat_room_id))
                                 }
                             }
                         ]}

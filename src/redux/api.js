@@ -173,3 +173,10 @@ export const removeFriendFromGroup = (chat_room_id, friend_user_id) => {
         friend_user_id
     })
 }
+
+export const exitTheGroup = (chat_room_id) => {
+    return axios.post(`http://itsmartone.com/bpk_connect/api/group/exit_group?token=asdf1234aaa`, {
+        chat_room_id,
+        user_id: '3963'
+    })
+}
