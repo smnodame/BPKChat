@@ -168,7 +168,9 @@ export default class Chat extends React.Component {
         >
             <View style={{  width: '100%'}}>
             <View style={[styles.item, itemStyle]}>
-          {!inMessage && renderDate(info.item.create_date)}
+
+            {inMessage && <Thumbnail small source={{ uri: info.item.profile_pic_url }} style={{ marginRight: 8, marginTop: 5 }}/>}
+            {!inMessage && renderDate(info.item.create_date)}
           {
               info.item.message_type=='1' && <View style={[styles.balloon, {backgroundColor}]}>
                   <TouchableWithoutFeedback onLongPress={() => this.setState({showPickerModal: true})}>
