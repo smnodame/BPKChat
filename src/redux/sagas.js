@@ -593,6 +593,9 @@ function* inviteFriendToGroupSaga() {
             // update chat list
             emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
         } else {
+            const navigate = yield select(navigateSelector)
+            navigate.dispatch(NavigationActions.back())
+
             yield put(selectChat(resFetchChatInfo.data.data))
 
             // add owner friend to new group room
