@@ -5,7 +5,7 @@ export const fetchMyProfile = () => {
 }
 
 export const fetchChatLists = () => {
-    return axios.get('http://itsmartone.com/bpk_connect/api/chat/chat_list?token=asdf1234aaa&user_id=3963&start=0&limit=20')
+    return axios.get('http://itsmartone.com/bpk_connect/api/chat/chat_list?token=asdf1234aaa&user_id=3963&start=0&limit=50')
 }
 
 export const fetchFriendListCount = (group, filter) => {

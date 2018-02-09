@@ -363,6 +363,7 @@ function* selectChatSaga() {
         // fetch chat list from userID
         try {
             const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id)
+
             const chatData = _.get(resFetchChat, 'data.data', [])
 
             // store data in store redux
@@ -392,7 +393,7 @@ function* onLoadMoreMessageListsSaga() {
         const chatInfo = yield select(getChatInfo)
         const messageLists = yield select(getMessageLists)
 
-        const topChatMessageId = messageLists[messageLists.length - 1].chat_message_id
+        const topChatMessageId = _.get(messageLists[messageLists.length - 1], 'chat_message_id', '0')
 
         const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, topChatMessageId)
         const chatData = _.get(resFetchChat, 'data.data', [])
@@ -556,8 +557,7 @@ function* loadMoreInviteFriendsSaga() {
         const chatInfo = yield select(getChatInfo)
         const userInfo = yield select(getUserInfo)
         const inviteFriendsFromStore = yield select(getInviteFriendLists)
-        const resFetchInviteFriend = yield call(fetchInviteFriend, chatInfo.chat_room_id, userInfo.user_id, inviteFriendsFromStore.length, 30, inviteFriendSeachText)
-
+        const resFetchInviteFriend = yield call(fetchInviteFriend, chatInfo.chat_room_id, userInfo.user_id, inviteFriendsFromStore.data.length, 30, inviteFriendSeachText)
         const allInviteFriendLists = inviteFriendsFromStore.data.concat(_.get(resFetchInviteFriend, 'data.data.data', []))
         inviteFriendsFromStore.data = allInviteFriendLists
         yield put(inviteFriends(inviteFriendsFromStore))
@@ -570,8 +570,6 @@ function* inviteFriendToGroupSaga() {
 
         const resInviteFriendToGroup = yield call(inviteFriendToGroup, chat_room_id, friend_user_id)
         // resInviteFriendToGroup.data.data.new_chat_room_id
-        console.log('===============')
-        console.log(resInviteFriendToGroup)
         // yield put(selectChat(info))
         emit_message('', chat_room_id)
 
