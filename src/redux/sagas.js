@@ -17,7 +17,8 @@ import {
     onSticker,
     sticker,
     onIsShowActionChat,
-    inviteFriends
+    inviteFriends,
+    selectChat
 } from './actions'
 import { NavigationActions } from 'react-navigation'
 import {
@@ -43,7 +44,8 @@ import {
     unblockChat,
     unmuteChat,
     fetchInviteFriend,
-    inviteFriendToGroup
+    inviteFriendToGroup,
+    fetchChatInfo
 } from './api'
 import {
     getFriendGroups,
@@ -59,7 +61,7 @@ import {
     getUserInfo,
     getInviteFriendLists
 } from './selectors'
-import { emit_subscribe, on_message, emit_message } from './socket.js'
+import { emit_subscribe, on_message, emit_message, emit_update_friend_chat_list } from './socket.js'
 
 function* onStickerSaga() {
     while (true) {
@@ -567,11 +569,28 @@ function* loadMoreInviteFriendsSaga() {
 function* inviteFriendToGroupSaga() {
     while (true) {
         const { payload: { chat_room_id, friend_user_id }} = yield take('ON_INVITE_FRIEND_TO_GROUP')
+        const userInfo = yield select(getUserInfo)
+        const inviteFriendLists = yield select(getInviteFriendLists)
 
         const resInviteFriendToGroup = yield call(inviteFriendToGroup, chat_room_id, friend_user_id)
-        // resInviteFriendToGroup.data.data.new_chat_room_id
-        // yield put(selectChat(info))
-        emit_message('', chat_room_id)
+        const newChatRoomId = resInviteFriendToGroup.data.data.new_chat_room_id
+
+        const resFetchChatInfo = yield call(fetchChatInfo, newChatRoomId)
+
+        const chatInfo = yield select(getChatInfo)
+
+        if(chatInfo.chat_room_type == 'G') {
+            inviteFriendLists.data.forEach((friend, index) => {
+                if(inviteFriendLists.data[index].friend_user_id == friend_user_id) {
+                    inviteFriendLists.data[index].status_quote = 'Invited. (Tap to remove)'
+                    inviteFriendLists.data[index].Invited == true
+                }
+            })
+            yield put(inviteFriends(inviteFriendLists))
+        } else {
+            emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
+            yield put(selectChat(resFetchChatInfo.data.data))
+        }
 
         continue
     }

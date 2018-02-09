@@ -412,6 +412,11 @@ export default class Chat extends React.Component {
                                     renderItem={({item}) => (
                                         <ListItem avatar onPress={() => {
                                             store.dispatch(onInviteFriendToGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
+                                            if(this.state.chatInfo.chat_room_type != 'G') {
+                                                this.setState({
+                                                    showInviteModal: false
+                                                })
+                                            }
                                         }}>
                                             <Left>
                                                 <Thumbnail source={{ uri: item.profile_pic_url }} />
