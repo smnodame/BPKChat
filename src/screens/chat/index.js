@@ -86,6 +86,55 @@ export default class Chat extends React.Component {
 
     updateData = () => {
         const state = store.getState()
+        const inviteAction = {
+            icon: 'md-person-add',
+            name: 'Invite',
+            event: () => {
+                store.dispatch(onFetchInviteFriend())
+                this.setState({ showInviteModal : true })
+            }
+        }
+        const friendsAction = {
+            icon: 'md-contacts',
+            name: 'member',
+            event: () => {
+                this.setState({ showRemoveInviteModal : true })
+            }
+        }
+        const openCaseAction = {
+            icon: 'md-mail-open',
+            name: 'Open Case',
+            event: () => {
+                this.setState({ showOpenCaseModal : true })
+            }
+        }
+        const searchAction = {
+            icon: 'md-search',
+            name: 'Search',
+            event: () => {
+
+            }
+        }
+        const settingAction = {
+            icon: 'md-settings',
+            name: 'Setting',
+            event: () => {
+                this.setState({ showGroupSetting : true })
+            }
+        }
+        const existGroupAction = {
+            icon: 'md-log-out',
+            name: 'Exit Group',
+            event: () => {
+                store.dispatch(onExitTheGroup(this.state.chatInfo.chat_room_id))
+            }
+        }
+        let options = []
+        if(_.get(state, 'chat.chatInfo').chat_room_type == 'G') {
+            options = options.concat([inviteAction, friendsAction, searchAction, settingAction, existGroupAction])
+        } else {
+            options = options.concat([inviteAction, openCaseAction, searchAction])
+        }
 
         this.setState({
             chat: _.get(state, 'chat.chat', []),
@@ -93,10 +142,10 @@ export default class Chat extends React.Component {
             user: _.get(state, 'user.user'),
             sticker: _.get(state, 'chat.sticker', []),
             isGroup: _.get(state, 'chat.chatInfo.friend_user_id', 'F')[0] == 'G',
-            inviteFriends: _.get(state, 'chat.inviteFriends.data', [])
+            inviteFriends: _.get(state, 'chat.inviteFriends.data', []),
+            optionLists: options
         })
-        // this.flatListRef.scrollToIndex({animated: true, index: "" + randomIndex})
-        console.log(data)
+
     }
 
 	async componentWillMount() {
@@ -366,161 +415,6 @@ export default class Chat extends React.Component {
                     </Button>
                 </Right>
             </Header>
-            {
-                this.state.showInviteModal && <ModalNative
-                    onRequestClose={() => this.setState({ showInviteModal: false })}
-                    onBackdropPress={() => this.setState({ showInviteModal: false })}
-                    isVisible={true}
-                >
-                    <View style={{
-                        backgroundColor: 'white',
-                        borderRadius: 4,
-                        borderColor: 'rgba(0, 0, 0, 0.1)',
-                    }}>
-                        <Header style={{ backgroundColor: '#3b5998' }}>
-                            <Left>
-                                <Button transparent onPress={() => {
-                                    this.setState({ showInviteModal: false })
-                                }}>
-                                    <Icon style={{ color: 'white' }} name="md-close" />
-                                </Button>
-                            </Left>
-                            <Body>
-                                <Title>Invite</Title>
-                            </Body>
-                            <Right>
-
-                            </Right>
-                        </Header>
-                        <View style={[styles.searchContainer, { borderRadius: 4 }]}>
-                          <RkTextInput autoCapitalize='none'
-                                       autoCorrect={false}
-                                       onSubmitEditing={() => {
-                                           store.dispatch(onFetchInviteFriend(this.state.inviteFriendSeachText))
-                                       }}
-                                       onChangeText={(inviteFriendSeachText) => this.setState({
-                                           inviteFriendSeachText
-                                       })}
-                                       label={<RkText rkType='awesome'>{FontAwesome.search}</RkText>}
-                                       rkType='row'
-                                       placeholder='Search'/>
-                        </View>
-                        <View style={{ marginBottom: 40 }}>
-                            <List>
-                                <FlatList
-                                    data={this.state.inviteFriends}
-                                    onEndReached={() => this.loadMoreInviteFriendLists()}
-                                    onEndReachedThreshold={0.4}
-                                    renderItem={({item}) => (
-                                        <ListItem avatar onPress={() => {
-                                            if(item.invited) {
-                                                store.dispatch(onRemoveFriendFromGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
-                                            } else {
-                                                store.dispatch(onInviteFriendToGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
-                                            }
-
-                                            if(this.state.chatInfo.chat_room_type != 'G') {
-                                                this.setState({
-                                                    showInviteModal: false
-                                                })
-                                            }
-                                        }}>
-                                            <Left>
-                                                <Thumbnail source={{ uri: item.profile_pic_url }} />
-                                            </Left>
-                                            <Body>
-                                                <Text>{ item.display_name }</Text>
-                                                <Text note style={{ marginLeft: 2 }}>{ item.status_quote }</Text>
-                                            </Body>
-                                        </ListItem>
-                                    )}
-                                />
-                            </List>
-                        </View>
-                    </View>
-                </ModalNative>
-            }
-            {
-                this.state.showRemoveInviteModal && <Modal
-                    onRequestClose={() => this.setState({ showRemoveInviteModal: false })}
-                    onBackdropPress={() => this.setState({ showRemoveInviteModal: false })}
-                    isVisible={true}
-                >
-                    <View style={{
-                        height: 400,
-                        backgroundColor: 'white',
-                        borderRadius: 4,
-                        borderColor: 'rgba(0, 0, 0, 0.1)',
-                    }}>
-                        <View style={[styles.searchContainer, { borderRadius: 4 }]}>
-                          <RkTextInput autoCapitalize='none'
-                                       autoCorrect={false}
-                                       label={<RkText rkType='awesome'>{FontAwesome.search}</RkText>}
-                                       rkType='row'
-                                       placeholder='Search'/>
-                        </View>
-                        <ScrollView>
-                            <List>
-                                <ListItem avatar>
-                                    <Left>
-                                        <Thumbnail source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg' }} />
-                                    </Left>
-                                    <Body>
-                                        <Text>Kumar Pratik</Text>
-                                        <Text note>Doing what you like will always keep you happy . .</Text>
-                                    </Body>
-                                    <Right style={{justifyContent: 'center', alignItems: 'center'}}>
-                                        <RkButton style={styles.plus} rkType='clear'>
-                                            <Icon ios={'md-remove-circle'} android={'md-remove-circle'} style={{fontSize: 20, color: 'gray'}}/>
-                                        </RkButton>
-                                    </Right>
-                                </ListItem>
-                            </List>
-                        </ScrollView>
-                    </View>
-                </Modal>
-            }
-            {
-                this.state.showOpenCaseModal && <Modal
-                    onRequestClose={() => this.setState({ showOpenCaseModal: false })}
-                    onBackdropPress={() => this.setState({ showOpenCaseModal: false })}
-                    isVisible={true}
-                >
-                    <View style={{
-                        height: 400,
-                        backgroundColor: 'white',
-                        borderRadius: 4,
-                        borderColor: 'rgba(0, 0, 0, 0.1)',
-                    }}>
-                        <View style={[styles.searchContainer, { borderRadius: 4 }]}>
-                          <RkTextInput autoCapitalize='none'
-                                       autoCorrect={false}
-                                       label={<RkText rkType='awesome'>{FontAwesome.search}</RkText>}
-                                       rkType='row'
-                                       placeholder='Search'/>
-
-                        </View>
-                        <ScrollView>
-                            <List>
-                                <ListItem avatar>
-                                    <Left>
-                                        <Thumbnail source={{ uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg' }} />
-                                    </Left>
-                                    <Body>
-                                        <Text>Kumar Pratik</Text>
-                                        <Text note>Doing what you like will always keep you happy . .</Text>
-                                    </Body>
-                                    <Right style={{justifyContent: 'center', alignItems: 'center'}}>
-                                        <RkButton style={styles.plus} rkType='clear'>
-                                            <Icon ios={'md-person-add'} android={'md-person-add'} style={{fontSize: 20, color: 'gray'}}/>
-                                        </RkButton>
-                                    </Right>
-                                </ListItem>
-                            </List>
-                        </ScrollView>
-                    </View>
-                </Modal>
-            }
             <Modal
                 onRequestClose={() => this.setState({ showPickerModal: false })}
                 onBackdropPress={() => this.setState({ showPickerModal: false })}
@@ -610,51 +504,7 @@ export default class Chat extends React.Component {
                 this.state.isShowAdditionalHeader&&<View style={[styles.additionHeader, { backgroundColor: 'white',  borderColor: '#d3d3d3', borderBottomWidth: 0.5 }]}>
                     <GridView
                         itemWidth={70}
-                        items={[
-                            {
-                                icon: 'md-person-add',
-                                name: 'Invite',
-                                event: () => {
-                                    store.dispatch(onFetchInviteFriend())
-                                    this.setState({ showInviteModal : true })
-                                }
-                            },
-                            {
-                                icon: 'md-remove-circle',
-                                name: 'Remove Invite',
-                                event: () => {
-                                    this.setState({ showRemoveInviteModal : true })
-                                }
-                            },
-                            {
-                                icon: 'md-mail-open',
-                                name: 'Open Case',
-                                event: () => {
-                                    this.setState({ showOpenCaseModal : true })
-                                }
-                            },
-                            {
-                                icon: 'md-search',
-                                name: 'Search',
-                                event: () => {
-
-                                }
-                            },
-                            {
-                                icon: 'md-settings',
-                                name: 'Setting',
-                                event: () => {
-                                    this.setState({ showGroupSetting : true })
-                                }
-                            },
-                            {
-                                icon: 'md-log-out',
-                                name: 'Exit Group',
-                                event: () => {
-                                    store.dispatch(onExitTheGroup(this.state.chatInfo.chat_room_id))
-                                }
-                            }
-                        ]}
+                        items={this.state.optionLists}
                         renderItem={item => (
                             <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                                 <RkButton style={styles.plus} rkType='clear' onPress={item.event}>
