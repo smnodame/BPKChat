@@ -588,9 +588,14 @@ function* inviteFriendToGroupSaga() {
                 }
             })
             yield put(inviteFriends(inviteFriendLists))
-        } else {
+
+            // update chat list
             emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
+        } else {
             yield put(selectChat(resFetchChatInfo.data.data))
+
+            // update chat list
+            emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
         }
 
         continue
@@ -602,7 +607,7 @@ function* removeFriendFromGroupSaga() {
         const { payload: { chat_room_id, friend_user_id }} = yield take('REMOVE_FRIEND_FROM_GROUP')
         const resRemoveFriendFromGroup = yield call(removeFriendFromGroup, chat_room_id, friend_user_id)
         const inviteFriendLists = yield select(getInviteFriendLists)
-
+        const userInfo = yield select(getUserInfo)
         const chatInfo = yield select(getChatInfo)
 
         if(chatInfo.chat_room_type == 'G') {
@@ -613,9 +618,14 @@ function* removeFriendFromGroupSaga() {
                 }
             })
             yield put(inviteFriends(inviteFriendLists))
+            
+            // update chat list
+            emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
         }
     }
 }
+
+
 
 export default function* rootSaga() {
     yield all([
