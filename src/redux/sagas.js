@@ -595,6 +595,9 @@ function* inviteFriendToGroupSaga() {
         } else {
             yield put(selectChat(resFetchChatInfo.data.data))
 
+            // add owner friend to new group room
+            yield call(inviteFriendToGroup, newChatRoomId, chatInfo.friend_user_id)
+
             // update chat list
             emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
         }
@@ -639,7 +642,8 @@ function* onExitTheGroupSaga() {
         navigate.dispatch(NavigationActions.back())
 
         // update chat list
-        emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
+        const resFetchChatLists = yield call(fetchChatLists)
+        yield put(chatLists(_.get(resFetchChatLists, 'data.data', [])))
     }
 }
 
