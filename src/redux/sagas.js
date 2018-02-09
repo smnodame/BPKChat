@@ -584,7 +584,7 @@ function* inviteFriendToGroupSaga() {
             inviteFriendLists.data.forEach((friend, index) => {
                 if(inviteFriendLists.data[index].friend_user_id == friend_user_id) {
                     inviteFriendLists.data[index].status_quote = 'Invited. (Tap to remove)'
-                    inviteFriendLists.data[index].Invited == true
+                    inviteFriendLists.data[index].invited = true
                 }
             })
             yield put(inviteFriends(inviteFriendLists))
@@ -609,7 +609,7 @@ function* removeFriendFromGroupSaga() {
             inviteFriendLists.data.forEach((friend, index) => {
                 if(inviteFriendLists.data[index].friend_user_id == friend_user_id) {
                     inviteFriendLists.data[index].status_quote = 'Tap to invite'
-                    inviteFriendLists.data[index].Invited == false
+                    inviteFriendLists.data[index].invited = false
                 }
             })
             yield put(inviteFriends(inviteFriendLists))

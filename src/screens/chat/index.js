@@ -411,6 +411,8 @@ export default class Chat extends React.Component {
                                     onEndReachedThreshold={0.4}
                                     renderItem={({item}) => (
                                         <ListItem avatar onPress={() => {
+                                            console.log('============')
+                                            console.log(item)
                                             if(item.invited) {
                                                 store.dispatch(onRemoveFriendFromGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
                                             } else {
