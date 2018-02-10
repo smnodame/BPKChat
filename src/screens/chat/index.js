@@ -256,11 +256,6 @@ export default class Chat extends React.Component {
                             this.setState({
                                 selectedOptionMessageId: Object.assign(this.state.selectedOptionMessageId, selectedOptionMessageId, {})
                             })
-                            console.log('============')
-                            console.log(this.state.selectedOptionMessageId)
-                            console.log(newValue)
-                            console.log( info.item.chat_message_id)
-                            console.log(_.get(this.state.selectedOptionMessageId, info.item.chat_message_id, false))
                         }}
                     />
                 </View>
