@@ -27,6 +27,7 @@
     "realm": "^1.8.0",
     "redux": "^3.7.2",
     "redux-saga": "^0.16.0",
+    "rn-round-checkbox": "^0.3.3",
     "socket.io": "^2.0.4"
   },
   "devDependencies": {

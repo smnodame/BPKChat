@@ -20,6 +20,7 @@ import {
   RkStyleSheet,
   RkTheme
 } from 'react-native-ui-kitten';
+import RoundCheckbox from 'rn-round-checkbox';
 import Modal from 'react-native-modal';
 import _ from 'lodash';
 import {
@@ -238,9 +239,24 @@ export default class Chat extends React.Component {
                 Keyboard.dismiss()
             }}
         >
-            <View style={{  width: '100%'}}>
+            <View style={{  width: '100%' }}>
+
             <View style={[styles.item, itemStyle]}>
 
+            /** Checkbox message */
+            <View style={{ marginRight: 8, marginTop: 5 }}>
+                <RoundCheckbox
+                    size={24}
+                    checked={true}
+                    onValueChange={(newValue) => {console.log(newValue)}}
+                />
+            </View>
+
+            {
+                !inMessage && <View style={{ flex: 1 }} />
+            }
+            /** -- End Checkbox message --- */
+            
             {inMessage && <Thumbnail small source={{ uri: info.item.profile_pic_url }} style={{ marginRight: 8, marginTop: 5 }}/>}
             {!inMessage && renderDate(info.item.create_date)}
           {
@@ -926,7 +942,7 @@ let styles = RkStyleSheet.create(theme => ({
     alignSelf: 'flex-end'
   },
   balloon: {
-    maxWidth: scale(250),
+    maxWidth:'60%',
     padding: 15,
     borderRadius: 20,
   },
