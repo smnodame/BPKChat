@@ -88,7 +88,8 @@ export default class Chat extends React.Component {
             isShowAdditionalHeader: false,
             collectionKeySelected: 0,
             showImageView: false,
-            page: 0
+            page: 0,
+            selectedOptionMessageId: {}
         }
 
         this._renderItem = this._renderItem.bind(this)
@@ -248,8 +249,19 @@ export default class Chat extends React.Component {
                 this.state.showOptionMessageModal && <View style={{ marginRight: 8, marginTop: 5 }}>
                     <RoundCheckbox
                         size={24}
-                        checked={true}
-                        onValueChange={(newValue) => {console.log(newValue)}}
+                        checked={_.get(this.state.selectedOptionMessageId, info.item.chat_message_id, false)}
+                        onValueChange={(newValue) => {
+                            const selectedOptionMessageId = {}
+                            _.set(this.state.selectedOptionMessageId, info.item.chat_message_id, newValue)
+                            this.setState({
+                                selectedOptionMessageId: Object.assign(this.state.selectedOptionMessageId, selectedOptionMessageId, {})
+                            })
+                            console.log('============')
+                            console.log(this.state.selectedOptionMessageId)
+                            console.log(newValue)
+                            console.log( info.item.chat_message_id)
+                            console.log(_.get(this.state.selectedOptionMessageId, info.item.chat_message_id, false))
+                        }}
                     />
                 </View>
             }
