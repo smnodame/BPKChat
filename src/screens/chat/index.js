@@ -48,7 +48,7 @@ import GridView from 'react-native-super-grid';
 
 import {store} from '../../redux'
 import { onLoadMoreMessageLists, onFetchInviteFriend, loadMoreInviteFriends, onInviteFriendToGroup, onRemoveFriendFromGroup, onExitTheGroup } from '../../redux/actions'
-import {sendTheMessage} from '../../redux/api'
+import {sendTheMessage, fetchFriendProfile} from '../../redux/api'
 import { emit_update_friend_chat_list, emit_unsubscribe, emit_message } from '../../redux/socket.js'
 
 import ImagePicker from 'react-native-image-picker'
@@ -119,12 +119,20 @@ export default class Chat extends React.Component {
             icon: 'md-settings',
             name: 'Setting',
             event: () => {
-                this.setState({ showGroupSetting : true })
+                fetchFriendProfile(this.state.chatInfo.friend_user_id).then((res) => {
+                    const friendInfo = res.data.data
+                    this.props.navigation.navigate('GroupSetting', {
+                        selectedFriend: friendInfo,
+                        saveGroupSetting: () => {
+
+                        }
+                    })
+                })
             }
         }
         const existGroupAction = {
             icon: 'md-log-out',
-            name: 'Exit Group',
+            name: 'Leave',
             event: () => {
                 store.dispatch(onExitTheGroup(this.state.chatInfo.chat_room_id))
             }
@@ -415,6 +423,80 @@ export default class Chat extends React.Component {
                     </Button>
                 </Right>
             </Header>
+            {
+                 this.state.showInviteModal && <ModalNative
+                     onRequestClose={() => this.setState({ showInviteModal: false })}
+                     onBackdropPress={() => this.setState({ showInviteModal: false })}
+                     isVisible={true}
+                 >
+                     <View style={{
+                         backgroundColor: 'white',
+                         borderRadius: 4,
+                         borderColor: 'rgba(0, 0, 0, 0.1)',
+                     }}>
+                         <Header style={{ backgroundColor: '#3b5998' }}>
+                             <Left>
+                                 <Button transparent onPress={() => {
+                                     this.setState({ showInviteModal: false })
+                                 }}>
+                                     <Icon style={{ color: 'white' }} name="md-close" />
+                                 </Button>
+                             </Left>
+                             <Body>
+                                 <Title>Invite</Title>
+                             </Body>
+                             <Right>
+
+                             </Right>
+                         </Header>
+                         <View style={[styles.searchContainer, { borderRadius: 4 }]}>
+                           <RkTextInput autoCapitalize='none'
+                                        autoCorrect={false}
+                                        onSubmitEditing={() => {
+                                            store.dispatch(onFetchInviteFriend(this.state.inviteFriendSeachText))
+                                        }}
+                                        onChangeText={(inviteFriendSeachText) => this.setState({
+                                            inviteFriendSeachText
+                                        })}
+                                        label={<RkText rkType='awesome'>{FontAwesome.search}</RkText>}
+                                        rkType='row'
+                                        placeholder='Search'/>
+                         </View>
+                         <View style={{ marginBottom: 40 }}>
+                             <List>
+                                <FlatList
+                                     data={this.state.inviteFriends}
+                                     onEndReached={() => this.loadMoreInviteFriendLists()}
+                                     onEndReachedThreshold={0.4}
+                                     renderItem={({item}) => (
+                                         <ListItem avatar onPress={() => {
+                                             if(item.invited) {
+                                                 store.dispatch(onRemoveFriendFromGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
+                                             } else {
+                                                 store.dispatch(onInviteFriendToGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
+                                             }
+
+                                            if(this.state.chatInfo.chat_room_type != 'G') {
+                                                 this.setState({
+                                                     showInviteModal: false
+                                                 })
+                                             }
+                                        }}>
+                                             <Left>
+                                                 <Thumbnail source={{ uri: item.profile_pic_url }} />
+                                             </Left>
+                                             <Body>
+                                                 <Text>{ item.display_name }</Text>
+                                                 <Text note style={{ marginLeft: 2 }}>{ item.status_quote }</Text>
+                                             </Body>
+                                          </ListItem>
+                                     )}
+                                 />
+                             </List>
+                         </View>
+                     </View>
+                 </ModalNative>
+             }
             <Modal
                 onRequestClose={() => this.setState({ showPickerModal: false })}
                 onBackdropPress={() => this.setState({ showPickerModal: false })}
