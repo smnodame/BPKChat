@@ -163,7 +163,8 @@ export default class Chat extends React.Component {
             isGroup: _.get(state, 'chat.chatInfo.friend_user_id', 'F')[0] == 'G',
             inviteFriends: _.get(state, 'chat.inviteFriends.data', []),
             optionLists: options,
-            member: _.get(state, 'chat.memberInGroup.data', [])
+            member: _.get(state, 'chat.memberInGroup.data', []),
+            optionMessage: _.get(state, 'chat.optionMessage', [])
         })
 
     }
@@ -243,17 +244,18 @@ export default class Chat extends React.Component {
 
             <View style={[styles.item, itemStyle]}>
 
-
-            <View style={{ marginRight: 8, marginTop: 5 }}>
-                <RoundCheckbox
-                    size={24}
-                    checked={true}
-                    onValueChange={(newValue) => {console.log(newValue)}}
-                />
-            </View>
+            {
+                this.state.showOptionMessageModal && <View style={{ marginRight: 8, marginTop: 5 }}>
+                    <RoundCheckbox
+                        size={24}
+                        checked={true}
+                        onValueChange={(newValue) => {console.log(newValue)}}
+                    />
+                </View>
+            }
 
             {
-                !inMessage && <View style={{ flex: 1 }} />
+                !inMessage && this.state.showOptionMessageModal && <View style={{ flex: 1 }} />
             }
 
             {inMessage && <Thumbnail small source={{ uri: info.item.profile_pic_url }} style={{ marginRight: 8, marginTop: 5 }}/>}
@@ -439,7 +441,11 @@ export default class Chat extends React.Component {
                     <Title>{ _.get(this.state, 'chatInfo.display_name', '') }</Title>
                 </Body>
                 <Right>
-                    <Button transparent>
+                    <Button transparent onPress={() => {
+                        this.setState({
+                            showOptionMessageModal: true
+                        })
+                    }}>
                         <Icon style={{ color: 'white' }} name="md-call" />
                     </Button>
                     <Button transparent onPress={() =>
@@ -694,22 +700,71 @@ export default class Chat extends React.Component {
                     />
                 </View>
             }
-              <FlatList ref='list'
-                        getItemLayout={(data, index) => (
-                            {length: 100, offset: 100 * index, index}
-                        )}
-                        inverted={true}
-                        onEndReached={() => {
-                            store.dispatch(onLoadMoreMessageLists())
-                        }}
-                        onEndReachedThreshold={0.3}
-                        keyExtractor={(post) => {
-                            return post.chat_message_id
-                        }}
-                        extraData={this.state}
-                        style={styles.list}
-                        data={this.state.chat}
-                        renderItem={this._renderItem.bind(this)}/>
+            <FlatList ref='list'
+                getItemLayout={(data, index) => (
+                    {length: 100, offset: 100 * index, index}
+                )}
+                inverted={true}
+                onEndReached={() => {
+                    store.dispatch(onLoadMoreMessageLists())
+                }}
+                onEndReachedThreshold={0.3}
+                keyExtractor={(post) => {
+                    return post.chat_message_id
+                }}
+                extraData={this.state}
+                style={styles.list}
+                data={this.state.chat}
+                renderItem={this._renderItem.bind(this)}
+            />
+            {
+                this.state.showOptionMessageModal &&
+                <ModalNative
+                   onRequestClose={() => this.setState({ showOptionMessageModal: false })}
+                   onBackdropPress={() => this.setState({ showOptionMessageModal: false })}
+                   isVisible={true}
+               >
+                       <View style={{
+                           backgroundColor: 'white',
+                           borderRadius: 4,
+                           borderColor: 'rgba(0, 0, 0, 0.1)',
+                           flex: 1
+                       }}>
+                           <Header style={{ backgroundColor: '#3b5998' }}>
+                               <Left>
+                                   <Button transparent onPress={() => {
+                                       this.setState({ showOptionMessageModal: false })
+                                   }}>
+                                       <Icon style={{ color: 'white' }} name="md-close" />
+                                   </Button>
+                               </Left>
+                               <Body>
+                                   <Title>Member</Title>
+                               </Body>
+                               <Right>
+
+                               </Right>
+                           </Header>
+                            <FlatList ref='list'
+                                getItemLayout={(data, index) => (
+                                    {length: 100, offset: 100 * index, index}
+                                )}
+                                inverted={true}
+                                onEndReached={() => {
+                                    // store.dispatch(onLoadMoreMessageLists())
+                                }}
+                                onEndReachedThreshold={0.3}
+                                keyExtractor={(post) => {
+                                    return post.chat_message_id
+                                }}
+                                extraData={this.state}
+                                style={styles.list}
+                                data={this.state.optionMessage}
+                                renderItem={this._renderItem.bind(this)}
+                            />
+                    </View>
+                </ModalNative>
+            }
               <View style={styles.footer}>
                 {
                     this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => this.setState({ isShowMedie: false })}>
