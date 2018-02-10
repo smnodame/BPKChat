@@ -19,7 +19,8 @@ import {
     onIsShowActionChat,
     inviteFriends,
     selectChat,
-    memberInGroup
+    memberInGroup,
+    optionMessage
 } from './actions'
 import { NavigationActions } from 'react-navigation'
 import {
@@ -680,6 +681,20 @@ function* onLoadMoreMemberInGroupSaga() {
     }
 }
 
+function* onEnterOptionMessageSaga() {
+    while (true) {
+        yield take('ON_ENTER_OPTION_MESSAGE')
+        console.log('= on enter option message =')
+        const chatInfo = yield select(getChatInfo)
+        const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id)
+
+        const chatData = _.get(resFetchChat, 'data.data', [])
+
+        // store data in store redux
+        yield put(optionMessage(chatData))
+    }
+}
+
 export default function* rootSaga() {
     yield all([
         signin(),
@@ -708,6 +723,7 @@ export default function* rootSaga() {
         removeFriendFromGroupSaga(),
         onExitTheGroupSaga(),
         onFetchFriendInGroupSaga(),
-        onLoadMoreMemberInGroupSaga()
+        onLoadMoreMemberInGroupSaga(),
+        onEnterOptionMessageSaga()
     ])
 }

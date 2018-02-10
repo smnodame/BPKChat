@@ -56,7 +56,8 @@ import {
     onRemoveFriendFromGroup,
     onExitTheGroup,
     onFetchFriendInGroup,
-    onLoadMoreMemberInGroup
+    onLoadMoreMemberInGroup,
+    onEnterOptionMessage
 } from '../../redux/actions'
 import {sendTheMessage, fetchFriendProfile} from '../../redux/api'
 import { emit_update_friend_chat_list, emit_unsubscribe, emit_message } from '../../redux/socket.js'
@@ -80,7 +81,6 @@ export default class Chat extends React.Component {
     constructor(props) {
         super(props);
 
-        // let conversation = data.getConversation(getUserId(this.props.navigation));
         let conversation = data.getConversation();
 
         this.state = {
@@ -176,7 +176,7 @@ export default class Chat extends React.Component {
     }
 
     componentDidMount() {
-
+        store.dispatch(onEnterOptionMessage())
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -243,7 +243,7 @@ export default class Chat extends React.Component {
 
             <View style={[styles.item, itemStyle]}>
 
-            /** Checkbox message */
+
             <View style={{ marginRight: 8, marginTop: 5 }}>
                 <RoundCheckbox
                     size={24}
@@ -255,8 +255,7 @@ export default class Chat extends React.Component {
             {
                 !inMessage && <View style={{ flex: 1 }} />
             }
-            /** -- End Checkbox message --- */
-            
+
             {inMessage && <Thumbnail small source={{ uri: info.item.profile_pic_url }} style={{ marginRight: 8, marginTop: 5 }}/>}
             {!inMessage && renderDate(info.item.create_date)}
           {

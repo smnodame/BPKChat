@@ -117,6 +117,10 @@ const chat = (state = {
             return Object.assign(state, {
                 memberInGroup: action.payload.friends
             })
+        case 'OPTION_MESSAGE':
+            return Object.assign(state, {
+                optionMessage: action.payload.message
+            })
         default:
             return state
     }

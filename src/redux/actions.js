@@ -298,3 +298,14 @@ export const onLoadMoreMemberInGroup = (query) => ({
         query
     }
 })
+
+export const onEnterOptionMessage = () => ({
+    type: 'ON_ENTER_OPTION_MESSAGE'
+})
+
+export const optionMessage = (message) => ({
+    type: 'OPTION_MESSAGE',
+    payload: {
+        message
+    }
+})
