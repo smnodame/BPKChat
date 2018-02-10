@@ -18,7 +18,8 @@ import {
     sticker,
     onIsShowActionChat,
     inviteFriends,
-    selectChat
+    selectChat,
+    memberInGroup
 } from './actions'
 import { NavigationActions } from 'react-navigation'
 import {
@@ -47,7 +48,8 @@ import {
     inviteFriendToGroup,
     fetchChatInfo,
     removeFriendFromGroup,
-    exitTheGroup
+    exitTheGroup,
+    friendInGroup
 } from './api'
 import {
     getFriendGroups,
@@ -650,6 +652,18 @@ function* onExitTheGroupSaga() {
     }
 }
 
+function* onFetchFriendInGroupSaga() {
+    while (true) {
+        yield take('ON_FETCH_FRIEND_IN_GROUP')
+
+        const chatInfo = yield select(getChatInfo)
+
+        const resFriendInGroup = yield call(friendInGroup, chatInfo.chat_room_id, null, null, '')
+
+        yield put(memberInGroup(_.get(resFriendInGroup, 'data.data', [])))
+    }
+}
+
 export default function* rootSaga() {
     yield all([
         signin(),
@@ -676,6 +690,7 @@ export default function* rootSaga() {
         loadMoreInviteFriendsSaga(),
         inviteFriendToGroupSaga(),
         removeFriendFromGroupSaga(),
-        onExitTheGroupSaga()
+        onExitTheGroupSaga(),
+        onFetchFriendInGroupSaga()
     ])
 }

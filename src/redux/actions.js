@@ -277,3 +277,14 @@ export const onExitTheGroup = (chat_room_id) => ({
         chat_room_id
     }
 })
+
+export const onFetchFriendInGroup = (chat_room_id, filter) => ({
+    type: 'ON_FETCH_FRIEND_IN_GROUP'
+})
+
+export const memberInGroup = (friends) => ({
+    type: 'MEMBER_IN_GROUP',
+    payload: {
+        friends
+    }
+})

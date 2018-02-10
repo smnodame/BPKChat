@@ -113,6 +113,10 @@ const chat = (state = {
             return Object.assign(state, {
                 inviteFriends: action.payload.friends
             })
+        case 'MEMBER_IN_GROUP':
+            return Object.assign(state, {
+                memberInGroup: action.payload.friends
+            })
         default:
             return state
     }
