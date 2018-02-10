@@ -45,3 +45,7 @@ export const getUserInfo = state => {
 export const getInviteFriendLists = state => {
     return state.chat.inviteFriends
 }
+
+export const getMemberInGroup = state => {
+    return state.chat.memberInGroup
+}

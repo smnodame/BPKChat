@@ -47,7 +47,16 @@ import {scale} from '../../utils/scale';
 import GridView from 'react-native-super-grid';
 
 import {store} from '../../redux'
-import { onLoadMoreMessageLists, onFetchInviteFriend, loadMoreInviteFriends, onInviteFriendToGroup, onRemoveFriendFromGroup, onExitTheGroup, onFetchFriendInGroup } from '../../redux/actions'
+import {
+    onLoadMoreMessageLists,
+    onFetchInviteFriend,
+    loadMoreInviteFriends,
+    onInviteFriendToGroup,
+    onRemoveFriendFromGroup,
+    onExitTheGroup,
+    onFetchFriendInGroup,
+    onLoadMoreMemberInGroup
+} from '../../redux/actions'
 import {sendTheMessage, fetchFriendProfile} from '../../redux/api'
 import { emit_update_friend_chat_list, emit_unsubscribe, emit_message } from '../../redux/socket.js'
 
@@ -179,6 +188,10 @@ export default class Chat extends React.Component {
             page: page + 1
         })
         store.dispatch(loadMoreInviteFriends(page, this.state.inviteFriendSeachText))
+    }
+
+    onLoadMoreMemberInGroup = () => {
+        store.dispatch(onLoadMoreMemberInGroup(this.state.memberSeachText))
     }
 
     _renderItem(info) {
@@ -529,7 +542,7 @@ export default class Chat extends React.Component {
                             <RkTextInput autoCapitalize='none'
                                          autoCorrect={false}
                                          onSubmitEditing={() => {
-                                            //  store.dispatch(onFetchInviteFriend(this.state.inviteFriendSeachText))
+                                             store.dispatch(onFetchFriendInGroup(this.state.memberSeachText))
                                          }}
                                          onChangeText={(memberSeachText) => this.setState({
                                              memberSeachText
@@ -542,7 +555,7 @@ export default class Chat extends React.Component {
                               <List>
                                  <FlatList
                                       data={this.state.member}
-                                    //   onEndReached={() => /**this.loadMoreInviteFriendLists()*/}
+                                      onEndReached={() => this.onLoadMoreMemberInGroup()}
                                       onEndReachedThreshold={0.4}
                                       renderItem={({item}) => (
                                           <ListItem avatar onPress={() => {

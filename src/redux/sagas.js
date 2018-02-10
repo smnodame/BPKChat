@@ -63,7 +63,8 @@ import {
     getSelectedActionChatRoomId,
     getChatLists,
     getUserInfo,
-    getInviteFriendLists
+    getInviteFriendLists,
+    getMemberInGroup
 } from './selectors'
 import { emit_subscribe, on_message, emit_message, emit_update_friend_chat_list } from './socket.js'
 
@@ -654,13 +655,28 @@ function* onExitTheGroupSaga() {
 
 function* onFetchFriendInGroupSaga() {
     while (true) {
-        yield take('ON_FETCH_FRIEND_IN_GROUP')
+        const { payload: { query } } = yield take('ON_FETCH_FRIEND_IN_GROUP')
 
         const chatInfo = yield select(getChatInfo)
 
-        const resFriendInGroup = yield call(friendInGroup, chatInfo.chat_room_id, null, null, '')
+        const resFriendInGroup = yield call(friendInGroup, chatInfo.chat_room_id, null, null, query)
 
         yield put(memberInGroup(_.get(resFriendInGroup, 'data.data', [])))
+    }
+}
+
+function* onLoadMoreMemberInGroupSaga() {
+    while (true) {
+        const { payload : { query } } = yield take('ON_LOAD_MORE_MEMBER_IN_GROUP')
+        const chatInfo = yield select(getChatInfo)
+        const userInfo = yield select(getUserInfo)
+
+        const memberFromStore = yield select(getMemberInGroup)
+        const resFriendInGroup = yield call(friendInGroup, chatInfo.chat_room_id, memberFromStore.data.length, 20, query)
+        const allMember = memberFromStore.data.concat(_.get(resFriendInGroup, 'data.data.data', []))
+
+        memberFromStore.data = allMember
+        yield put(memberInGroup(memberFromStore))
     }
 }
 
@@ -691,6 +707,7 @@ export default function* rootSaga() {
         inviteFriendToGroupSaga(),
         removeFriendFromGroupSaga(),
         onExitTheGroupSaga(),
-        onFetchFriendInGroupSaga()
+        onFetchFriendInGroupSaga(),
+        onLoadMoreMemberInGroupSaga()
     ])
 }
