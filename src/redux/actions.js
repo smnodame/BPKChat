@@ -311,9 +311,10 @@ export const optionMessage = (message) => ({
     }
 })
 
-export const onUpdateProfile = (profile) => ({
+export const onUpdateProfile = (profile, pic_base64) => ({
     type: 'ON_UPDATE_PROFILE',
     payload: {
-        profile
+        profile,
+        pic_base64
     }
 })

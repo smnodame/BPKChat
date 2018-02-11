@@ -78,7 +78,8 @@ export default class ProfileSettings extends React.Component {
           }
           else {
               this.setState({
-                  profile_pic_url: response.uri
+                  profile_pic_url: response.uri,
+                  profile_pic_base64: response.data || ''
               })
           }
       })
@@ -107,7 +108,8 @@ export default class ProfileSettings extends React.Component {
           }
           else {
               this.setState({
-                  wall_pic_url: response.uri
+                  wall_pic_url: response.uri,
+                  wall_pic_base64: response.data || ''
               })
           }
       })
@@ -122,7 +124,12 @@ export default class ProfileSettings extends React.Component {
           password: ''
       }
       store.dispatch(onUpdateProfile(
-          profile
+          profile,
+          {
+              user_id: this.state.user_id,
+              wall_pic_base64: this.state.wall_pic_base64,
+              profile_pic_base64: this.state.profile_pic_base64
+          }
       ))
   }
 

@@ -188,3 +188,7 @@ export const friendInGroup = (chat_room_id, start=0, limit=20, filter='') => {
 export const updateProfile = (data) => {
     return axios.post(`http://itsmartone.com/bpk_connect/api/user/update_setting?token=asdf1234aaa`, data)
 }
+
+export const updatePictureAuth = (data) => {
+    return  axios.post("http://itsmartone.com/bpk_connect/api/user/update_picture?token=asdf1234aaa", data)
+}
