@@ -619,23 +619,33 @@ function* inviteFriendToGroupSaga() {
 
 function* removeFriendFromGroupSaga() {
     while (true) {
-        const { payload: { chat_room_id, friend_user_id }} = yield take('REMOVE_FRIEND_FROM_GROUP')
+        const { payload: { chat_room_id, friend_user_id, is_from_member_modal }} = yield take('REMOVE_FRIEND_FROM_GROUP')
         const resRemoveFriendFromGroup = yield call(removeFriendFromGroup, chat_room_id, friend_user_id)
-        const inviteFriendLists = yield select(getInviteFriendLists)
         const userInfo = yield select(getUserInfo)
         const chatInfo = yield select(getChatInfo)
 
         if(chatInfo.chat_room_type == 'G') {
-            inviteFriendLists.data.forEach((friend, index) => {
-                if(inviteFriendLists.data[index].friend_user_id == friend_user_id) {
-                    inviteFriendLists.data[index].status_quote = 'Tap to invite'
-                    inviteFriendLists.data[index].invited = false
-                }
-            })
-            yield put(inviteFriends(inviteFriendLists))
+            if (!is_from_member_modal) {
+                const inviteFriendLists = yield select(getInviteFriendLists)
+                inviteFriendLists.data.forEach((friend, index) => {
+                    if(inviteFriendLists.data[index].friend_user_id == friend_user_id) {
+                        inviteFriendLists.data[index].status_quote = 'Tap to invite'
+                        inviteFriendLists.data[index].invited = false
+                    }
+                })
+                yield put(inviteFriends(inviteFriendLists))
+            } else {
+                const member = yield select(getMemberInGroup)
+                member.data = member.data.filter((friend) => {
+                    return friend.friend_user_id != friend_user_id
+                })
+                yield put(memberInGroup(member))
+            }
 
             // update chat list
             emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
+            // update own
+            emit_update_friend_chat_list('3963', '3963')
         }
     }
 }

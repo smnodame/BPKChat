@@ -514,7 +514,7 @@ export default class Chat extends React.Component {
                                      renderItem={({item}) => (
                                          <ListItem avatar onPress={() => {
                                              if(item.invited) {
-                                                 store.dispatch(onRemoveFriendFromGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
+                                                 store.dispatch(onRemoveFriendFromGroup(this.state.chatInfo.chat_room_id, item.friend_user_id, false))
                                              } else {
                                                  store.dispatch(onInviteFriendToGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
                                              }
@@ -587,7 +587,7 @@ export default class Chat extends React.Component {
                                       onEndReachedThreshold={0.4}
                                       renderItem={({item}) => (
                                           <ListItem avatar onPress={() => {
-                                            //   store.dispatch(onRemoveFriendFromGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
+                                              store.dispatch(onRemoveFriendFromGroup(this.state.chatInfo.chat_room_id, item.friend_user_id, true))
                                          }}>
                                               <Left>
                                                   <Thumbnail source={{ uri: item.profile_pic_url }} />

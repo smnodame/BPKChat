@@ -263,11 +263,12 @@ export const onInviteFriendToGroup = (chat_room_id, friend_user_id) => ({
     }
 })
 
-export const onRemoveFriendFromGroup = (chat_room_id, friend_user_id) => ({
+export const onRemoveFriendFromGroup = (chat_room_id, friend_user_id, is_from_member_modal) => ({
     type: 'REMOVE_FRIEND_FROM_GROUP',
     payload: {
         chat_room_id,
-        friend_user_id
+        friend_user_id,
+        is_from_member_modal
     }
 })
 
