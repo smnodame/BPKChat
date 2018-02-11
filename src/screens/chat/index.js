@@ -57,7 +57,8 @@ import {
     onExitTheGroup,
     onFetchFriendInGroup,
     onLoadMoreMemberInGroup,
-    onEnterOptionMessage
+    onEnterOptionMessage,
+    onLoadMoreOptionMessage
 } from '../../redux/actions'
 import {sendTheMessage, fetchFriendProfile} from '../../redux/api'
 import { emit_update_friend_chat_list, emit_unsubscribe, emit_message } from '../../redux/socket.js'
@@ -758,7 +759,7 @@ export default class Chat extends React.Component {
                                 )}
                                 inverted={true}
                                 onEndReached={() => {
-                                    // store.dispatch(onLoadMoreMessageLists())
+                                    store.dispatch(onLoadMoreOptionMessage())
                                 }}
                                 onEndReachedThreshold={0.3}
                                 keyExtractor={(post) => {

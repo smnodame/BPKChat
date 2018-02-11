@@ -49,3 +49,7 @@ export const getInviteFriendLists = state => {
 export const getMemberInGroup = state => {
     return state.chat.memberInGroup
 }
+
+export const getOptionMessageLists = state => {
+    return state.chat.optionMessage
+}

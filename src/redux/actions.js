@@ -304,6 +304,10 @@ export const onEnterOptionMessage = () => ({
     type: 'ON_ENTER_OPTION_MESSAGE'
 })
 
+export const onLoadMoreOptionMessage = () => ({
+    type: 'ON_LOAD_MORE_OPTION_MESSAGE'
+})
+
 export const optionMessage = (message) => ({
     type: 'OPTION_MESSAGE',
     payload: {

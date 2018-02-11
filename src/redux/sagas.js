@@ -66,7 +66,8 @@ import {
     getChatLists,
     getUserInfo,
     getInviteFriendLists,
-    getMemberInGroup
+    getMemberInGroup,
+    getOptionMessageLists
 } from './selectors'
 import { emit_subscribe, on_message, emit_message, emit_update_friend_chat_list } from './socket.js'
 
@@ -739,6 +740,24 @@ function* updateProfileSaga() {
     }
 }
 
+function* onLoadMoreOptionMessageSaga() {
+    while (true) {
+        yield take('ON_LOAD_MORE_OPTION_MESSAGE')
+        const chatInfo = yield select(getChatInfo)
+
+        const messageLists = yield select(getOptionMessageLists)
+
+        const topChatMessageId = _.get(messageLists[messageLists.length - 1], 'chat_message_id', '0')
+
+        const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, topChatMessageId)
+        const chatData = _.get(resFetchChat, 'data.data', [])
+
+        const newMessageLists = messageLists.concat(chatData)
+
+        yield put(optionMessage(newMessageLists))
+    }
+}
+
 export default function* rootSaga() {
     yield all([
         signin(),
@@ -769,6 +788,7 @@ export default function* rootSaga() {
         onFetchFriendInGroupSaga(),
         onLoadMoreMemberInGroupSaga(),
         onEnterOptionMessageSaga(),
-        updateProfileSaga()
+        updateProfileSaga(),
+        onLoadMoreOptionMessageSaga()
     ])
 }
