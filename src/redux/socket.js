@@ -43,13 +43,14 @@ export const on_as_seen = () => {
         // fetch new message if is not own message
         if(user_id != '3963') {
             const state = store.getState()
-            const chatInfo = _.get(state, 'chat.chatInfo')
+            const messageLists = _.get(state, 'chat.chat')
 
-            fetchChat(chatInfo.chat_room_id).then((res) => {
-                const chatData = _.get(res, 'data.data', []).reverse()
-                // store data in store redux
-                store.dispatch(chat(chatData))
+            messageLists.forEach((message, index) => {
+                if(message.who_read.indexOf(user_id) < 0) {
+                    messageLists[index].who_read.push(user_id)
+                }
             })
+            store.dispatch(chat(messageLists))
         }
     })
 }
