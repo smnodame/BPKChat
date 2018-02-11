@@ -32,6 +32,9 @@ export default class ProfileSettings extends React.Component {
     // this.user = data.getUser();
 
     this.state = {
+        errorMessage: '',
+        newPassword: '',
+        confirmPassword: ''
     }
   }
 
@@ -121,16 +124,23 @@ export default class ProfileSettings extends React.Component {
           display_name: this.state.display_name,
           status_quote: this.state.status_quote,
           hn: this.state.hn,
-          password: ''
+          password: this.state.newPassword
       }
-      store.dispatch(onUpdateProfile(
-          profile,
-          {
-              user_id: this.state.user_id,
-              wall_pic_base64: this.state.wall_pic_base64,
-              profile_pic_base64: this.state.profile_pic_base64
-          }
-      ))
+      if(this.state.newPassword == this.state.confirmPassword) {
+          store.dispatch(onUpdateProfile(
+              profile,
+              {
+                  user_id: this.state.user_id,
+                  wall_pic_base64: this.state.wall_pic_base64,
+                  profile_pic_base64: this.state.profile_pic_base64
+              }
+          ))
+      } else {
+          this.setState({
+              errorMessage: 'Password is not matched'
+          })
+      }
+
   }
 
   render() {
@@ -250,13 +260,6 @@ export default class ProfileSettings extends React.Component {
                <RkText rkType='primary header6'>CHANGE PASSWORD</RkText>
              </View>
              <View style={styles.row}>
-               <RkTextInput label='Old Password'
-                            value={this.state.password}
-                            rkType='right clear'
-                            secureTextEntry={true}
-                            onChangeText={(text) => this.setState({password: text})}/>
-             </View>
-             <View style={styles.row}>
                <RkTextInput label='New Password'
                             value={this.state.newPassword}
                             rkType='right clear'
@@ -270,8 +273,15 @@ export default class ProfileSettings extends React.Component {
                             secureTextEntry={true}
                             onChangeText={(text) => this.setState({confirmPassword: text})}/>
              </View>
+             <View>
+                 {
+                     !!this.state.errorMessage&&<Text style={{ textAlign: 'center', color: 'red', marginTop: 10 }}>{ this.state.errorMessage }</Text>
+                 }
+             </View>
            </View>
+
         </RkAvoidKeyboard>
+
       </ScrollView>
      </View>
     )
