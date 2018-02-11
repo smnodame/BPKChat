@@ -10,6 +10,8 @@ import AddFriend from './src/screens/addFriend'
 import Login from './src/screens/login'
 import SignUp from './src/screens/register'
 import GroupSetting from './src/screens/groupSetting'
+import ProfileSettings from './src/screens/profile'
+
 import {store} from './src/redux'
 import { start_app  } from './src/redux/actions.js'
 import {start_socket} from './src/redux/socket.js'
@@ -32,7 +34,8 @@ const BPKChat = StackNavigator({
     AddFriend: { screen: AddFriend },
     Login: { screen: Login },
     SignUp: { screen: SignUp },
-    GroupSetting: { screen: GroupSetting }
+    GroupSetting: { screen: GroupSetting },
+    ProfileSettings: { screen: ProfileSettings }
 },
 {
     initialRouteName: "App",

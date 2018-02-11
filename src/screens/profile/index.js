@@ -16,7 +16,8 @@ import {
 } from 'react-native-ui-kitten';
 import {data} from '../../data';
 import {FontAwesome} from '../../assets/icons';
-import { Thumbnail, Button, Text, Icon } from 'native-base';
+import { NavigationActions } from 'react-navigation'
+import { Thumbnail, Button, Text, Icon, Header, Left, Body, Title, Right } from 'native-base';
 import ImagePicker from 'react-native-image-picker'
 import {store} from '../../redux'
 
@@ -113,6 +114,22 @@ export default class ProfileSettings extends React.Component {
 
   render() {
     return (
+    <View>
+    <Header>
+        <Left>
+            <Button transparent onPress={() => this.props.navigation.dispatch(NavigationActions.back())}>
+                <Icon style={{ color: 'white' }} name="md-arrow-round-back" />
+            </Button>
+        </Left>
+        <Body>
+            <Title>Profile</Title>
+        </Body>
+        <Right>
+            <Button transparent onPress={() => {}}>
+                <Icon style={{ color: 'white' }} name="md-checkmark" />
+            </Button>
+        </Right>
+    </Header>
       <ScrollView style={styles.root}>
         <RkAvoidKeyboard>
         <View style={{ height: 220 , backgroundColor: '#fafafa'}}>
@@ -241,6 +258,7 @@ export default class ProfileSettings extends React.Component {
            </View>
         </RkAvoidKeyboard>
       </ScrollView>
+     </View>
     )
   }
 }

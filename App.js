@@ -39,6 +39,7 @@ import ProfileSettings from './src/screens/profile'
 import ChatList from './src/screens/chatlist'
 import Contacts from './src/screens/contact'
 import Chat from './src/screens/chat'
+import GridMenu from './src/screens/gridMenu'
 
 const deviceHeight = Dimensions.get("window").height
 const deviceWidth = Dimensions.get("window").width
@@ -109,7 +110,7 @@ export default class App extends Component<{}> {
             )
         } else if (this.state.selectedTab == 'Profile') {
             return (
-                <ProfileSettings />
+                <GridMenu screenProps={{ rootNavigation: this.props.navigation }} />
             )
         }
     }
@@ -164,7 +165,7 @@ export default class App extends Component<{}> {
                   <Right>
                   </Right>
               </Header>
-              <Content>
+              <Content style={{ backgroundColor: 'white' }}>
               {
                   this.renderContent()
               }
