@@ -769,7 +769,8 @@ function* onInviteFriendToGroupWithOpenCaseSaga() {
             chat_message_ids: selected_option_message_id
         })
         const newChatRoomId = resInviteFriendToGroup.data.new_chat_room_id
-
+        const displayName = resInviteFriendToGroup.data.room_name
+        
         const resFetchChatInfo = yield call(fetchChatInfo, newChatRoomId)
 
         const chatInfo = yield select(getChatInfo)
@@ -777,7 +778,10 @@ function* onInviteFriendToGroupWithOpenCaseSaga() {
         const navigate = yield select(navigateSelector)
         navigate.dispatch(NavigationActions.back())
 
-        yield put(selectChat(resFetchChatInfo.data.data))
+        yield put(selectChat({
+            chat_room_id: newChatRoomId,
+            display_name: displayName
+        }))
 
         // add owner friend to new group room
         yield call(inviteFriendToGroup, newChatRoomId, chatInfo.friend_user_id)
