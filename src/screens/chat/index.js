@@ -103,7 +103,10 @@ export default class Chat extends React.Component {
             name: 'Invite',
             event: () => {
                 store.dispatch(onFetchInviteFriend())
-                this.setState({ showInviteModal : true })
+                this.setState({
+                    showInviteModal : true,
+                    isOpenCase: false
+                })
             }
         }
         const friendsAction = {
@@ -118,7 +121,11 @@ export default class Chat extends React.Component {
             icon: 'md-mail-open',
             name: 'Open Case',
             event: () => {
-                this.setState({ showOpenCaseModal : true })
+                store.dispatch(onFetchInviteFriend())
+                this.setState({
+                    showInviteModal : true,
+                    isOpenCase: true
+                })
             }
         }
         const searchAction = {
@@ -514,16 +521,24 @@ export default class Chat extends React.Component {
                                      onEndReachedThreshold={0.4}
                                      renderItem={({item}) => (
                                          <ListItem avatar onPress={() => {
-                                             if(item.invited) {
-                                                 store.dispatch(onRemoveFriendFromGroup(this.state.chatInfo.chat_room_id, item.friend_user_id, false))
+                                             if(this.state.isOpenCase) {
+                                                this.setState({
+                                                    showOptionMessageModal: true,
+                                                    chat_room_id: this.state.chatInfo.chat_room_id,
+                                                    selected_invite_friend_user_id: item.friend_user_id
+                                                })
                                              } else {
-                                                 store.dispatch(onInviteFriendToGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
-                                             }
+                                                 if(item.invited) {
+                                                     store.dispatch(onRemoveFriendFromGroup(this.state.chatInfo.chat_room_id, item.friend_user_id, false))
+                                                 } else {
+                                                     store.dispatch(onInviteFriendToGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
+                                                 }
 
-                                            if(this.state.chatInfo.chat_room_type != 'G') {
-                                                 this.setState({
-                                                     showInviteModal: false
-                                                 })
+                                                if(this.state.chatInfo.chat_room_type != 'G') {
+                                                     this.setState({
+                                                         showInviteModal: false
+                                                     })
+                                                 }
                                              }
                                         }}>
                                              <Left>
@@ -632,61 +647,6 @@ export default class Chat extends React.Component {
                   </Button>
                 </View>
             </Modal>
-            <Modal
-                onRequestClose={() => this.setState({ showGroupSetting: false })}
-                onBackdropPress={() => this.setState({ showGroupSetting: false })}
-                isVisible={this.state.showGroupSetting}
-            >
-                <View style={{
-                    height: 400,
-                    backgroundColor: 'white',
-                    borderRadius: 4,
-                    borderColor: 'rgba(0, 0, 0, 0.1)',
-                }}>
-                    <View style={{ height: 220 }}>
-                        <Image
-                            style={{width: '100%', height: 150, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
-                            source={{uri: 'https://images.alphacoders.com/685/685151.jpg'}}
-                        />
-                        <Image
-                            style={{
-                                width: 110,
-                                height: 110,
-                                borderRadius: 55,
-                                borderColor: 'white',
-                                borderWidth: 1,
-                                position: 'absolute',
-                                top: 95,
-                                left: '50%',
-                                marginLeft: -55
-                            }}
-                            source={{uri: 'https://www.billboard.com/files/styles/480x270/public/media/taylor-swift-1989-tour-red-lipstick-2015-billboard-650.jpg'}}
-                        />
-                    </View>
-                    <View style={{
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}>
-                        <View style={styles.row}>
-                          <RkTextInput label='Display Name'
-                                       value={'Boonprakit'}
-                                       rkType='right clear'
-                                       onChangeText={(text) => this.setState({firstName: text})}/>
-                        </View>
-                    </View>
-                    <View style={{ flex: 1}}>
-                    </View>
-                    <View
-                        style={{
-                            width: '100%'
-                        }}
-                    >
-                        <Button block style={{ backgroundColor: '#3b5998', margin: 5 }}>
-                            <Text>UPDATE</Text>
-                        </Button>
-                    </View>
-                </View>
-            </Modal>
             <RkAvoidKeyboard style={styles.container} onResponderRelease={(event) => {
               Keyboard.dismiss();
             }}>
@@ -747,10 +707,19 @@ export default class Chat extends React.Component {
                                    </Button>
                                </Left>
                                <Body>
-                                   <Title>Member</Title>
+                                   <Title>Select Message</Title>
                                </Body>
                                <Right>
-
+                                   <Button transparent onPress={() => {
+                                        const selectedOptionMessageId = []
+                                        _.forEach(this.state.selectedOptionMessageId, (value, key) => {
+                                            if(value) {
+                                                selectedOptionMessageId.push(key)
+                                            }
+                                        })
+                                   }}>
+                                        <Icon style={{ color: 'white' }} name="md-checkmark" />
+                                   </Button>
                                </Right>
                            </Header>
                             <FlatList ref='list'
