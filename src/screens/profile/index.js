@@ -214,10 +214,31 @@ export default class ProfileSettings extends React.Component {
           </View>
 
           <View style={styles.section}>
-            <View style={[styles.row, styles.heading]}>
-              <RkText rkType='primary header6'>CONNECT YOUR ACCOUNT</RkText>
-            </View>
-          </View>
+             <View style={[styles.row, styles.heading]}>
+               <RkText rkType='primary header6'>CHANGE PASSWORD</RkText>
+             </View>
+             <View style={styles.row}>
+               <RkTextInput label='Old Password'
+                            value={this.state.password}
+                            rkType='right clear'
+                            secureTextEntry={true}
+                            onChangeText={(text) => this.setState({password: text})}/>
+             </View>
+             <View style={styles.row}>
+               <RkTextInput label='New Password'
+                            value={this.state.newPassword}
+                            rkType='right clear'
+                            secureTextEntry={true}
+                            onChangeText={(text) => this.setState({newPassword: text})}/>
+             </View>
+             <View style={styles.row}>
+               <RkTextInput label='Confirm Password'
+                            value={this.state.confirmPassword}
+                            rkType='right clear'
+                            secureTextEntry={true}
+                            onChangeText={(text) => this.setState({confirmPassword: text})}/>
+             </View>
+           </View>
         </RkAvoidKeyboard>
       </ScrollView>
     )
