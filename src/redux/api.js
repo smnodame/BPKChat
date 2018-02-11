@@ -194,9 +194,12 @@ export const updatePictureAuth = (data) => {
 }
 
 export const inviteFriendToGroupWithOpenCase = (data) => {
-    return axios.post("http://itsmartone.com/bpk_connect/api/group/open_case?token=asdf1234aaa", data).then((res) => {
-        return res
-    }, (err) => {
-        return err
-    })
+    return fetch('http://itsmartone.com/bpk_connect/api/group/open_case?token=asdf1234aaa', {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+            }).then(res=>res.json())
 }
