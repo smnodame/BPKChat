@@ -669,6 +669,8 @@ function* onExitTheGroupSaga() {
 function* onFetchFriendInGroupSaga() {
     while (true) {
         const { payload: { query } } = yield take('ON_FETCH_FRIEND_IN_GROUP')
+        // clear friend in member from store
+        yield put(memberInGroup([]))
 
         const chatInfo = yield select(getChatInfo)
 
@@ -770,7 +772,8 @@ function* onInviteFriendToGroupWithOpenCaseSaga() {
         const newChatRoomId = resInviteFriendToGroup.data.data.new_chat_room_id
 
         const resFetchChatInfo = yield call(fetchChatInfo, newChatRoomId)
-
+        console.log('================')
+        console.log(resFetchChatInfo)
         const chatInfo = yield select(getChatInfo)
 
         const navigate = yield select(navigateSelector)
