@@ -720,6 +720,10 @@ function* updateProfileSaga() {
         // nagigate back
         const navigate = yield select(navigateSelector)
         navigate.dispatch(NavigationActions.back())
+
+        // fetch user profile
+        const resFetchMyProfile = yield call(fetchMyProfile)
+        yield put(myprofile(_.get(resFetchMyProfile, 'data.data')))
     }
 }
 
