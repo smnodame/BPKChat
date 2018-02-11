@@ -70,7 +70,7 @@ import {
     getMemberInGroup,
     getOptionMessageLists
 } from './selectors'
-import { emit_subscribe, on_message, emit_message, emit_update_friend_chat_list } from './socket.js'
+import { emit_subscribe, on_message, emit_message, emit_update_friend_chat_list, emit_as_seen } from './socket.js'
 
 function* onStickerSaga() {
     while (true) {
@@ -387,6 +387,7 @@ function* selectChatSaga() {
 
             // call set as setAsSeen
             yield call(setAsSeen, chatInfo.chat_room_id)
+            emit_as_seen(chatInfo.chat_room_id)
 
             // navigate to chat page
             const navigate = yield select(navigateSelector)
