@@ -664,7 +664,7 @@ function* onFetchFriendInGroupSaga() {
 
         const chatInfo = yield select(getChatInfo)
 
-        const resFriendInGroup = yield call(friendInGroup, chatInfo.chat_room_id, null, null, query)
+        const resFriendInGroup = yield call(friendInGroup, chatInfo.chat_room_id, 0, 20, query)
 
         yield put(memberInGroup(_.get(resFriendInGroup, 'data.data', [])))
     }
