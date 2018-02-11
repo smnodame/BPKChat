@@ -184,3 +184,7 @@ export const exitTheGroup = (chat_room_id) => {
 export const friendInGroup = (chat_room_id, start=0, limit=20, filter='') => {
     return axios.get(`http://itsmartone.com/bpk_connect/api/group/friend_list_for_remove?token=asdf1234aaa&chat_room_id=${chat_room_id}&user_id=3963&start=${start}&limit=${limit}&filter=${filter}`)
 }
+
+export const updateProfile = (data) => {
+    return axios.post(`http://itsmartone.com/bpk_connect/api/user/update_setting?token=asdf1234aaa`, data)
+}

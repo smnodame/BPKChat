@@ -50,7 +50,8 @@ import {
     fetchChatInfo,
     removeFriendFromGroup,
     exitTheGroup,
-    friendInGroup
+    friendInGroup,
+    updateProfile
 } from './api'
 import {
     getFriendGroups,
@@ -709,6 +710,19 @@ function* onEnterOptionMessageSaga() {
     }
 }
 
+function* updateProfileSaga() {
+    while (true) {
+        const { payload: { profile }} = yield take('ON_UPDATE_PROFILE')
+
+        // update profile with api
+        yield call(updateProfile, profile)
+
+        // nagigate back
+        const navigate = yield select(navigateSelector)
+        navigate.dispatch(NavigationActions.back())
+    }
+}
+
 export default function* rootSaga() {
     yield all([
         signin(),
@@ -738,6 +752,7 @@ export default function* rootSaga() {
         onExitTheGroupSaga(),
         onFetchFriendInGroupSaga(),
         onLoadMoreMemberInGroupSaga(),
-        onEnterOptionMessageSaga()
+        onEnterOptionMessageSaga(),
+        updateProfileSaga()
     ])
 }

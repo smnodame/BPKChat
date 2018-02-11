@@ -20,7 +20,7 @@ import { NavigationActions } from 'react-navigation'
 import { Thumbnail, Button, Text, Icon, Header, Left, Body, Title, Right } from 'native-base';
 import ImagePicker from 'react-native-image-picker'
 import {store} from '../../redux'
-
+import { onUpdateProfile } from '../../redux/actions.js'
 
 export default class ProfileSettings extends React.Component {
   static navigationOptions = {
@@ -40,10 +40,11 @@ export default class ProfileSettings extends React.Component {
       this.setState({
           display_name: _.get(state, 'user.user.display_name', ''),
           username: _.get(state, 'user.user.username', ''),
-          hn: _.get(state, 'user.user.status_quote', ''),
+          hn: _.get(state, 'user.user.hn', ''),
           status_quote: _.get(state, 'user.user.status_quote', ''),
           wall_pic_url: _.get(state, 'user.user.wall_pic_url', ''),
-          profile_pic_url: _.get(state, 'user.user.profile_pic_url', '')
+          profile_pic_url: _.get(state, 'user.user.profile_pic_url', ''),
+          user_id: _.get(state, 'user.user.user_id', '')
       })
   }
 
@@ -112,6 +113,19 @@ export default class ProfileSettings extends React.Component {
       })
   }
 
+  saveProfile = () => {
+      const profile = {
+          user_id: this.state.user_id,
+          display_name: this.state.display_name,
+          status_quote: this.state.status_quote,
+          hn: this.state.hn,
+          password: ''
+      }
+      store.dispatch(onUpdateProfile(
+          profile
+      ))
+  }
+
   render() {
     return (
     <View>
@@ -125,7 +139,7 @@ export default class ProfileSettings extends React.Component {
             <Title>Profile</Title>
         </Body>
         <Right>
-            <Button transparent onPress={() => {}}>
+            <Button transparent onPress={() => this.saveProfile() }>
                 <Icon style={{ color: 'white' }} name="md-checkmark" />
             </Button>
         </Right>
@@ -211,12 +225,6 @@ export default class ProfileSettings extends React.Component {
                            onChangeText={(text) => this.setState({display_name: text})}/>
             </View>
             <View style={styles.row}>
-              <RkTextInput label='Username'
-                           value={this.state.username}
-                           onChangeText={(text) => this.setState({username: text})}
-                           rkType='right clear'/>
-            </View>
-            <View style={styles.row}>
               <RkTextInput label='Status'
                            value={this.state.status_quote}
                            onChangeText={(text) => this.setState({status_quote: text})}
@@ -265,7 +273,8 @@ export default class ProfileSettings extends React.Component {
 
 let styles = RkStyleSheet.create(theme => ({
   root: {
-    backgroundColor: theme.colors.screen.base
+    backgroundColor: theme.colors.screen.base,
+    marginBottom: 40
   },
   header: {
     backgroundColor: theme.colors.screen.neutral,

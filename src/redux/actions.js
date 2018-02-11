@@ -310,3 +310,10 @@ export const optionMessage = (message) => ({
         message
     }
 })
+
+export const onUpdateProfile = (profile) => ({
+    type: 'ON_UPDATE_PROFILE',
+    payload: {
+        profile
+    }
+})
