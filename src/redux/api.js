@@ -192,3 +192,11 @@ export const updateProfile = (data) => {
 export const updatePictureAuth = (data) => {
     return  axios.post("http://itsmartone.com/bpk_connect/api/user/update_picture?token=asdf1234aaa", data)
 }
+
+export const inviteFriendToGroupWithOpenCase = (data) => {
+    return axios.post("http://itsmartone.com/bpk_connect/api/group/open_case?token=asdf1234aaa", data).then((res) => {
+        return res
+    }, (err) => {
+        return err
+    })
+}

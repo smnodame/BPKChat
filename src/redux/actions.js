@@ -322,3 +322,12 @@ export const onUpdateProfile = (profile, pic_base64) => ({
         pic_base64
     }
 })
+
+export const onInviteFriendToGroupWithOpenCase = (chat_room_id, selected_invite_friend_user_id, selected_option_message_id) => ({
+    type: 'ON_INVITE_FRIEND_TO_GROUP_WITH_OPEN_CASE',
+    payload: {
+        chat_room_id,
+        selected_invite_friend_user_id,
+        selected_option_message_id
+    }
+})

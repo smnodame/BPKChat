@@ -58,7 +58,8 @@ import {
     onFetchFriendInGroup,
     onLoadMoreMemberInGroup,
     onEnterOptionMessage,
-    onLoadMoreOptionMessage
+    onLoadMoreOptionMessage,
+    onInviteFriendToGroupWithOpenCase
 } from '../../redux/actions'
 import {sendTheMessage, fetchFriendProfile} from '../../redux/api'
 import { emit_update_friend_chat_list, emit_unsubscribe, emit_message } from '../../redux/socket.js'
@@ -717,6 +718,7 @@ export default class Chat extends React.Component {
                                                 selectedOptionMessageId.push(key)
                                             }
                                         })
+                                        store.dispatch(onInviteFriendToGroupWithOpenCase(this.state.chatInfo.chat_room_id, this.state.selected_invite_friend_user_id, selectedOptionMessageId))
                                    }}>
                                         <Icon style={{ color: 'white' }} name="md-checkmark" />
                                    </Button>

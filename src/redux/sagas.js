@@ -51,7 +51,8 @@ import {
     removeFriendFromGroup,
     exitTheGroup,
     friendInGroup,
-    updateProfile
+    updateProfile,
+    inviteFriendToGroupWithOpenCase
 } from './api'
 import {
     getFriendGroups,
@@ -172,11 +173,11 @@ function checkFriendListsChanged(groups, numberFromStore, numberFromBackend, fri
     })
 }
 
-function* refreshNumberOfFriendLists() {
-    while (true) {
-
-    }
-}
+// function* refreshNumberOfFriendLists() {
+//     while (true) {
+//
+//     }
+// }
 
 function* updateFriendListsSaga() {
     while (true) {
@@ -758,6 +759,42 @@ function* onLoadMoreOptionMessageSaga() {
     }
 }
 
+function* onInviteFriendToGroupWithOpenCaseSaga() {
+    while (true) {
+        const { payload: { chat_room_id, selected_invite_friend_user_id, selected_option_message_id }} = yield take('ON_INVITE_FRIEND_TO_GROUP_WITH_OPEN_CASE')
+
+        const userInfo = yield select(getUserInfo)
+
+        const resInviteFriendToGroup = yield call(inviteFriendToGroupWithOpenCase, {
+            user_id: userInfo.user_id,
+            chat_room_id: chat_room_id,
+            friend_user_id: selected_invite_friend_user_id,
+            chat_message_ids: selected_option_message_id
+        })
+
+        const newChatRoomId = resInviteFriendToGroup.data.data.new_chat_room_id
+
+        const resFetchChatInfo = yield call(fetchChatInfo, newChatRoomId)
+
+        const chatInfo = yield select(getChatInfo)
+
+        const navigate = yield select(navigateSelector)
+        navigate.dispatch(NavigationActions.back())
+
+        yield put(selectChat(resFetchChatInfo.data.data))
+
+        // add owner friend to new group room
+        yield call(inviteFriendToGroup, newChatRoomId, chatInfo.friend_user_id)
+
+        // update chat list
+        emit_update_friend_chat_list(userInfo.user_id, selected_invite_friend_user_id)
+        // update own
+        emit_update_friend_chat_list('3963', '3963')
+
+        continue
+    }
+}
+
 export default function* rootSaga() {
     yield all([
         signin(),
@@ -789,6 +826,7 @@ export default function* rootSaga() {
         onLoadMoreMemberInGroupSaga(),
         onEnterOptionMessageSaga(),
         updateProfileSaga(),
-        onLoadMoreOptionMessageSaga()
+        onLoadMoreOptionMessageSaga(),
+        onInviteFriendToGroupWithOpenCaseSaga()
     ])
 }
