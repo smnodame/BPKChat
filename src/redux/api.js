@@ -79,8 +79,8 @@ export const updateGroupSetting = (data) => {
     })
 }
 
-export const fetchChat = (chatRoomId, topChatMessageId = '') => {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/message/message_list?token=asdf1234aaa&user_id=3963&chat_room_id=${chatRoomId}&after_chat_message_id=&before_chat_message_id=${topChatMessageId}&limit=50`).then((res) => {
+export const fetchChat = (chatRoomId, topChatMessageId = '', after_chat_message_id = '') => {
+    return axios.get(`http://itsmartone.com/bpk_connect/api/message/message_list?token=asdf1234aaa&user_id=3963&chat_room_id=${chatRoomId}&after_chat_message_id=${after_chat_message_id}&before_chat_message_id=${topChatMessageId}&limit=50`).then((res) => {
         return res
     }, (err) => {
         return err

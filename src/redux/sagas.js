@@ -173,12 +173,6 @@ function checkFriendListsChanged(groups, numberFromStore, numberFromBackend, fri
     })
 }
 
-// function* refreshNumberOfFriendLists() {
-//     while (true) {
-//
-//     }
-// }
-
 function* updateFriendListsSaga() {
     while (true) {
         yield take('UPDATE_FRIEND_LISTS')

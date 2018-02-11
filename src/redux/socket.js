@@ -15,8 +15,12 @@ export const on_message = () => {
         const state = store.getState()
         const chatInfo = _.get(state, 'chat.chatInfo')
 
-        fetchChat(chatInfo.chat_room_id).then((res) => {
-            const chatData = _.get(res, 'data.data', []).reverse()
+        const messageLists = _.get(state, 'chat.chat')
+
+        const lastChatMessageId = _.get(messageLists[0], 'chat_message_id', '0')
+
+        fetchChat(chatInfo.chat_room_id, '', lastChatMessageId).then((res) => {
+            const chatData = _.get(res, 'data.data', []).concat(messageLists)
             // store data in store redux
             store.dispatch(chat(chatData))
         })
