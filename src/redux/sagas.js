@@ -596,6 +596,8 @@ function* inviteFriendToGroupSaga() {
 
             // update chat list
             emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
+            // update own
+            emit_update_friend_chat_list('3963', '3963')
         } else {
             const navigate = yield select(navigateSelector)
             navigate.dispatch(NavigationActions.back())
@@ -607,6 +609,8 @@ function* inviteFriendToGroupSaga() {
 
             // update chat list
             emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
+            // update own
+            emit_update_friend_chat_list('3963', '3963')
         }
 
         continue
