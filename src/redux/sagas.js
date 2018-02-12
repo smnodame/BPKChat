@@ -1,7 +1,7 @@
 import _ from "lodash"
 import React from 'react'
 import { AsyncStorage } from 'react-native'
-import { all, call, put, takeEvery, takeLatest, take, select } from 'redux-saga/effects'
+import { all, call, put, takeEvery, takeLatest, take, select, delay } from 'redux-saga/effects'
 import {
     numberOfFriendLists,
     signin_error,
@@ -217,6 +217,8 @@ function* signin() {
             yield put(authenticated(token, setting))
             yield put(signin_error(''))
 
+            AsyncStorage.setItem('user_id', user.user_id)
+
             const navigate = yield select(navigateSelector)
 
             // yield call(checkAuthAyncStorage, user.user_id)
@@ -367,6 +369,7 @@ function* logout() {
         yield take('LOGOUT')
 
         const navigate = yield select(navigateSelector)
+        AsyncStorage.removeItem('user_id')
 
         const resetAction = NavigationActions.reset({
             index: 0,
@@ -824,11 +827,10 @@ function* enterSplashSaga() {
     while (true) {
         yield take('ENTER_SPLASH')
         console.log('[enterSplashSaga] start app')
-
         const user_id = yield call(getAuth)
 
-        console.log(user_id)
         const navigate = yield select(navigateSelector)
+
 
         if(user_id) {
             const resetAction = NavigationActions.reset({
