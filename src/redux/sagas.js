@@ -237,7 +237,6 @@ function* start_app() {
 function* signup() {
     while (true) {
         const { payload: { id, password, confirm_password, display_name, mobile_no, language_id } } = yield take('SIGNUP')
-        console.log(id, password, confirm_password, display_name, mobile_no, language_id)
         if(id && password && confirm_password && display_name && mobile_no && language_id) {
             if(password != confirm_password) {
                 yield put(signupEror('Password and Confirm password is not match!'))
@@ -388,7 +387,6 @@ function* selectChatSaga() {
             const navigate = yield select(navigateSelector)
             navigate.navigate('Chat')
         } catch (err) {
-
             console.log(err)
         }
     }
