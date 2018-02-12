@@ -76,6 +76,16 @@ import {
 } from './selectors'
 import { start_socket, emit_subscribe, on_message, emit_message, emit_update_friend_chat_list, emit_as_seen } from './socket.js'
 
+export const getAuth = () => {
+    return AsyncStorage.getItem('user_id').then((user_id) => {
+        return user_id
+    }, (err) => {
+        return err
+    }).catch((err) => {
+        console.log('[getAuth] err ', err)
+    })
+}
+
 function* onStickerSaga() {
     while (true) {
         yield take('ON_STICKER')
@@ -332,6 +342,8 @@ function* enterContactSaga() {
 
         // start socket after enter the contact
         start_socket()
+
+        const user_id = yield call(getAuth)
 
         // navigate to app
         const navigate = yield select(navigateSelector)
@@ -818,15 +830,6 @@ function* onInviteFriendToGroupWithOpenCaseSaga() {
     }
 }
 
-const getAuth = () => {
-    return AsyncStorage.getItem('user_id').then((user_id) => {
-        return user_id
-    }, (err) => {
-        return err
-    }).catch((err) => {
-        console.log('[getAuth] err ', err)
-    })
-}
 
 function* enterSplashSaga() {
     while (true) {
@@ -853,8 +856,7 @@ function* enterSplashSaga() {
     }
 }
 
-
-export default function* rootSaga() {
+export function* rootSaga() {
     yield all([
         signin(),
         start_app(),

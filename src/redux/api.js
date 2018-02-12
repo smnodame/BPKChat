@@ -1,15 +1,33 @@
 import axios from "axios"
+import React from 'react'
+import { AsyncStorage } from 'react-native'
+
+export const getAuth = () => {
+    return AsyncStorage.getItem('user_id').then((user_id) => {
+        return user_id
+    }, (err) => {
+        return err
+    }).catch((err) => {
+        console.log('[getAuth] err ', err)
+    })
+}
 
 export const fetchMyProfile = () => {
-    return axios.get('http://itsmartone.com/bpk_connect/api/user/my_profile?token=asdf1234aaa&user_id=3963')
+    return getAuth().then((user_id) => {
+        return axios.get(`http://itsmartone.com/bpk_connect/api/user/my_profile?token=asdf1234aaa&user_id=${user_id}`)
+    })
 }
 
 export const fetchChatLists = () => {
-    return axios.get('http://itsmartone.com/bpk_connect/api/chat/chat_list?token=asdf1234aaa&user_id=3963&start=0&limit=50')
+    return getAuth().then((user_id) => {
+        return axios.get(`http://itsmartone.com/bpk_connect/api/chat/chat_list?token=asdf1234aaa&user_id=${user_id}&start=0&limit=50`)
+    })
 }
 
 export const fetchFriendListCount = (group, filter) => {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list_count?token=asdf1234aaa&user_id=3963&friend_type=${group}&filter=${filter}`)
+    return getAuth().then((user_id) => {
+        return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list_count?token=asdf1234aaa&user_id=${user_id}&friend_type=${group}&filter=${filter}`)
+    })
 }
 
 export const fetchFriendGroups = () => {
@@ -17,7 +35,9 @@ export const fetchFriendGroups = () => {
 }
 
 export const fetchFriendLists = (group, range, start = 0, filter = '') => {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=3963&start=${start}&limit=50&filter=${filter}&friend_type=${group}`)
+    return getAuth().then((user_id) => {
+        return axios.get(`http://itsmartone.com/bpk_connect/api/friend/friend_list?token=asdf1234aaa&user_id=${user_id}&start=${start}&limit=50&filter=${filter}&friend_type=${group}`)
+    })
 }
 
 export const fetchFriendProfile = (userID) => {
@@ -25,7 +45,9 @@ export const fetchFriendProfile = (userID) => {
 }
 
 export const fetchChatInfo = (chat_room_id) => {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/chat/data?token=asdf1234aaa&user_id=3963&chat_room_id=${chat_room_id}`)
+    return getAuth().then((user_id) => {
+        return axios.get(`http://itsmartone.com/bpk_connect/api/chat/data?token=asdf1234aaa&user_id=${user_id}&chat_room_id=${chat_room_id}`)
+    })
 }
 export const loginApi = (username, password) => {
     return axios.get(`http://itsmartone.com/bpk_connect/api/user/check_login?user_id=${username}&password=${password}`)
@@ -80,77 +102,85 @@ export const updateGroupSetting = (data) => {
 }
 
 export const fetchChat = (chatRoomId, topChatMessageId = '', after_chat_message_id = '') => {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/message/message_list?token=asdf1234aaa&user_id=3963&chat_room_id=${chatRoomId}&after_chat_message_id=${after_chat_message_id}&before_chat_message_id=${topChatMessageId}&limit=50`).then((res) => {
-        return res
-    }, (err) => {
-        return err
+    return getAuth().then((user_id) => {
+        return axios.get(`http://itsmartone.com/bpk_connect/api/message/message_list?token=asdf1234aaa&user_id=${user_id}&chat_room_id=${chatRoomId}&after_chat_message_id=${after_chat_message_id}&before_chat_message_id=${topChatMessageId}&limit=50`)
     })
 }
 
 export const sendTheMessage = (chat_room_id, message_type, content, sticker_path, image_base64) => {
-    return axios.post(`http://itsmartone.com/bpk_connect/api/message/send?token=asdf1234aaa` ,
-        { user_id: '3963', chat_room_id, message_type, content, sticker_path, image_base64 }
-    ).then((res) => {
-        return res
-    }, (err) => {
-        return err
+    return getAuth().then((user_id) => {
+        return axios.post(`http://itsmartone.com/bpk_connect/api/message/send?token=asdf1234aaa` ,
+            { user_id: user_id, chat_room_id, message_type, content, sticker_path, image_base64 }
+        )
     })
 }
 
 export const fetchSticker = () => {
-    return axios.get('http://itsmartone.com/bpk_connect/api/message/sticker_list?token=asdf1234aaa&user_id=3963')
+    return getAuth().then((user_id) => {
+        return axios.get(`http://itsmartone.com/bpk_connect/api/message/sticker_list?token=asdf1234aaa&user_id=${user_id}`)
+    })
 }
 
 export const muteChat = (chat_room_id) => {
-    return axios.post(`http://itsmartone.com/bpk_connect/api/chat/mute?token=asdf1234aaa`, {
-        chat_room_id,
-        user_id: '3963'
-    }).then((res) => {
-        return res
-    }, (err) => {
-        return err
+    return getAuth().then((user_id) => {
+        return axios.post(`http://itsmartone.com/bpk_connect/api/chat/mute?token=asdf1234aaa`, {
+            chat_room_id,
+            user_id: user_id
+        })
     })
 }
 
 export const deleteChat = (chat_room_id) => {
-    return axios.post(`http://itsmartone.com/bpk_connect/api/chat/delete?token=asdf1234aaa`, {
-        chat_room_id,
-        user_id: '3963'
+    return getAuth().then((user_id) => {
+        return axios.post(`http://itsmartone.com/bpk_connect/api/chat/delete?token=asdf1234aaa`, {
+            chat_room_id,
+            user_id: user_id
+        })
     })
 }
 
 export const hideChat = (chat_room_id) => {
-    return axios.post(`http://itsmartone.com/bpk_connect/api/chat/hide?token=asdf1234aaa`, {
-        chat_room_id,
-        user_id: '3963'
+    return getAuth().then((user_id) => {
+        return axios.post(`http://itsmartone.com/bpk_connect/api/chat/hide?token=asdf1234aaa`, {
+            chat_room_id,
+            user_id: chat_room_id
+        })
     })
 }
 
 export const blockChat = (chat_room_id) => {
-    return axios.post(`http://itsmartone.com/bpk_connect/api/chat/block?token=asdf1234aaa`, {
-        chat_room_id,
-        user_id: '3963'
+    return getAuth().then((user_id) => {
+        return axios.post(`http://itsmartone.com/bpk_connect/api/chat/block?token=asdf1234aaa`, {
+            chat_room_id,
+            user_id: user_id
+        })
     })
 }
 
 export const unblockChat = (chat_room_id) => {
-    return axios.post(`http://itsmartone.com/bpk_connect/api/chat/unblock?token=asdf1234aaa`, {
-        chat_room_id,
-        user_id: '3963'
+    return getAuth().then((user_id) => {
+        return axios.post(`http://itsmartone.com/bpk_connect/api/chat/unblock?token=asdf1234aaa`, {
+            chat_room_id,
+            user_id: user_id
+        })
     })
 }
 
 export const unmuteChat = (chat_room_id) => {
-    return axios.post(`http://itsmartone.com/bpk_connect/api/chat/unmute?token=asdf1234aaa`, {
-        chat_room_id,
-        user_id: '3963'
+    return getAuth().then((user_id) => {
+        return axios.post(`http://itsmartone.com/bpk_connect/api/chat/unmute?token=asdf1234aaa`, {
+            chat_room_id,
+            user_id: user_id
+        })
     })
 }
 
 export const setAsSeen = (chat_room_id) => {
-    return axios.post(`http://itsmartone.com/bpk_connect/api/chat/read_message?token=asdf1234aaa`, {
-        chat_room_id,
-        user_id: '3963'
+    return getAuth().then((user_id) => {
+        return axios.post(`http://itsmartone.com/bpk_connect/api/chat/read_message?token=asdf1234aaa`, {
+            chat_room_id,
+            user_id: user_id
+        })
     })
 }
 
@@ -159,30 +189,38 @@ export const fetchInviteFriend = (chat_room_id, user_id, start=0, limit=30, filt
 }
 
 export const inviteFriendToGroup = (chat_room_id, friend_user_id) => {
-    return axios.post(`http://itsmartone.com/bpk_connect/api/group/invite?token=asdf1234aaa`, {
-        chat_room_id,
-        user_id: '3963',
-        friend_user_id
+    return getAuth().then((user_id) => {
+        return axios.post(`http://itsmartone.com/bpk_connect/api/group/invite?token=asdf1234aaa`, {
+            chat_room_id,
+            user_id: user_id,
+            friend_user_id
+        })
     })
 }
 
 export const removeFriendFromGroup = (chat_room_id, friend_user_id) => {
-    return axios.post(`http://itsmartone.com/bpk_connect/api/group/remove_from_group?token=asdf1234aaa`, {
-        chat_room_id,
-        user_id: '3963',
-        friend_user_id
+    return getAuth().then((user_id) => {
+        return axios.post(`http://itsmartone.com/bpk_connect/api/group/remove_from_group?token=asdf1234aaa`, {
+            chat_room_id,
+            user_id: user_id,
+            friend_user_id
+        })
     })
 }
 
 export const exitTheGroup = (chat_room_id) => {
-    return axios.post(`http://itsmartone.com/bpk_connect/api/group/exit_group?token=asdf1234aaa`, {
-        chat_room_id,
-        user_id: '3963'
+    return getAuth().then((user_id) => {
+        return axios.post(`http://itsmartone.com/bpk_connect/api/group/exit_group?token=asdf1234aaa`, {
+            chat_room_id,
+            user_id: user_id
+        })
     })
 }
 
 export const friendInGroup = (chat_room_id, start=0, limit=20, filter='') => {
-    return axios.get(`http://itsmartone.com/bpk_connect/api/group/friend_list_for_remove?token=asdf1234aaa&chat_room_id=${chat_room_id}&user_id=3963&start=${start}&limit=${limit}&filter=${filter}`)
+    return getAuth().then((user_id) => {
+        return axios.get(`http://itsmartone.com/bpk_connect/api/group/friend_list_for_remove?token=asdf1234aaa&chat_room_id=${chat_room_id}&user_id=${user_id}&start=${start}&limit=${limit}&filter=${filter}`)
+    })
 }
 
 export const updateProfile = (data) => {

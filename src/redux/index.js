@@ -11,7 +11,7 @@ import Reducers from './reducers'
 const sagaMiddleware = createSagaMiddleware()
 
 // Saga
-import rootSaga from './sagas'
+import { rootSaga } from './sagas'
 
 // mount it on the Store
 export const store = createStore(
