@@ -22,7 +22,9 @@ import {
     inviteFriends,
     selectChat,
     memberInGroup,
-    optionMessage
+    optionMessage,
+    enterContact,
+    enterSplash
 } from './actions'
 import { NavigationActions } from 'react-navigation'
 import {
@@ -221,15 +223,7 @@ function* signin() {
 
             const navigate = yield select(navigateSelector)
 
-            // yield call(checkAuthAyncStorage, user.user_id)
-
-            const resetAction = NavigationActions.reset({
-				index: 0,
-				actions: [
-					NavigationActions.navigate({ routeName: 'App'})
-				]
-			})
-			navigate.dispatch(resetAction)
+            yield put(enterContact())
             continue
         }
         yield put(signin_error('กรุณาระบุ Username เเละ Password'))
@@ -307,9 +301,9 @@ const fetchNumberOfGroup = (filter) => {
     })
 }
 
-function* enterContacts() {
+function* enterContactSaga() {
     while (true) {
-        yield take('ENTER_CONTACTS')
+        yield take('ENTER_CONTACT')
         const filter = ''
         // fetch groups
         const resFetchFriendGroups = yield call(fetchFriendGroups)
@@ -338,6 +332,17 @@ function* enterContacts() {
 
         // start socket after enter the contact
         start_socket()
+
+        // navigate to app
+        const navigate = yield select(navigateSelector)
+        const resetAction = NavigationActions.reset({
+            index: 0,
+            actions: [
+                NavigationActions.navigate({ routeName: 'App'})
+            ]
+        })
+        console.log('[enterSplashSaga] navigate to App')
+        navigate.dispatch(resetAction)
     }
 }
 
@@ -831,16 +836,8 @@ function* enterSplashSaga() {
 
         const navigate = yield select(navigateSelector)
 
-
         if(user_id) {
-            const resetAction = NavigationActions.reset({
-                index: 0,
-                actions: [
-                    NavigationActions.navigate({ routeName: 'App'})
-                ]
-            })
-            console.log('[enterSplashSaga] navigate to App')
-            navigate.dispatch(resetAction)
+            yield put(enterContact())
             continue
         } else {
             const resetAction = NavigationActions.reset({
@@ -862,7 +859,7 @@ export default function* rootSaga() {
         signin(),
         start_app(),
         signup(),
-        enterContacts(),
+        enterContactSaga(),
         searchNewFriendSaga(),
         addFavoriteSaga(),
         removeFavoriteSaga(),

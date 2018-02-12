@@ -59,8 +59,8 @@ export const friends = (friends) => ({
     }
 })
 
-export const enterContacts = () => ({
-    type: 'ENTER_CONTACTS'
+export const enterContact = () => ({
+    type: 'ENTER_CONTACT'
 })
 
 export const myprofile = (data) => ({
