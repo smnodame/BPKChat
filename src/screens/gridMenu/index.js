@@ -29,7 +29,7 @@ const MainRoutes = [
     },
     {
         id: 'keep',
-        title: 'keep',
+        title: 'Keep',
         icon: FontIcons.article,
         children: []
     },
