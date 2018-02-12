@@ -6,7 +6,7 @@ import { chatLists, chat } from './actions.js'
 import { store } from './index.js'
 
 const socket = SocketIOClient('http://192.168.1.39:4444/')
-const user_id = '3963'
+let user_id = ''
 
 export const on_message = () => {
     socket.on('message', function(data) {
@@ -34,20 +34,20 @@ export const on_message = () => {
 export const emit_as_seen = (chat_room_id) => {
     socket.emit('read_all', {
         chat_room_id,
-        user_id: '3963'
+        user_id: user_id
     })
 }
 
 export const on_as_seen = () => {
-    socket.on('read_all', (user_id) => {
+    socket.on('read_all', (user_id_from_socket) => {
         // fetch new message if is not own message
-        if(user_id != '3963') {
+        if(user_id_from_socket != user_id) {
             const state = store.getState()
             const messageLists = _.get(state, 'chat.chat')
 
             messageLists.forEach((message, index) => {
-                if(message.who_read.indexOf(user_id) < 0) {
-                    messageLists[index].who_read.push(user_id)
+                if(message.who_read.indexOf(user_id_from_socket) < 0) {
+                    messageLists[index].who_read.push(user_id_from_socket)
                 }
             })
             store.dispatch(chat(messageLists))
@@ -106,19 +106,6 @@ export const emit_message = (message, chat_room_id) => {
     })
 }
 
-// export const emit_read_message = (user_id, chat_room_id) => {
-//     socket.emit('read_message', {
-//         user_id,
-//         chat_room_id
-//     })
-// }
-//
-// export const emit_read_all = (user_id, chat_room_id) => {
-//     socket.emit('read_all', {
-//         user_id,
-//         chat_room_id
-//     })
-// }
 
 export const start_socket = () => {
     // Connect!
@@ -129,7 +116,11 @@ export const start_socket = () => {
         console.log(' socket conntected ')
     })
 
+    // get user_id from store
+    user_id = _.get(store.getState(), 'user.user.user_id')
+
     emit_subscribe_chat_list(user_id)
     on_update_friend_chat_list()
     on_as_seen()
+
 }

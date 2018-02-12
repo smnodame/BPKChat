@@ -70,7 +70,7 @@ import {
     getMemberInGroup,
     getOptionMessageLists
 } from './selectors'
-import { emit_subscribe, on_message, emit_message, emit_update_friend_chat_list, emit_as_seen } from './socket.js'
+import { start_socket, emit_subscribe, on_message, emit_message, emit_update_friend_chat_list, emit_as_seen } from './socket.js'
 
 function* onStickerSaga() {
     while (true) {
@@ -320,6 +320,8 @@ function* enterContacts() {
 
         // fetch sticker
         yield put(onSticker())
+
+        start_socket()
     }
 }
 

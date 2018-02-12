@@ -14,10 +14,6 @@ import ProfileSettings from './src/screens/profile'
 
 import {store} from './src/redux'
 import { start_app  } from './src/redux/actions.js'
-import {start_socket} from './src/redux/socket.js'
-
-// start socket io
-start_socket()
 
 // start material UI
 bootstrap()
