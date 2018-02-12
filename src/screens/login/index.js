@@ -50,7 +50,6 @@ export default class Login extends React.Component {
         }
 		this.openControlPanel = this.openControlPanel.bind(this)
 		this.onLogin = this.onLogin.bind(this)
-		store.dispatch(navigate(this.props.navigation))
     }
 
 	async componentDidMount() {

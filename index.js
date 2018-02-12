@@ -11,6 +11,7 @@ import Login from './src/screens/login'
 import SignUp from './src/screens/register'
 import GroupSetting from './src/screens/groupSetting'
 import ProfileSettings from './src/screens/profile'
+import Splash from './src/screens/splash'
 
 import {store} from './src/redux'
 import { start_app  } from './src/redux/actions.js'
@@ -31,10 +32,11 @@ const BPKChat = StackNavigator({
     Login: { screen: Login },
     SignUp: { screen: SignUp },
     GroupSetting: { screen: GroupSetting },
-    ProfileSettings: { screen: ProfileSettings }
+    ProfileSettings: { screen: ProfileSettings },
+    Splash: { screen: Splash }
 },
 {
-    initialRouteName: "Login",
+    initialRouteName: "Splash",
     headerMode: "none",
 })
 
