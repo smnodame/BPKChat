@@ -395,8 +395,8 @@ export default class Chat extends React.Component {
             return;
         }
 
-        emit_update_friend_chat_list('3963', '3963')
-        emit_update_friend_chat_list('3963', this.state.chatInfo.friend_user_id)
+        emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
+        emit_update_friend_chat_list(this.state.user.user_id, this.state.chatInfo.friend_user_id)
         emit_message(this.state.message, this.state.chatInfo.chat_room_id)
 
         this.setState({
@@ -413,8 +413,8 @@ export default class Chat extends React.Component {
             return;
         }
 
-        emit_update_friend_chat_list('3963', '3963')
-        emit_update_friend_chat_list('3963', this.state.chatInfo.friend_user_id)
+        emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
+        emit_update_friend_chat_list(this.state.user.user_id, this.state.chatInfo.friend_user_id)
         emit_message(this.state.message, this.state.chatInfo.chat_room_id)
 
         this.setState({
@@ -432,8 +432,8 @@ export default class Chat extends React.Component {
             return;
         }
 
-        emit_update_friend_chat_list('3963', '3963')
-        emit_update_friend_chat_list('3963', this.state.chatInfo.friend_user_id)
+        emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
+        emit_update_friend_chat_list(this.state.user.user_id, this.state.chatInfo.friend_user_id)
         emit_message(this.state.message, this.state.chatInfo.chat_room_id)
 
         this.setState({
