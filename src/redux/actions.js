@@ -331,3 +331,7 @@ export const onInviteFriendToGroupWithOpenCase = (chat_room_id, selected_invite_
         selected_option_message_id
     }
 })
+
+export const enterSplash = () => ({
+    type: 'ENTER_SPLASH'
+})

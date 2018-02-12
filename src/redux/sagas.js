@@ -810,6 +810,51 @@ function* onInviteFriendToGroupWithOpenCaseSaga() {
     }
 }
 
+const getAuth = () => {
+    return AsyncStorage.getItem('user_id').then((user_id) => {
+        return user_id
+    }, (err) => {
+        return err
+    }).catch((err) => {
+        console.log('[getAuth] err ', err)
+    })
+}
+
+function* enterSplashSaga() {
+    while (true) {
+        yield take('ENTER_SPLASH')
+        console.log('[enterSplashSaga] start app')
+
+        const user_id = yield call(getAuth)
+
+        console.log(user_id)
+        const navigate = yield select(navigateSelector)
+
+        if(user_id) {
+            const resetAction = NavigationActions.reset({
+                index: 0,
+                actions: [
+                    NavigationActions.navigate({ routeName: 'App'})
+                ]
+            })
+            console.log('[enterSplashSaga] navigate to App')
+            navigate.dispatch(resetAction)
+            continue
+        } else {
+            const resetAction = NavigationActions.reset({
+                index: 0,
+                actions: [
+                    NavigationActions.navigate({ routeName: 'Login'})
+                ]
+            })
+            console.log('[enterSplashSaga] navigate to Login')
+            navigate.dispatch(resetAction)
+            continue
+        }
+    }
+}
+
+
 export default function* rootSaga() {
     yield all([
         signin(),
@@ -842,6 +887,7 @@ export default function* rootSaga() {
         onEnterOptionMessageSaga(),
         updateProfileSaga(),
         onLoadMoreOptionMessageSaga(),
-        onInviteFriendToGroupWithOpenCaseSaga()
+        onInviteFriendToGroupWithOpenCaseSaga(),
+        enterSplashSaga()
     ])
 }

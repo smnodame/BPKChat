@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Image, View, AsyncStorage } from 'react-native';
 import { NavigationActions } from 'react-navigation'
 
-import { signin, start_app, navigate  } from '../../redux/actions.js'
+import { signin, start_app, navigate, enterSplash  } from '../../redux/actions.js'
 import {store} from '../../redux'
 
 export default class Splash extends React.Component {
@@ -35,16 +35,17 @@ export default class Splash extends React.Component {
 			// await AsyncStorage.setItem('current_state', 'Login')
 			// await AsyncStorage.removeItem('patient_host')
             // await AsyncStorage.removeItem('pos_host')
-            setTimeout(() => {
-                const resetAction = NavigationActions.reset({
-                        index: 0,
-                        actions: [
-                            NavigationActions.navigate({ routeName: 'Login'})
-                        ]
-                    })
-                this.props.navigation.dispatch(resetAction)
-            }, 1500)
+            // setTimeout(() => {
+            //     const resetAction = NavigationActions.reset({
+            //             index: 0,
+            //             actions: [
+            //                 NavigationActions.navigate({ routeName: 'Login'})
+            //             ]
+            //         })
+            //     this.props.navigation.dispatch(resetAction)
+            // }, 1500)
 		// }
+		store.dispatch(enterSplash())
     }
 
     render() {
