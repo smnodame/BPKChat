@@ -595,7 +595,7 @@ function* inviteFriendToGroupSaga() {
             // update chat list
             emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
             // update own
-            emit_update_friend_chat_list('3963', '3963')
+            emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
         } else {
             const navigate = yield select(navigateSelector)
             navigate.dispatch(NavigationActions.back())
@@ -608,7 +608,7 @@ function* inviteFriendToGroupSaga() {
             // update chat list
             emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
             // update own
-            emit_update_friend_chat_list('3963', '3963')
+            emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
         }
 
         continue
@@ -643,7 +643,7 @@ function* removeFriendFromGroupSaga() {
             // update chat list
             emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
             // update own
-            emit_update_friend_chat_list('3963', '3963')
+            emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
         }
     }
 }
@@ -770,7 +770,7 @@ function* onInviteFriendToGroupWithOpenCaseSaga() {
         })
         const newChatRoomId = resInviteFriendToGroup.data.new_chat_room_id
         const displayName = resInviteFriendToGroup.data.room_name
-        
+
         const resFetchChatInfo = yield call(fetchChatInfo, newChatRoomId)
 
         const chatInfo = yield select(getChatInfo)
@@ -789,7 +789,7 @@ function* onInviteFriendToGroupWithOpenCaseSaga() {
         // update chat list
         emit_update_friend_chat_list(userInfo.user_id, selected_invite_friend_user_id)
         // update own
-        emit_update_friend_chat_list('3963', '3963')
+        emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
 
         continue
     }
