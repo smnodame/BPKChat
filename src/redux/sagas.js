@@ -1,4 +1,6 @@
 import _ from "lodash"
+import React from 'react'
+import { AsyncStorage } from 'react-native'
 import { all, call, put, takeEvery, takeLatest, take, select } from 'redux-saga/effects'
 import {
     numberOfFriendLists,
@@ -197,6 +199,11 @@ function* searchNewFriendSaga() {
     }
 }
 
+const checkAuthAyncStorage = async (user_id) => {
+    await AsyncStorage.setItem('user_id', user_id)
+    return user_id
+}
+
 function* signin() {
     while (true) {
         const { payload: { username, password } } = yield take('SIGNIN')
@@ -208,10 +215,11 @@ function* signin() {
             }
             const { data: { token, setting, user } } = res_loginApi
             yield put(authenticated(token, setting))
-
             yield put(signin_error(''))
 
             const navigate = yield select(navigateSelector)
+
+            // yield call(checkAuthAyncStorage, user.user_id)
 
             const resetAction = NavigationActions.reset({
 				index: 0,
@@ -249,7 +257,15 @@ function* signup() {
             }
             const { data: { token, setting } } = res_create_new_account
             yield put(authenticated(token, setting, {}))
-            yield put(NavigationActions.navigate({ routeName: 'Login' }))
+
+            const navigate = yield select(navigateSelector)
+            const resetAction = NavigationActions.reset({
+				index: 0,
+				actions: [
+					NavigationActions.navigate({ routeName: 'Login'})
+				]
+			})
+			navigate.dispatch(resetAction)
             continue
         }
         yield put(signupEror('กรุณาระบุรายละเอียดให้ครบทุกช่อง'))

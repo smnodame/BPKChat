@@ -67,7 +67,7 @@ export default class App extends Component<{}> {
         this.onTabClick = this.onTabClick.bind(this)
         this.renderContent = this.renderContent.bind(this)
 
-        store.dispatch(navigate(this.props.navigation))
+        // store.dispatch(navigate(this.props.navigation))
     }
 
     async componentWillMount() {

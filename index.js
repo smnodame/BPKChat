@@ -34,7 +34,7 @@ const BPKChat = StackNavigator({
     ProfileSettings: { screen: ProfileSettings }
 },
 {
-    initialRouteName: "App",
+    initialRouteName: "Login",
     headerMode: "none",
 })
 
