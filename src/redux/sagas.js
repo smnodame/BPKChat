@@ -184,7 +184,6 @@ function* updateFriendListsSaga() {
         const groups = yield select(getFriendGroups)
 
         const newFriendLists = yield call(checkFriendListsChanged, groups, numberFromStore, numberFromBackend, friendsData, rangeFriendLists)
-        console.log(newFriendLists)
         yield put(friends(newFriendLists))
 
         yield put(numberOfFriendLists(numberFromBackend))
@@ -282,7 +281,6 @@ const fetchNumberOfGroup = (filter) => {
         fetchFriendListCount('department', filter),
         fetchFriendListCount('other', filter)
     ]).then((res) => {
-        console.log(res)
         return {
             favorite: res[0].data.total_number,
             group: res[1].data.total_number,

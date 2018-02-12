@@ -67,6 +67,7 @@ export default class Contacts extends React.Component {
 
     updateData = () => {
         const state = store.getState()
+        console.log('[updateData in Contact]')
         console.log(state)
         this.setState({
             friends: _.get(state, 'friend.friends', {

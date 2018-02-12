@@ -57,7 +57,6 @@ export default class Signup extends React.Component {
 
 	updateState = () => {
 		const state = store.getState()
-		console.log(state)
 		this.setState({
 			error: state.user.signupError,
 			languages: state.system.languages
