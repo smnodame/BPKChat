@@ -321,6 +321,7 @@ function* enterContacts() {
         // fetch sticker
         yield put(onSticker())
 
+        // start socket after enter the contact
         start_socket()
     }
 }
