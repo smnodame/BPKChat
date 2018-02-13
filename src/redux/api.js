@@ -154,7 +154,7 @@ export const hideChat = (chat_room_id) => {
     return getAuth().then((user_id) => {
         return axios.post(`http://itsmartone.com/bpk_connect/api/chat/hide?token=asdf1234aaa`, {
             chat_room_id,
-            user_id: chat_room_id
+            user_id: user_id
         })
     })
 }
