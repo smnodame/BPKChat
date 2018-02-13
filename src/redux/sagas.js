@@ -683,6 +683,7 @@ function* inviteFriendToGroupSaga() {
 
                 // update chat list
                 emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
+                emit_update_friend_chat_list(userInfo.user_id, chatInfo.friend_user_id)
                 // update own
                 emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
             }
@@ -894,6 +895,7 @@ function* onInviteFriendToGroupWithOpenCaseSaga() {
 
             // update chat list
             emit_update_friend_chat_list(userInfo.user_id, selected_invite_friend_user_id)
+            emit_update_friend_chat_list(userInfo.user_id, chatInfo.friend_user_id)
             // update own
             emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
 
