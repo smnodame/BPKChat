@@ -404,7 +404,6 @@ function* selectChatSaga() {
         // fetch chat list from userID
         try {
             const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id)
-
             const chatData = _.get(resFetchChat, 'data.data', [])
 
             // store data in store redux
@@ -416,147 +415,173 @@ function* selectChatSaga() {
             emit_subscribe(chatInfo.chat_room_id)
 
             // call set as setAsSeen
-            yield call(setAsSeen, chatInfo.chat_room_id)
-            emit_as_seen(chatInfo.chat_room_id)
+            if(chatData.length != 0) {
+                yield call(setAsSeen, chatInfo.chat_room_id)
+                emit_as_seen(chatInfo.chat_room_id)
+            }
 
             // navigate to chat page
             const navigate = yield select(navigateSelector)
             navigate.navigate('Chat')
         } catch (err) {
-            console.log(err)
+            console.log('[selectChatSaga] ', err)
         }
     }
 }
 
 function* onLoadMoreMessageListsSaga() {
     while (true) {
-        yield take('ON_LOAD_MORE_MESSAGE_LIST')
-        const chatInfo = yield select(getChatInfo)
-        const messageLists = yield select(getMessageLists)
+        try {
+            yield take('ON_LOAD_MORE_MESSAGE_LIST')
+            const chatInfo = yield select(getChatInfo)
+            const messageLists = yield select(getMessageLists)
 
-        const topChatMessageId = _.get(messageLists[messageLists.length - 1], 'chat_message_id', '0')
+            const topChatMessageId = _.get(messageLists[messageLists.length - 1], 'chat_message_id', '0')
 
-        const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, topChatMessageId)
-        const chatData = _.get(resFetchChat, 'data.data', [])
+            const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, topChatMessageId)
+            const chatData = _.get(resFetchChat, 'data.data', [])
 
-        const newMessageLists = messageLists.concat(chatData)
+            const newMessageLists = messageLists.concat(chatData)
 
-        yield put(chat(newMessageLists))
+            yield put(chat(newMessageLists))
+        } catch (err) {
+            console.log('[onLoadMoreMessageListsSaga] ', err)
+        }
     }
 }
 
 function* onMuteChatSaga() {
     while (true) {
-        yield take('ON_MUTE_CHAT')
-        const chatRoomId = yield select(getSelectedActionChatRoomId)
-        const resMuteChat = yield call(muteChat, chatRoomId)
+        try {
+            yield take('ON_MUTE_CHAT')
+            const chatRoomId = yield select(getSelectedActionChatRoomId)
+            const resMuteChat = yield call(muteChat, chatRoomId)
 
-        /** hide modal after click some event */
-        yield put(onIsShowActionChat(false, ''))
+            /** hide modal after click some event */
+            yield put(onIsShowActionChat(false, ''))
 
-        /** change status */
-        const chatListsFromStore = yield select(getChatLists)
+            /** change status */
+            const chatListsFromStore = yield select(getChatLists)
 
-        for(let i = 0; i < chatListsFromStore.length; i++ ) {
-            if(chatListsFromStore[i].chat_room_id == chatRoomId) {
-                chatListsFromStore[i].is_mute = '1'
+            for(let i = 0; i < chatListsFromStore.length; i++ ) {
+                if(chatListsFromStore[i].chat_room_id == chatRoomId) {
+                    chatListsFromStore[i].is_mute = '1'
+                }
             }
+
+            yield put(chatLists(chatListsFromStore))
+
+            console.log(`[onMuteChatSaga] mute chat room id ${chatRoomId}`)
+        } catch (err) {
+            console.log('[onMuteChatSaga] ', err)
         }
-
-        yield put(chatLists(chatListsFromStore))
-
-        console.log(`[onMuteChatSaga] mute chat room id ${chatRoomId}`)
     }
 }
 
 function* onUnmuteChatSaga() {
     while (true) {
-        yield take('ON_UNMUTE_CHAT')
-        const chatRoomId = yield select(getSelectedActionChatRoomId)
-        const resUnMuteChat = yield call(unmuteChat, chatRoomId)
+        try {
+            yield take('ON_UNMUTE_CHAT')
+            const chatRoomId = yield select(getSelectedActionChatRoomId)
+            const resUnMuteChat = yield call(unmuteChat, chatRoomId)
 
-        /** hide modal after click some event */
-        yield put(onIsShowActionChat(false, ''))
+            /** hide modal after click some event */
+            yield put(onIsShowActionChat(false, ''))
 
-        /** change status */
-        const chatListsFromStore = yield select(getChatLists)
+            /** change status */
+            const chatListsFromStore = yield select(getChatLists)
 
-        for(let i = 0; i < chatListsFromStore.length; i++ ) {
-            if(chatListsFromStore[i].chat_room_id == chatRoomId) {
-                chatListsFromStore[i].is_mute = '0'
+            for(let i = 0; i < chatListsFromStore.length; i++ ) {
+                if(chatListsFromStore[i].chat_room_id == chatRoomId) {
+                    chatListsFromStore[i].is_mute = '0'
+                }
             }
+
+            yield put(chatLists(chatListsFromStore))
+
+            console.log(`[onUnMuteChatSaga] unmute chat room id ${chatRoomId}`)
+        } catch (err) {
+            console.log('[onUnmuteChatSaga] ', err)
         }
-
-        yield put(chatLists(chatListsFromStore))
-
-        console.log(`[onUnMuteChatSaga] unmute chat room id ${chatRoomId}`)
     }
 }
 
 function* onHideChatSaga() {
     while (true) {
-        yield take('ON_HIDE_CHAT')
-        const chatRoomId = yield select(getSelectedActionChatRoomId)
-        const resHideChat = yield call(hideChat, chatRoomId)
+        try {
+            yield take('ON_HIDE_CHAT')
+            const chatRoomId = yield select(getSelectedActionChatRoomId)
+            const resHideChat = yield call(hideChat, chatRoomId)
 
-        /** hide modal after click some event */
-        yield put(onIsShowActionChat(false, ''))
+            /** hide modal after click some event */
+            yield put(onIsShowActionChat(false, ''))
 
-        console.log(`[onHideChatSaga] hide chat room id ${chatRoomId}`)
+            console.log(`[onHideChatSaga] hide chat room id ${chatRoomId}`)
 
 
-        const chatListsFromStore = yield select(getChatLists)
+            const chatListsFromStore = yield select(getChatLists)
 
-        const chatListsFilterHide = chatListsFromStore.filter((chat) => {
-            return chatRoomId != chat.chat_room_id
-        })
-        yield put(chatLists(chatListsFilterHide))
+            const chatListsFilterHide = chatListsFromStore.filter((chat) => {
+                return chatRoomId != chat.chat_room_id
+            })
+            yield put(chatLists(chatListsFilterHide))
+        } catch (err) {
+            console.log('[onHideChatSaga] ', err)
+        }
     }
 }
 
 function* onBlockChatSaga() {
     while (true) {
-        yield take('ON_BLOCK_CHAT')
-        const chatRoomId = yield select(getSelectedActionChatRoomId)
-        const resBlockChat = yield call(blockChat, chatRoomId)
+        try {
+            yield take('ON_BLOCK_CHAT')
+            const chatRoomId = yield select(getSelectedActionChatRoomId)
+            const resBlockChat = yield call(blockChat, chatRoomId)
 
-        /** hide modal after click some event */
-        yield put(onIsShowActionChat(false, ''))
-        /** change status */
-        const chatListsFromStore = yield select(getChatLists)
-        for(let i = 0; i < chatListsFromStore.length; i++ ) {
-            if(chatListsFromStore[i].chat_room_id == chatRoomId) {
-                chatListsFromStore[i].is_blocked = '1'
+            /** hide modal after click some event */
+            yield put(onIsShowActionChat(false, ''))
+            /** change status */
+            const chatListsFromStore = yield select(getChatLists)
+            for(let i = 0; i < chatListsFromStore.length; i++ ) {
+                if(chatListsFromStore[i].chat_room_id == chatRoomId) {
+                    chatListsFromStore[i].is_blocked = '1'
+                }
             }
+
+            yield put(chatLists(chatListsFromStore))
+
+            console.log(`[onBlockChatSaga] block chat room id ${chatRoomId}`)
+        } catch (err) {
+            console.log('[onBlockChatSaga] ', err)
         }
-
-        yield put(chatLists(chatListsFromStore))
-
-        console.log(`[onBlockChatSaga] block chat room id ${chatRoomId}`)
     }
 }
 
 function* onUnblockChatSaga() {
     while (true) {
         yield take('ON_UNBLOCK_CHAT')
-        const chatRoomId = yield select(getSelectedActionChatRoomId)
-        const resUnBlockChat = yield call(unblockChat, chatRoomId)
+        try {
+            const chatRoomId = yield select(getSelectedActionChatRoomId)
+            const resUnBlockChat = yield call(unblockChat, chatRoomId)
 
-        /** hide modal after click some event */
-        yield put(onIsShowActionChat(false, ''))
+            /** hide modal after click some event */
+            yield put(onIsShowActionChat(false, ''))
 
-        /** change status */
-        const chatListsFromStore = yield select(getChatLists)
+            /** change status */
+            const chatListsFromStore = yield select(getChatLists)
 
-        for(let i = 0; i < chatListsFromStore.length; i++ ) {
-            if(chatListsFromStore[i].chat_room_id == chatRoomId) {
-                chatListsFromStore[i].is_blocked = '0'
+            for(let i = 0; i < chatListsFromStore.length; i++ ) {
+                if(chatListsFromStore[i].chat_room_id == chatRoomId) {
+                    chatListsFromStore[i].is_blocked = '0'
+                }
             }
+
+            yield put(chatLists(chatListsFromStore))
+
+            console.log(`[onUnblockChatSaga] unblock chat room id ${chatRoomId}`)
+        } catch (err) {
+            console.log('[onUnblockChatSaga] ', err)
         }
-
-        yield put(chatLists(chatListsFromStore))
-
-        console.log(`[onUnblockChatSaga] unblock chat room id ${chatRoomId}`)
     }
 }
 
@@ -583,12 +608,16 @@ function* onDeleteChatSaga() {
 function* onFetchInviteFriendSaga() {
     while (true) {
         const { payload: { inviteFriendSeachText } } = yield take('ON_FETCH_INVITE_FRIEND')
-        const chatInfo = yield select(getChatInfo)
-        const userInfo = yield select(getUserInfo)
+        try {
+            const chatInfo = yield select(getChatInfo)
+            const userInfo = yield select(getUserInfo)
 
-        const resFetchInviteFriend = yield call(fetchInviteFriend, chatInfo.chat_room_id, userInfo.user_id, 0, 30, inviteFriendSeachText)
+            const resFetchInviteFriend = yield call(fetchInviteFriend, chatInfo.chat_room_id, userInfo.user_id, 0, 30, inviteFriendSeachText)
 
-        yield put(inviteFriends(_.get(resFetchInviteFriend, 'data.data', [])))
+            yield put(inviteFriends(_.get(resFetchInviteFriend, 'data.data', [])))
+        } catch (err) {
+            console.log('[onFetchInviteFriendSaga] ', err)
+        }
     }
 }
 

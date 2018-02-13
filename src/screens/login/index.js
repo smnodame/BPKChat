@@ -53,7 +53,6 @@ export default class Login extends React.Component {
     }
 
 	async componentDidMount() {
-
     }
 
 	async componentWillMount() {
