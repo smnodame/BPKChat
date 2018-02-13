@@ -220,16 +220,16 @@ function* signin() {
     while (true) {
         const { payload: { username, password } } = yield take('SIGNIN')
         if(username && password) {
-            const res_loginApi = yield call(loginApi, username, password)
-            if(_.get(res_loginApi.data, 'error')) {
-                yield put(signin_error(res_loginApi.data.error))
-                continue
-            }
-            const { data: { token, setting, user } } = res_loginApi
-            yield put(authenticated(token, setting))
-            yield put(signin_error(''))
+            // const res_loginApi = yield call(loginApi, username, password)
+            // if(_.get(res_loginApi.data, 'error')) {
+            //     yield put(signin_error(res_loginApi.data.error))
+            //     continue
+            // }
+            // const { data: { token, setting, user } } = res_loginApi
+            // yield put(authenticated(token, setting))
+            // yield put(signin_error(''))
 
-            AsyncStorage.setItem('user_id', user.user_id)
+            AsyncStorage.setItem('user_id', username)
 
             const navigate = yield select(navigateSelector)
 
@@ -361,23 +361,26 @@ function* enterContactSaga() {
 function* loadmoreSaga() {
     while (true) {
         const { payload: { group } } = yield take('ON_LOAD_MORE')
+        try {
+            //get all friends
+            const friendsData = yield select(getFriends)
+            const groupFriends = _.get(friendsData, group, [])
 
-        //get all friends
-        const friendsData = yield select(getFriends)
-        const groupFriends = _.get(friendsData, group, [])
+            // get filter
+            const filter = yield select(getFilterFriend)
 
-        // get filter
-        const filter = yield select(getFilterFriend)
+            // get range for each group
+            const rangeFriendLists = yield select(getRangeOfGroup)
+            const resFetchFriendLists = yield call(fetchFriendLists, group, null, groupFriends.length, filter)
 
-        // get range for each group
-        const rangeFriendLists = yield select(getRangeOfGroup)
-        const resFetchFriendLists = yield call(fetchFriendLists, group, null, groupFriends.length, filter)
+            // add new list in old list
+            friendsData[group] = friendsData[group].concat( _.get(resFetchFriendLists, 'data.data', []))
 
-        // add new list in old list
-        friendsData[group] = friendsData[group].concat( _.get(resFetchFriendLists, 'data.data', []))
-
-        // updatet
-        yield put(friends(friendsData))
+            // updatet
+            yield put(friends(friendsData))
+        } catch (err) {
+            console.log('[loadmoreSaga] ', err)
+        }
     }
 }
 
@@ -533,8 +536,8 @@ function* onHideChatSaga() {
 
 function* onBlockChatSaga() {
     while (true) {
+        yield take('ON_BLOCK_CHAT')
         try {
-            yield take('ON_BLOCK_CHAT')
             const chatRoomId = yield select(getSelectedActionChatRoomId)
             const resBlockChat = yield call(blockChat, chatRoomId)
 
@@ -588,20 +591,24 @@ function* onUnblockChatSaga() {
 function* onDeleteChatSaga() {
     while (true) {
         yield take('ON_DELETE_CHAT')
-        const chatRoomId = yield select(getSelectedActionChatRoomId)
-        const resDeleteChat = yield call(deleteChat, chatRoomId)
+        try {
+            const chatRoomId = yield select(getSelectedActionChatRoomId)
+            const resDeleteChat = yield call(deleteChat, chatRoomId)
 
-        /** hide modal after click some event */
-        yield put(onIsShowActionChat(false, ''))
+            /** hide modal after click some event */
+            yield put(onIsShowActionChat(false, ''))
 
-        console.log(`[onDeleteChatSaga] delete chat room id ${chatRoomId}`)
+            console.log(`[onDeleteChatSaga] delete chat room id ${chatRoomId}`)
 
-        const chatListsFromStore = yield select(getChatLists)
+            const chatListsFromStore = yield select(getChatLists)
 
-        const chatListsFilterHide = chatListsFromStore.filter((chat) => {
-            return chatRoomId != chat.chat_room_id
-        })
-        yield put(chatLists(chatListsFilterHide))
+            const chatListsFilterHide = chatListsFromStore.filter((chat) => {
+                return chatRoomId != chat.chat_room_id
+            })
+            yield put(chatLists(chatListsFilterHide))
+        } catch (err) {
+            console.log('[onDeleteChatSaga] ', err)
+        }
     }
 }
 
@@ -624,90 +631,102 @@ function* onFetchInviteFriendSaga() {
 function* loadMoreInviteFriendsSaga() {
     while (true) {
         const { payload : { page, inviteFriendSeachText } } = yield take('LOAD_MORE_INVITE_FRIENDS')
-        const chatInfo = yield select(getChatInfo)
-        const userInfo = yield select(getUserInfo)
-        const inviteFriendsFromStore = yield select(getInviteFriendLists)
-        const resFetchInviteFriend = yield call(fetchInviteFriend, chatInfo.chat_room_id, userInfo.user_id, inviteFriendsFromStore.data.length, 30, inviteFriendSeachText)
-        const allInviteFriendLists = inviteFriendsFromStore.data.concat(_.get(resFetchInviteFriend, 'data.data.data', []))
-        inviteFriendsFromStore.data = allInviteFriendLists
-        yield put(inviteFriends(inviteFriendsFromStore))
+        try {
+            const chatInfo = yield select(getChatInfo)
+            const userInfo = yield select(getUserInfo)
+            const inviteFriendsFromStore = yield select(getInviteFriendLists)
+            const resFetchInviteFriend = yield call(fetchInviteFriend, chatInfo.chat_room_id, userInfo.user_id, inviteFriendsFromStore.data.length, 30, inviteFriendSeachText)
+            const allInviteFriendLists = inviteFriendsFromStore.data.concat(_.get(resFetchInviteFriend, 'data.data.data', []))
+            inviteFriendsFromStore.data = allInviteFriendLists
+            yield put(inviteFriends(inviteFriendsFromStore))
+        } catch (err) {
+            console.log('[loadMoreInviteFriendsSaga] ', err)
+        }
     }
 }
 
 function* inviteFriendToGroupSaga() {
     while (true) {
         const { payload: { chat_room_id, friend_user_id }} = yield take('ON_INVITE_FRIEND_TO_GROUP')
-        const userInfo = yield select(getUserInfo)
-        const inviteFriendLists = yield select(getInviteFriendLists)
+        try {
+            const userInfo = yield select(getUserInfo)
+            const inviteFriendLists = yield select(getInviteFriendLists)
 
-        const resInviteFriendToGroup = yield call(inviteFriendToGroup, chat_room_id, friend_user_id)
-        const newChatRoomId = resInviteFriendToGroup.data.data.new_chat_room_id
+            const resInviteFriendToGroup = yield call(inviteFriendToGroup, chat_room_id, friend_user_id)
+            const newChatRoomId = resInviteFriendToGroup.data.data.new_chat_room_id
 
-        const resFetchChatInfo = yield call(fetchChatInfo, newChatRoomId)
+            const resFetchChatInfo = yield call(fetchChatInfo, newChatRoomId)
 
-        const chatInfo = yield select(getChatInfo)
+            const chatInfo = yield select(getChatInfo)
 
-        if(chatInfo.chat_room_type == 'G') {
-            inviteFriendLists.data.forEach((friend, index) => {
-                if(inviteFriendLists.data[index].friend_user_id == friend_user_id) {
-                    inviteFriendLists.data[index].status_quote = 'Invited. (Tap to remove)'
-                    inviteFriendLists.data[index].invited = true
-                }
-            })
-            yield put(inviteFriends(inviteFriendLists))
+            if(chatInfo.chat_room_type == 'G') {
+                inviteFriendLists.data.forEach((friend, index) => {
+                    if(inviteFriendLists.data[index].friend_user_id == friend_user_id) {
+                        inviteFriendLists.data[index].status_quote = 'Invited. (Tap to remove)'
+                        inviteFriendLists.data[index].invited = true
+                    }
+                })
+                yield put(inviteFriends(inviteFriendLists))
 
-            // update chat list
-            emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
-            // update own
-            emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
-        } else {
-            const navigate = yield select(navigateSelector)
-            navigate.dispatch(NavigationActions.back())
+                // update chat list
+                emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
+                // update own
+                emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
+            } else {
+                const navigate = yield select(navigateSelector)
+                navigate.dispatch(NavigationActions.back())
 
-            yield put(selectChat(resFetchChatInfo.data.data))
+                yield put(selectChat(resFetchChatInfo.data.data))
 
-            // add owner friend to new group room
-            yield call(inviteFriendToGroup, newChatRoomId, chatInfo.friend_user_id)
+                // add owner friend to new group room
+                yield call(inviteFriendToGroup, newChatRoomId, chatInfo.friend_user_id)
 
-            // update chat list
-            emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
-            // update own
-            emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
+                // update chat list
+                emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
+                // update own
+                emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
+            }
+
+            continue
+        } catch (err) {
+            console.log('[inviteFriendToGroupSaga] ', err)
         }
-
-        continue
     }
 }
 
 function* removeFriendFromGroupSaga() {
     while (true) {
         const { payload: { chat_room_id, friend_user_id, is_from_member_modal }} = yield take('REMOVE_FRIEND_FROM_GROUP')
-        const resRemoveFriendFromGroup = yield call(removeFriendFromGroup, chat_room_id, friend_user_id)
-        const userInfo = yield select(getUserInfo)
-        const chatInfo = yield select(getChatInfo)
+        try {
+            const resRemoveFriendFromGroup = yield call(removeFriendFromGroup, chat_room_id, friend_user_id)
+            const userInfo = yield select(getUserInfo)
+            const chatInfo = yield select(getChatInfo)
 
-        if(chatInfo.chat_room_type == 'G') {
-            if (!is_from_member_modal) {
-                const inviteFriendLists = yield select(getInviteFriendLists)
-                inviteFriendLists.data.forEach((friend, index) => {
-                    if(inviteFriendLists.data[index].friend_user_id == friend_user_id) {
-                        inviteFriendLists.data[index].status_quote = 'Tap to invite'
-                        inviteFriendLists.data[index].invited = false
-                    }
-                })
-                yield put(inviteFriends(inviteFriendLists))
-            } else {
-                const member = yield select(getMemberInGroup)
-                member.data = member.data.filter((friend) => {
-                    return friend.friend_user_id != friend_user_id
-                })
-                yield put(memberInGroup(member))
+            if(chatInfo.chat_room_type == 'G') {
+                if (!is_from_member_modal) {
+                    const inviteFriendLists = yield select(getInviteFriendLists)
+                    inviteFriendLists.data.forEach((friend, index) => {
+                        if(inviteFriendLists.data[index].friend_user_id == friend_user_id) {
+                            inviteFriendLists.data[index].status_quote = 'Tap to invite'
+                            inviteFriendLists.data[index].invited = false
+                        }
+                    })
+                    yield put(inviteFriends(inviteFriendLists))
+                } else {
+                    const member = yield select(getMemberInGroup)
+                    member.data = member.data.filter((friend) => {
+                        return friend.friend_user_id != friend_user_id
+                    })
+                    yield put(memberInGroup(member))
+                }
+
+                // update chat list
+                emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
+                // update own
+                emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
             }
-
-            // update chat list
-            emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
-            // update own
-            emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
+        } catch (err) {
+            console.log('[removeFriendFromGroupSaga] ', err)
         }
     }
 }
@@ -715,147 +734,173 @@ function* removeFriendFromGroupSaga() {
 function* onExitTheGroupSaga() {
     while (true) {
         const { payload: { chat_room_id }} = yield take('ON_EXIT_THE_GROUP')
+        try {
+            yield call(exitTheGroup, chat_room_id)
 
-        yield call(exitTheGroup, chat_room_id)
+            const userInfo = yield select(getUserInfo)
 
-        const userInfo = yield select(getUserInfo)
+            const navigate = yield select(navigateSelector)
 
-        const navigate = yield select(navigateSelector)
+            navigate.dispatch(NavigationActions.back())
 
-        navigate.dispatch(NavigationActions.back())
-
-        // update chat list
-        const resFetchChatLists = yield call(fetchChatLists)
-        yield put(chatLists(_.get(resFetchChatLists, 'data.data', [])))
+            // update chat list
+            const resFetchChatLists = yield call(fetchChatLists)
+            yield put(chatLists(_.get(resFetchChatLists, 'data.data', [])))
+        } catch (err) {
+            console.log('[onExitTheGroupSaga] ', err)
+        }
     }
 }
 
 function* onFetchFriendInGroupSaga() {
     while (true) {
         const { payload: { query } } = yield take('ON_FETCH_FRIEND_IN_GROUP')
-        // clear friend in member from store
-        yield put(memberInGroup([]))
+        try {
+            // clear friend in member from store
+            yield put(memberInGroup([]))
 
-        const chatInfo = yield select(getChatInfo)
+            const chatInfo = yield select(getChatInfo)
 
-        const resFriendInGroup = yield call(friendInGroup, chatInfo.chat_room_id, 0, 20, query)
+            const resFriendInGroup = yield call(friendInGroup, chatInfo.chat_room_id, 0, 20, query)
 
-        yield put(memberInGroup(_.get(resFriendInGroup, 'data.data', [])))
+            yield put(memberInGroup(_.get(resFriendInGroup, 'data.data', [])))
+        } catch (err) {
+            console.log('[onFetchFriendInGroupSaga] ', err)
+        }
     }
 }
 
 function* onLoadMoreMemberInGroupSaga() {
     while (true) {
         const { payload : { query } } = yield take('ON_LOAD_MORE_MEMBER_IN_GROUP')
-        const chatInfo = yield select(getChatInfo)
-        const userInfo = yield select(getUserInfo)
+        try {
+            const chatInfo = yield select(getChatInfo)
+            const userInfo = yield select(getUserInfo)
 
-        const memberFromStore = yield select(getMemberInGroup)
-        const resFriendInGroup = yield call(friendInGroup, chatInfo.chat_room_id, memberFromStore.data.length, 20, query)
-        const allMember = memberFromStore.data.concat(_.get(resFriendInGroup, 'data.data.data', []))
+            const memberFromStore = yield select(getMemberInGroup)
+            const resFriendInGroup = yield call(friendInGroup, chatInfo.chat_room_id, memberFromStore.data.length, 20, query)
+            const allMember = memberFromStore.data.concat(_.get(resFriendInGroup, 'data.data.data', []))
 
-        memberFromStore.data = allMember
-        yield put(memberInGroup(memberFromStore))
+            memberFromStore.data = allMember
+            yield put(memberInGroup(memberFromStore))
+        } catch (err) {
+            console.log('[onLoadMoreMemberInGroupSaga] ', err)
+        }
     }
 }
 
 function* onEnterOptionMessageSaga() {
     while (true) {
         yield take('ON_ENTER_OPTION_MESSAGE')
-        const chatInfo = yield select(getChatInfo)
-        const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id)
+        try {
+            const chatInfo = yield select(getChatInfo)
+            const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id)
 
-        const chatData = _.get(resFetchChat, 'data.data', [])
+            const chatData = _.get(resFetchChat, 'data.data', [])
 
-        // store data in store redux
-        yield put(optionMessage(chatData))
+            // store data in store redux
+            yield put(optionMessage(chatData))
+        } catch (err) {
+            console.log('[onEnterOptionMessageSaga] ', err)
+        }
     }
 }
 
 function* updateProfileSaga() {
     while (true) {
         const { payload: { profile, pic_base64 }} = yield take('ON_UPDATE_PROFILE')
-        const userInfo = yield select(getUserInfo)
+        try {
+            const userInfo = yield select(getUserInfo)
 
-        // update profile with api
-        yield call(updateProfile, profile)
+            // update profile with api
+            yield call(updateProfile, profile)
 
-        // update picture profile
-        if(!_.get(pic_base64, 'profile_pic_base64', false)) {
-            delete pic_base64.profile_pic_base64
+            // update picture profile
+            if(!_.get(pic_base64, 'profile_pic_base64', false)) {
+                delete pic_base64.profile_pic_base64
+            }
+            if(!_.get(pic_base64, 'wall_pic_base64', false)) {
+                delete pic_base64.wall_pic_base64
+            }
+
+            if(_.get(pic_base64, 'profile_pic_base64', false) || _.get(pic_base64, 'wall_pic_base64', false)) {
+                yield call(updatePictureAuth, pic_base64)
+            }
+
+            // nagigate back
+            const navigate = yield select(navigateSelector)
+            navigate.dispatch(NavigationActions.back())
+
+            // fetch user profile
+            const resFetchMyProfile = yield call(fetchMyProfile)
+            yield put(myprofile(_.get(resFetchMyProfile, 'data.data')))
+        } catch (err) {
+            console.log('[updateProfileSaga] ', err)
         }
-        if(!_.get(pic_base64, 'wall_pic_base64', false)) {
-            delete pic_base64.wall_pic_base64
-        }
-
-        if(_.get(pic_base64, 'profile_pic_base64', false) || _.get(pic_base64, 'wall_pic_base64', false)) {
-            yield call(updatePictureAuth, pic_base64)
-        }
-
-        // nagigate back
-        const navigate = yield select(navigateSelector)
-        navigate.dispatch(NavigationActions.back())
-
-        // fetch user profile
-        const resFetchMyProfile = yield call(fetchMyProfile)
-        yield put(myprofile(_.get(resFetchMyProfile, 'data.data')))
     }
 }
 
 function* onLoadMoreOptionMessageSaga() {
     while (true) {
         yield take('ON_LOAD_MORE_OPTION_MESSAGE')
-        const chatInfo = yield select(getChatInfo)
+        try {
+            const chatInfo = yield select(getChatInfo)
 
-        const messageLists = yield select(getOptionMessageLists)
+            const messageLists = yield select(getOptionMessageLists)
 
-        const topChatMessageId = _.get(messageLists[messageLists.length - 1], 'chat_message_id', '0')
+            const topChatMessageId = _.get(messageLists[messageLists.length - 1], 'chat_message_id', '0')
 
-        const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, topChatMessageId)
-        const chatData = _.get(resFetchChat, 'data.data', [])
+            const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, topChatMessageId)
+            const chatData = _.get(resFetchChat, 'data.data', [])
 
-        const newMessageLists = messageLists.concat(chatData)
+            const newMessageLists = messageLists.concat(chatData)
 
-        yield put(optionMessage(newMessageLists))
+            yield put(optionMessage(newMessageLists))
+        } catch (err) {
+            console.log('[onLoadMoreOptionMessageSaga] ', err)
+        }
     }
 }
 
 function* onInviteFriendToGroupWithOpenCaseSaga() {
     while (true) {
         const { payload: { chat_room_id, selected_invite_friend_user_id, selected_option_message_id }} = yield take('ON_INVITE_FRIEND_TO_GROUP_WITH_OPEN_CASE')
+        try {
+            const userInfo = yield select(getUserInfo)
 
-        const userInfo = yield select(getUserInfo)
+            const resInviteFriendToGroup = yield call(inviteFriendToGroupWithOpenCase, {
+                chat_room_id: chat_room_id,
+                user_id: userInfo.user_id,
+                friend_user_id: selected_invite_friend_user_id,
+                chat_message_ids: selected_option_message_id
+            })
+            const newChatRoomId = resInviteFriendToGroup.data.new_chat_room_id
+            const displayName = resInviteFriendToGroup.data.room_name
 
-        const resInviteFriendToGroup = yield call(inviteFriendToGroupWithOpenCase, {
-            chat_room_id: chat_room_id,
-            user_id: userInfo.user_id,
-            friend_user_id: selected_invite_friend_user_id,
-            chat_message_ids: selected_option_message_id
-        })
-        const newChatRoomId = resInviteFriendToGroup.data.new_chat_room_id
-        const displayName = resInviteFriendToGroup.data.room_name
+            const resFetchChatInfo = yield call(fetchChatInfo, newChatRoomId)
 
-        const resFetchChatInfo = yield call(fetchChatInfo, newChatRoomId)
+            const chatInfo = yield select(getChatInfo)
 
-        const chatInfo = yield select(getChatInfo)
+            const navigate = yield select(navigateSelector)
+            navigate.dispatch(NavigationActions.back())
 
-        const navigate = yield select(navigateSelector)
-        navigate.dispatch(NavigationActions.back())
+            yield put(selectChat({
+                chat_room_id: newChatRoomId,
+                display_name: displayName
+            }))
 
-        yield put(selectChat({
-            chat_room_id: newChatRoomId,
-            display_name: displayName
-        }))
+            // add owner friend to new group room
+            yield call(inviteFriendToGroup, newChatRoomId, chatInfo.friend_user_id)
 
-        // add owner friend to new group room
-        yield call(inviteFriendToGroup, newChatRoomId, chatInfo.friend_user_id)
+            // update chat list
+            emit_update_friend_chat_list(userInfo.user_id, selected_invite_friend_user_id)
+            // update own
+            emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
 
-        // update chat list
-        emit_update_friend_chat_list(userInfo.user_id, selected_invite_friend_user_id)
-        // update own
-        emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
-
-        continue
+            continue
+        } catch (err) {
+            console.log('[onInviteFriendToGroupWithOpenCaseSaga] ', err)
+        }
     }
 }
 
