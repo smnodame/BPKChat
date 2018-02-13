@@ -39,7 +39,9 @@ import {
     Right,
     Thumbnail,
     Title,
-    Badge
+    Badge,
+    Item,
+    Input
 } from 'native-base';
 import realm from '../../data/realm/realm';
 import {FontAwesome} from '../../assets/icons';
@@ -91,7 +93,8 @@ export default class Chat extends React.Component {
             collectionKeySelected: 0,
             showImageView: false,
             page: 0,
-            selectedOptionMessageId: {}
+            selectedOptionMessageId: {},
+            filterMessage: ''
         }
 
         this._renderItem = this._renderItem.bind(this)
@@ -133,7 +136,10 @@ export default class Chat extends React.Component {
             icon: 'md-search',
             name: 'Search',
             event: () => {
-
+                this.setState({
+                    isShowSearch: true,
+                    isShowAdditionalHeader: false
+                })
             }
         }
         const settingAction = {
@@ -484,24 +490,63 @@ export default class Chat extends React.Component {
                     <Title>{ _.get(this.state, 'chatInfo.display_name', '') }</Title>
                 </Body>
                 <Right>
-                    <Button transparent onPress={() => {
-                        this.setState({
-                            showOptionMessageModal: true
-                        })
-                    }}>
-                        <Icon style={{ color: 'white' }} name="md-call" />
-                    </Button>
-                    <Button transparent onPress={() =>
-                        this.setState({
-                            isShowAdditionalHeader: !this.state.isShowAdditionalHeader,
-                            isShowPhoto: false,
-                            isShowRecord: false
-                        })
-                    }>
-                        <Icon style={{ color: 'white' }} name="md-settings" />
-                    </Button>
+                    {
+                        !this.state.isShowSearch && <Button transparent onPress={() => {
+                            this.setState({
+                                showOptionMessageModal: true
+                            })
+                        }}>
+                            <Icon style={{ color: 'white' }} name="md-call" />
+                        </Button>
+
+                    }
+                    {
+                        !this.state.isShowSearch && <Button transparent onPress={() =>
+                            this.setState({
+                                isShowAdditionalHeader: !this.state.isShowAdditionalHeader,
+                                isShowPhoto: false,
+                                isShowRecord: false
+                            })
+                        }>
+                            <Icon style={{ color: 'white' }} name="md-settings" />
+                        </Button>
+                    }
+                    {
+                        this.state.isShowSearch && <Button
+                            transparent
+                            style={{ paddingLeft: 0, paddingRight: 0, marginLeft: 0, marginRight: 0 }}
+                            onPress={() => {
+                                this.setState({
+                                    isShowSearch: false,
+                                    filterMessage: ''
+                                })
+                            }}
+                        >
+                            <Text style={{ color: 'white', paddingLeft: 0, paddingRight: 0, marginLeft: 0, marginRight: 0 }}>Cancle</Text>
+                        </Button>
+                    }
                 </Right>
             </Header>
+            {
+                this.state.isShowSearch && <Header style={{ backgroundColor: '#3b5998' }} searchBar rounded>
+                    <Item>
+                        <Icon name="ios-search" />
+                            <Input
+                                onSubmitEditing={() => {
+                                    alert(this.state.filterMessage)
+                                }}
+                                placeholder="Search"
+                                onChangeText={(txt) => this.setState({
+                                    filterMessage: txt
+                                })}
+                            />
+                        <Icon name="ios-people" />
+                    </Item>
+                    <Button transparent>
+                        <Text>Search</Text>
+                    </Button>
+                </Header>
+            }
             {
                  this.state.showInviteModal && <ModalNative
                      onRequestClose={() => this.setState({ showInviteModal: false })}
