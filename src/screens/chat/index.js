@@ -415,10 +415,14 @@ export default class Chat extends React.Component {
         emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
 
         // update every friends in group
-        const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
-        friend_user_ids.forEach((friend_user_id) => {
-            emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
-        })
+        if(this.state.chatInfo.chat_room_type == 'G') {
+            const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
+            friend_user_ids.forEach((friend_user_id) => {
+                emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
+            })
+        } else {
+            emit_update_friend_chat_list(this.state.user.user_id, this.state.chatInfo.friend_user_id)
+        }
 
         this.setState({
             message: ''

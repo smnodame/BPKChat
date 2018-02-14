@@ -911,7 +911,9 @@ function* onInviteFriendToGroupWithOpenCaseSaga() {
 
             yield put(selectChat({
                 chat_room_id: newChatRoomId,
-                display_name: displayName
+                display_name: displayName,
+                chat_room_type: 'G',
+                friend_user_ids: `${userInfo.user_id},${chatInfo.friend_user_id}${selected_invite_friend_user_id}`
             }))
 
             // update own
