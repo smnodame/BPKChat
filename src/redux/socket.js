@@ -32,6 +32,7 @@ export const on_message = () => {
 }
 
 export const emit_as_seen = (chat_room_id) => {
+    console.log('[emit_as_seen] start ')
     socket.emit('read_all', {
         chat_room_id,
         user_id: user_id
@@ -40,6 +41,7 @@ export const emit_as_seen = (chat_room_id) => {
 
 export const on_as_seen = () => {
     socket.on('read_all', (user_id_from_socket) => {
+        console.log('[subscribe read_all]')
         // fetch new message if is not own message
         if(user_id_from_socket != user_id) {
             const state = store.getState()
@@ -56,34 +58,40 @@ export const on_as_seen = () => {
 }
 
 export const emit_subscribe = (chat_room_id) => {
+    console.log('[emit_subscribe]')
     socket.emit('subscribe', {
         chat_room_id
     })
 }
 
 export const emit_unsubscribe = (chat_room_id) => {
+    console.log('[emit_unsubscribe]')
     socket.emit('unsubscribe', {
         chat_room_id
     })
 }
 
 export const emit_unsubscribeall = () => {
+    console.log('[emit_unsubscribeall]')
     socket.emit('unsubscribeall')
 }
 
 export const emit_subscribe_chat_list = (user_id) => {
+    console.log('[emit_subscribe_chat_list]')
     socket.emit('subscribeChatList', {
         user_id
     })
 }
 
 export const emit_unsubscribe_chat_list = (user_id) => {
+    console.log('[emit_unsubscribe_chat_list]')
     socket.emit('unsubscribeChatList', {
         user_id
     })
 }
 
 export const emit_update_friend_chat_list = (user_id, friend_user_id) => {
+    console.log('[emit_update_friend_chat_list]')
     socket.emit('updateFriendChatList', {
         user_id,
         friend_user_id
@@ -92,6 +100,7 @@ export const emit_update_friend_chat_list = (user_id, friend_user_id) => {
 
 export const on_update_friend_chat_list = () => {
     socket.on('updateFriendChatList', () => {
+        console.log('[subscribe updateFriendChatList]')
         fetchChatLists().then((res) => {
             store.dispatch(chatLists(_.get(res, 'data.data', [])))
         })
@@ -100,12 +109,12 @@ export const on_update_friend_chat_list = () => {
 }
 
 export const emit_message = (message, chat_room_id) => {
+    console.log('[emit_message]')
     socket.emit('message', {
         message,
         chat_room_id
     })
 }
-
 
 export const start_socket = () => {
     // Connect!
