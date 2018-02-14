@@ -668,10 +668,11 @@ function* inviteFriendToGroupSaga() {
                 })
                 yield put(inviteFriends(inviteFriendLists))
 
-                // update chat list
-                emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
                 // update own
                 emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
+
+                // update chat list
+                emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
             } else {
                 const navigate = yield select(navigateSelector)
                 navigate.dispatch(NavigationActions.back())
@@ -681,11 +682,12 @@ function* inviteFriendToGroupSaga() {
                 // add owner friend to new group room
                 yield call(inviteFriendToGroup, newChatRoomId, chatInfo.friend_user_id)
 
+                // update own
+                emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
+
                 // update chat list
                 emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
                 emit_update_friend_chat_list(userInfo.user_id, chatInfo.friend_user_id)
-                // update own
-                emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
             }
 
             continue
@@ -721,10 +723,10 @@ function* removeFriendFromGroupSaga() {
                     yield put(memberInGroup(member))
                 }
 
-                // update chat list
-                emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
                 // update own
                 emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
+                // update chat list
+                emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
             }
         } catch (err) {
             console.log('[removeFriendFromGroupSaga] ', err)
@@ -893,12 +895,12 @@ function* onInviteFriendToGroupWithOpenCaseSaga() {
             // add owner friend to new group room
             yield call(inviteFriendToGroup, newChatRoomId, chatInfo.friend_user_id)
 
-            // update chat list
-            emit_update_friend_chat_list(userInfo.user_id, selected_invite_friend_user_id)
-            emit_update_friend_chat_list(userInfo.user_id, chatInfo.friend_user_id)
             // update own
             emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
 
+            // update chat list
+            emit_update_friend_chat_list(userInfo.user_id, selected_invite_friend_user_id)
+            emit_update_friend_chat_list(userInfo.user_id, chatInfo.friend_user_id)
             continue
         } catch (err) {
             console.log('[onInviteFriendToGroupWithOpenCaseSaga] ', err)
