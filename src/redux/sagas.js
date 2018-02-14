@@ -57,7 +57,8 @@ import {
     exitTheGroup,
     friendInGroup,
     updateProfile,
-    inviteFriendToGroupWithOpenCase
+    inviteFriendToGroupWithOpenCase,
+    createNewRoom
 } from './api'
 import {
     getFriendGroups,
@@ -407,6 +408,11 @@ function* selectChatSaga() {
         const { payload: { chatInfo }} = yield take('SELECT_CHAT')
         // fetch chat list from userID
         try {
+            if(!chatInfo.chat_room_id) {
+                const resCreateNewRoom = yield call(createNewRoom, chatInfo.friend_user_id)
+                chatInfo.chat_room_id = resCreateNewRoom.data.data.chat_room_id
+            }
+
             const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, '', '', '')
             const chatData = _.get(resFetchChat, 'data.data', [])
 
