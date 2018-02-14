@@ -406,7 +406,7 @@ function* selectChatSaga() {
         const { payload: { chatInfo }} = yield take('SELECT_CHAT')
         // fetch chat list from userID
         try {
-            const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id)
+            const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, '', '', '')
             const chatData = _.get(resFetchChat, 'data.data', [])
 
             // store data in store redux
@@ -440,7 +440,7 @@ function* onLoadMoreMessageListsSaga() {
 
             const topChatMessageId = _.get(messageLists[messageLists.length - 1], 'chat_message_id', '0')
 
-            const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, topChatMessageId)
+            const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, topChatMessageId, '', '')
             const chatData = _.get(resFetchChat, 'data.data', [])
 
             const newMessageLists = messageLists.concat(chatData)
@@ -796,7 +796,7 @@ function* onEnterOptionMessageSaga() {
         yield take('ON_ENTER_OPTION_MESSAGE')
         try {
             const chatInfo = yield select(getChatInfo)
-            const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id)
+            const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, '', '', '')
 
             const chatData = _.get(resFetchChat, 'data.data', [])
 
@@ -852,7 +852,7 @@ function* onLoadMoreOptionMessageSaga() {
 
             const topChatMessageId = _.get(messageLists[messageLists.length - 1], 'chat_message_id', '0')
 
-            const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, topChatMessageId)
+            const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, topChatMessageId, '', '')
             const chatData = _.get(resFetchChat, 'data.data', [])
 
             const newMessageLists = messageLists.concat(chatData)
