@@ -131,5 +131,5 @@ export const start_socket = () => {
     emit_subscribe_chat_list(user_id)
     on_update_friend_chat_list()
     on_as_seen()
-
+    on_message()
 }

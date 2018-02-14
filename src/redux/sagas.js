@@ -414,7 +414,6 @@ function* selectChatSaga() {
             yield put(chat(chatData))
 
             // subscribe socket io
-            on_message()
             emit_subscribe(chatInfo.chat_room_id)
 
             // call set as setAsSeen
