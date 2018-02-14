@@ -61,7 +61,8 @@ import {
     onLoadMoreMemberInGroup,
     onEnterOptionMessage,
     onLoadMoreOptionMessage,
-    onInviteFriendToGroupWithOpenCase
+    onInviteFriendToGroupWithOpenCase,
+    onFetchMessageLists
 } from '../../redux/actions'
 import {sendTheMessage, fetchFriendProfile } from '../../redux/api'
 import {
@@ -415,7 +416,7 @@ export default class Chat extends React.Component {
         const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
         friend_user_ids.forEach((friend_user_id) => {
             emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
-        })    
+        })
 
         this.setState({
             message: ''
@@ -520,6 +521,7 @@ export default class Chat extends React.Component {
                             transparent
                             style={{ paddingLeft: 0, paddingRight: 0, marginLeft: 0, marginRight: 0 }}
                             onPress={() => {
+                                store.dispatch(onFetchMessageLists(''))
                                 this.setState({
                                     isShowSearch: false,
                                     filterMessage: ''
@@ -537,7 +539,7 @@ export default class Chat extends React.Component {
                         <Icon name="ios-search" />
                             <Input
                                 onSubmitEditing={() => {
-                                    alert(this.state.filterMessage)
+                                    store.dispatch(onFetchMessageLists(this.state.filterMessage))
                                 }}
                                 placeholder="Search"
                                 onChangeText={(txt) => this.setState({
@@ -751,7 +753,7 @@ export default class Chat extends React.Component {
                 )}
                 inverted={true}
                 onEndReached={() => {
-                    store.dispatch(onLoadMoreMessageLists())
+                    store.dispatch(onLoadMoreMessageLists(this.state.filterMessage))
                 }}
                 onEndReachedThreshold={0.3}
                 keyExtractor={(post) => {

@@ -197,8 +197,11 @@ export const sticker = (stickerData) => ({
     }
 })
 
-export const onLoadMoreMessageLists = () => ({
-    type: 'ON_LOAD_MORE_MESSAGE_LIST'
+export const onLoadMoreMessageLists = (filterMessage) => ({
+    type: 'ON_LOAD_MORE_MESSAGE_LIST',
+    payload: {
+        filterMessage
+    }
 })
 
 export const onIsShowActionChat = (isShowActionChat, selectedChatRoomId) => ({
@@ -334,4 +337,11 @@ export const onInviteFriendToGroupWithOpenCase = (chat_room_id, selected_invite_
 
 export const enterSplash = () => ({
     type: 'ENTER_SPLASH'
+})
+
+export const onFetchMessageLists = (filterMessage) => ({
+    type: 'ON_FETCH_MESSAGE_LISTS',
+    payload: {
+        filterMessage
+    }
 })

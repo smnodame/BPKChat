@@ -431,16 +431,35 @@ function* selectChatSaga() {
     }
 }
 
+function* onFetchMessageListsSaga() {
+    while (true) {
+        const { payload: { filterMessage }} = yield take('ON_FETCH_MESSAGE_LISTS')
+        try {
+            const chatInfo = yield select(getChatInfo)
+            const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, '', '', filterMessage)
+            console.log('=============')
+            console.log(filterMessage)
+            console.log(resFetchChat)
+            const chatData = _.get(resFetchChat, 'data.data', [])
+            console.log(chatData)
+            // store data in store redux
+            yield put(chat(chatData))
+        } catch (err) {
+            console.log('[onFetchMessageListsSaga] ', err)
+        }
+    }
+}
+
 function* onLoadMoreMessageListsSaga() {
     while (true) {
         try {
-            yield take('ON_LOAD_MORE_MESSAGE_LIST')
+            const { payload: { filterMessage }} = yield take('ON_LOAD_MORE_MESSAGE_LIST')
             const chatInfo = yield select(getChatInfo)
             const messageLists = yield select(getMessageLists)
 
             const topChatMessageId = _.get(messageLists[messageLists.length - 1], 'chat_message_id', '0')
 
-            const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, topChatMessageId, '', '')
+            const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, topChatMessageId, '', filterMessage)
             const chatData = _.get(resFetchChat, 'data.data', [])
 
             const newMessageLists = messageLists.concat(chatData)
@@ -966,6 +985,7 @@ export function* rootSaga() {
         updateProfileSaga(),
         onLoadMoreOptionMessageSaga(),
         onInviteFriendToGroupWithOpenCaseSaga(),
-        enterSplashSaga()
+        enterSplashSaga(),
+        onFetchMessageListsSaga()
     ])
 }
