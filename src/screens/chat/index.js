@@ -521,10 +521,11 @@ export default class Chat extends React.Component {
                             transparent
                             style={{ paddingLeft: 0, paddingRight: 0, marginLeft: 0, marginRight: 0 }}
                             onPress={() => {
-                                store.dispatch(onFetchMessageLists(''))
                                 this.setState({
                                     isShowSearch: false,
                                     filterMessage: ''
+                                }, () => {
+                                    store.dispatch(onFetchMessageLists(''))
                                 })
                             }}
                         >
