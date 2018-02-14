@@ -24,7 +24,8 @@ import {
     memberInGroup,
     optionMessage,
     enterContact,
-    enterSplash
+    enterSplash,
+    onFetchMessageLists
 } from './actions'
 import { NavigationActions } from 'react-navigation'
 import {

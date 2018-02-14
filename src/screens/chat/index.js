@@ -62,7 +62,8 @@ import {
     onEnterOptionMessage,
     onLoadMoreOptionMessage,
     onInviteFriendToGroupWithOpenCase,
-    onFetchMessageLists
+    onFetchMessageLists,
+    isShowSearchBar
 } from '../../redux/actions'
 import {sendTheMessage, fetchFriendProfile } from '../../redux/api'
 import {
@@ -142,9 +143,9 @@ export default class Chat extends React.Component {
             name: 'Search',
             event: () => {
                 this.setState({
-                    isShowSearch: true,
                     isShowAdditionalHeader: false
                 })
+                store.dispatch(isShowSearchBar(true))
             }
         }
         const settingAction = {
@@ -185,7 +186,8 @@ export default class Chat extends React.Component {
             inviteFriends: _.get(state, 'chat.inviteFriends.data', []),
             optionLists: options,
             member: _.get(state, 'chat.memberInGroup.data', []),
-            optionMessage: _.get(state, 'chat.optionMessage', [])
+            optionMessage: _.get(state, 'chat.optionMessage', []),
+            isShowSearchBar: _.get(state, 'chat.isShowSearchBar', false)
         })
 
     }
@@ -496,7 +498,7 @@ export default class Chat extends React.Component {
                 </Body>
                 <Right>
                     {
-                        !this.state.isShowSearch && <Button transparent onPress={() => {
+                        !this.state.isShowSearchBar && <Button transparent onPress={() => {
                             this.setState({
                                 showOptionMessageModal: true
                             })
@@ -506,7 +508,7 @@ export default class Chat extends React.Component {
 
                     }
                     {
-                        !this.state.isShowSearch && <Button transparent onPress={() =>
+                        !this.state.isShowSearchBar && <Button transparent onPress={() =>
                             this.setState({
                                 isShowAdditionalHeader: !this.state.isShowAdditionalHeader,
                                 isShowPhoto: false,
@@ -517,14 +519,14 @@ export default class Chat extends React.Component {
                         </Button>
                     }
                     {
-                        this.state.isShowSearch && <Button
+                        this.state.isShowSearchBar && <Button
                             transparent
                             style={{ paddingLeft: 0, paddingRight: 0, marginLeft: 0, marginRight: 0 }}
                             onPress={() => {
                                 this.setState({
-                                    isShowSearch: false,
                                     filterMessage: ''
                                 }, () => {
+                                    store.dispatch(isShowSearchBar(false))
                                     store.dispatch(onFetchMessageLists(''))
                                 })
                             }}
@@ -535,7 +537,7 @@ export default class Chat extends React.Component {
                 </Right>
             </Header>
             {
-                this.state.isShowSearch && <Header style={{ backgroundColor: '#3b5998' }} searchBar rounded>
+                this.state.isShowSearchBar && <Header style={{ backgroundColor: '#3b5998' }} searchBar rounded>
                     <Item>
                         <Icon name="ios-search" />
                             <Input

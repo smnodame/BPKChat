@@ -345,3 +345,10 @@ export const onFetchMessageLists = (filterMessage) => ({
         filterMessage
     }
 })
+
+export const isShowSearchBar = (isShow) => ({
+    type: 'IS_SHOW_SEARCH_BAR',
+    payload: {
+        isShow
+    }
+})

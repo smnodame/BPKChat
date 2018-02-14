@@ -121,6 +121,16 @@ const chat = (state = {
             return Object.assign(state, {
                 optionMessage: action.payload.message
             })
+        case 'IS_SHOW_SEARCH_BAR':
+            let chat = {}
+            if(!action.payload.isShow) {
+                chat = {
+                    chat: []
+                }
+            }
+            return Object.assign(state, {
+                isShowSearchBar: action.payload.isShow,
+            }, chat)
         default:
             return state
     }
