@@ -63,8 +63,12 @@ import {
     onLoadMoreOptionMessage,
     onInviteFriendToGroupWithOpenCase
 } from '../../redux/actions'
-import {sendTheMessage, fetchFriendProfile} from '../../redux/api'
-import { emit_update_friend_chat_list, emit_unsubscribe, emit_message } from '../../redux/socket.js'
+import {sendTheMessage, fetchFriendProfile } from '../../redux/api'
+import {
+    emit_update_friend_chat_list,
+    emit_unsubscribe,
+    emit_message
+} from '../../redux/socket.js'
 
 import ImagePicker from 'react-native-image-picker'
 
@@ -401,6 +405,9 @@ export default class Chat extends React.Component {
             return;
         }
 
+        // update message for everyone in group
+        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
+
         // update our own
         emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
 
@@ -408,10 +415,7 @@ export default class Chat extends React.Component {
         const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
         friend_user_ids.forEach((friend_user_id) => {
             emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
-        })
-
-        // update message for everyone in group
-        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
+        })    
 
         this.setState({
             message: ''
@@ -427,6 +431,9 @@ export default class Chat extends React.Component {
             return;
         }
 
+        // update message for everyone in group
+        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
+
         // update our own
         emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
 
@@ -435,9 +442,6 @@ export default class Chat extends React.Component {
         friend_user_ids.forEach((friend_user_id) => {
             emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
         })
-
-        // update message for everyone in group
-        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
 
         this.setState({
             message: ''
@@ -454,6 +458,9 @@ export default class Chat extends React.Component {
             return;
         }
 
+        // update message for everyone in group
+        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
+
         // update our own
         emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
 
@@ -462,9 +469,6 @@ export default class Chat extends React.Component {
         friend_user_ids.forEach((friend_user_id) => {
             emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
         })
-
-        // update message for everyone in group
-        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
 
         this.setState({
             message: ''
