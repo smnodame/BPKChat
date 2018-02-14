@@ -488,6 +488,7 @@ export default class Chat extends React.Component {
                 <Left>
                     <Button transparent onPress={() => {
                         emit_unsubscribe(this.state.chatInfo.chat_room_id)
+                        store.dispatch(isShowSearchBar(false))
                         this.props.navigation.dispatch(NavigationActions.back())
                     }}>
                         <Icon style={{ color: 'white' }} name="md-arrow-round-back" />

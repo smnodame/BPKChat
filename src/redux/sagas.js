@@ -903,6 +903,9 @@ function* onInviteFriendToGroupWithOpenCaseSaga() {
 
             const chatInfo = yield select(getChatInfo)
 
+            // add owner friend to new group room
+            yield call(inviteFriendToGroup, newChatRoomId, chatInfo.friend_user_id)
+
             const navigate = yield select(navigateSelector)
             navigate.dispatch(NavigationActions.back())
 
@@ -910,9 +913,6 @@ function* onInviteFriendToGroupWithOpenCaseSaga() {
                 chat_room_id: newChatRoomId,
                 display_name: displayName
             }))
-
-            // add owner friend to new group room
-            yield call(inviteFriendToGroup, newChatRoomId, chatInfo.friend_user_id)
 
             // update own
             emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
