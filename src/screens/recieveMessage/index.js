@@ -4,7 +4,8 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Image
+  Image,
+  BackAndroid
 } from 'react-native'
 import _ from 'lodash'
 import {
@@ -39,6 +40,12 @@ import { NavigationActions } from 'react-navigation'
 
 import { enterContacts, removeFavorite, addFavorite, showOrHideFriendLists, onLoadMore, onSearchFriend, selectChat } from '../../redux/actions.js'
 import {store} from '../../redux'
+import {sendTheMessage, fetchFriendProfile } from '../../redux/api'
+import {
+    emit_update_friend_chat_list,
+    emit_unsubscribe,
+    emit_message
+} from '../../redux/socket.js'
 
 export default class RecieveMessage extends React.Component {
 
@@ -88,6 +95,7 @@ export default class RecieveMessage extends React.Component {
             showDepartmentFriendLists: _.get(state, 'system.isShowFriendLists.department', false),
             showOtherFriendLists: _.get(state, 'system.isShowFriendLists.other', false),
             user: _.get(state, 'user.user', {}),
+            sharedMessage: _.get(state, 'system.sharedMessage', ''),
             numberOfFriendLists: {
                 favorite: _.get(state, 'friend.numberOfFriendLists.favorite', 0),
                 other: _.get(state, 'friend.numberOfFriendLists.other', 0),
@@ -150,7 +158,9 @@ export default class RecieveMessage extends React.Component {
             return true
         }).map((friend) => {
             return (
-                <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ selectedFriend: friend })}>
+                <TouchableOpacity key={friend.friend_user_id} onPress={() => {
+                    this._pushMessage(friend)
+                }}>
                   <View style={styles.container}>
                       <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
                       <View style={{ flexDirection: 'column' }}>
@@ -169,7 +179,9 @@ export default class RecieveMessage extends React.Component {
         }).map((friend) => {
             return (
                 <View>
-                    <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ selectedFriend: friend })}>
+                    <TouchableOpacity key={friend.friend_user_id} onPress={() => {
+                        this._pushMessage(friend)
+                    }}>
                       <View style={styles.container}>
                           <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
                           <View style={{ flexDirection: 'column' }}>
@@ -190,7 +202,9 @@ export default class RecieveMessage extends React.Component {
         }).map((friend) => {
             return (
                 <View>
-                    <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ selectedFriend: friend })}>
+                    <TouchableOpacity key={friend.friend_user_id} onPress={() => {
+                        this._pushMessage(friend)
+                    }}>
                         <View style={styles.container}>
                             <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
                             <View style={{ flexDirection: 'column' }}>
@@ -212,7 +226,9 @@ export default class RecieveMessage extends React.Component {
         }).map((friend, key) => {
             return (
                 <View>
-                    <TouchableOpacity key={key} onPress={() => this.setState({ selectedFriend: friend })}>
+                    <TouchableOpacity key={key} onPress={() => {
+                        this._pushMessage(friend)
+                    }}>
                         <View style={styles.container}>
                             <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
                             <View style={{ flexDirection: 'column' }}>
@@ -226,6 +242,31 @@ export default class RecieveMessage extends React.Component {
 
             )
         })
+    }
+
+     _pushMessage = async (chatInfo) => {
+        const resSendTheMessage = await sendTheMessage(chatInfo.chat_room_id, '1', this.state.sharedMessage, '', '')
+
+        if(_.get(resSendTheMessage.data, 'error')) {
+            return;
+        }
+
+        // update message for everyone in group
+        emit_message(this.state.sharedMessage, chatInfo.chat_room_id)
+
+        // update our own
+        emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
+
+        // update every friends in group
+        if(chatInfo.chat_room_type == 'G') {
+            const friend_user_ids = chatInfo.friend_user_ids.split(',')
+            friend_user_ids.forEach((friend_user_id) => {
+                emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
+            })
+        } else {
+            emit_update_friend_chat_list(this.state.user.user_id, chatInfo.friend_user_id)
+        }
+        BackAndroid.exitApp()
     }
 
     render() {

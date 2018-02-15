@@ -91,10 +91,7 @@ export default class Chat extends React.Component {
     constructor(props) {
         super(props);
 
-        let conversation = data.getConversation();
-
         this.state = {
-            data: conversation,
             isShowAdditionalHeader: false,
             collectionKeySelected: 0,
             showImageView: false,
