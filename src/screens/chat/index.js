@@ -743,7 +743,7 @@ export default class Chat extends React.Component {
                   </Button>
                   <Button block light onPress={() => {
                       Share.share({
-                          message: 'hello'
+                          message: this.state.copiedText
                       }).then(result => console.log(result)).catch(errorMsg => console.log(errorMsg));
                   }}>
                       <Text>SHARE</Text>
