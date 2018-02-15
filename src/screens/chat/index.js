@@ -734,7 +734,10 @@ export default class Chat extends React.Component {
                   <Button block light>
                       <Text>DELETE MESSEGES</Text>
                   </Button>
-                  <Button block light>
+                  <Button block light onPress={() => {
+                      this.setState({ showPickerModal: false })
+                      this.props.navigation.navigate('RecieveMessage')
+                  }}>
                       <Text>FORWORD</Text>
                   </Button>
                   <Button block light>
