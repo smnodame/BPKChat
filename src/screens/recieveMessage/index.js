@@ -33,7 +33,6 @@ import {
     Item,
     Input
 } from 'native-base';
-import {data} from '../../data'
 import {Avatar} from '../../components/avatar'
 import {FontAwesome} from '../../assets/icons'
 import { NavigationActions } from 'react-navigation'

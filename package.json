@@ -25,7 +25,6 @@
     "react-native-vector-icons": "^4.4.2",
     "react-navigation": "^1.0.0-beta.22",
     "react-redux": "^5.0.6",
-    "realm": "^1.8.0",
     "redux": "^3.7.2",
     "redux-saga": "^0.16.0",
     "rn-round-checkbox": "^0.3.3",

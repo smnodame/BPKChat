@@ -45,9 +45,7 @@ import {
     Item,
     Input
 } from 'native-base';
-import realm from '../../data/realm/realm';
 import {FontAwesome} from '../../assets/icons';
-import {data} from '../../data';
 import {scale} from '../../utils/scale';
 import GridView from 'react-native-super-grid';
 

@@ -15,7 +15,6 @@ import {
   RkStyleSheet
 } from 'react-native-ui-kitten';
 import { NavigationActions } from 'react-navigation'
-import {data} from '../../data';
 import {FontAwesome} from '../../assets/icons';
 import { Thumbnail, Button, Text, Icon, Container, Content, Header, Title, Left, Body, Right } from 'native-base';
 import ImagePicker from 'react-native-image-picker'

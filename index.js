@@ -3,7 +3,6 @@ import App from './App';
 import { StackNavigator } from 'react-navigation'
 
 import {bootstrap} from './src/config/bootstrap';
-import {data} from './src/data'
 
 import Chat from './src/screens/chat'
 import AddFriend from './src/screens/addFriend'
@@ -19,9 +18,6 @@ import { start_app  } from './src/redux/actions.js'
 
 // start material UI
 bootstrap()
-
-// start Realm
-data.populateRealm()
 
 // call first action that should do
 store.dispatch(start_app())

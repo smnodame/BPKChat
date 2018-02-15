@@ -16,7 +16,6 @@ import {
 import { Thumbnail, Button, Text, Badge } from 'native-base';
 import {Avatar} from '../../components';
 import {FontAwesome} from '../../assets/icons';
-import {data} from '../../data';
 let moment = require('moment');
 import Modal from 'react-native-modal';
 import { selectChat, onIsShowActionChat, onMuteChat, onHideChat, onBlockChat, onDeleteChat, onUnblockChat, onUnmuteChat  } from '../../redux/actions.js'

@@ -14,7 +14,6 @@ import {
   RkTheme,
   RkStyleSheet
 } from 'react-native-ui-kitten';
-import {data} from '../../data';
 import {FontAwesome} from '../../assets/icons';
 import { NavigationActions } from 'react-navigation'
 import { Thumbnail, Button, Text, Icon, Header, Left, Body, Title, Right } from 'native-base';

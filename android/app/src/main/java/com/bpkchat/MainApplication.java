@@ -6,7 +6,6 @@ import com.facebook.react.ReactApplication;
 import com.meedan.ShareMenuPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.imagepicker.ImagePickerPackage;
-import io.realm.react.RealmReactPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -31,7 +30,6 @@ public class MainApplication extends Application implements ReactApplication {
             new ShareMenuPackage(),
             new RNFetchBlobPackage(),
             new ImagePickerPackage(),
-            new RealmReactPackage(),
             new VectorIconsPackage()
       );
     }

@@ -14,7 +14,6 @@ import {
 } from 'react-native-ui-kitten'
 import Modal from 'react-native-modal'
 import { Thumbnail, Icon, Text, Button } from 'native-base'
-import {data} from '../../data'
 import {Avatar} from '../../components/avatar'
 import {FontAwesome} from '../../assets/icons'
 import { NavigationActions } from 'react-navigation'
