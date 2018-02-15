@@ -9,7 +9,8 @@ import {
   ScrollView,
   StyleSheet,
   Keyboard,
-  Modal as ModalNative
+  Modal as ModalNative,
+  Clipboard
 } from 'react-native';
 import { InteractionManager, WebView } from 'react-native';
 import {
@@ -291,7 +292,7 @@ export default class Chat extends React.Component {
             {!inMessage && renderDate(info.item.create_date)}
           {
               info.item.message_type=='1' && <View style={[styles.balloon, {backgroundColor}]}>
-                  <TouchableWithoutFeedback onLongPress={() => this.setState({showPickerModal: true})}>
+                  <TouchableWithoutFeedback onLongPress={() => this.setState({ showPickerModal: true, copiedText: info.item.content })}>
                       <RkText rkType='primary2 mediumLine chat'>{info.item.content}</RkText>
                   </TouchableWithoutFeedback>
               </View>
@@ -717,7 +718,14 @@ export default class Chat extends React.Component {
                     borderRadius: 4,
                     borderColor: 'rgba(0, 0, 0, 0.1)',
                 }}>
-                  <Button block light>
+                  <Button
+                      block
+                      light
+                      onPress={() => {
+                          Clipboard.setString(this.state.copiedText)
+                          this.setState({ showPickerModal: false })
+                      }}
+                  >
                       <Text>COPY</Text>
                   </Button>
                   <Button block light>
