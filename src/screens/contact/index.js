@@ -156,7 +156,7 @@ export default class Contacts extends React.Component {
     renderGroups = () => {
         return this.state.friends.group.filter((friend) => {
             return true
-        }).map((friend) => {
+        }).map((friend, key) => {
             return (
                 <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ selectedFriend: friend, showGroupModal: true })}>
                   <View style={styles.container}>
@@ -174,9 +174,9 @@ export default class Contacts extends React.Component {
     renderFavorite = () => {
         return this.state.friends.favorite.filter((friend) => {
             return true
-        }).map((friend) => {
+        }).map((friend, key) => {
             return (
-                <View>
+                <View key={key}>
                     <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ selectedFriend: friend, showFriendModal: true })}>
                       <View style={styles.container}>
                           <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
@@ -195,9 +195,9 @@ export default class Contacts extends React.Component {
     renderOthers = () => {
         return this.state.friends.other.filter((friend) => {
             return true
-        }).map((friend) => {
+        }).map((friend, key) => {
             return (
-                <View>
+                <View key={key}>
                     <TouchableOpacity key={friend.friend_user_id} onPress={() => this.setState({ selectedFriend: friend, showFriendModal: true })}>
                         <View style={styles.container}>
                             <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
@@ -219,7 +219,7 @@ export default class Contacts extends React.Component {
             return true
         }).map((friend, key) => {
             return (
-                <View>
+                <View key={key}>
                     <TouchableOpacity key={key} onPress={() => this.setState({ selectedFriend: friend, showFriendModal: true })}>
                         <View style={styles.container}>
                             <Thumbnail  style={styles.avatar}  source={{ uri: friend.profile_pic_url }} />
