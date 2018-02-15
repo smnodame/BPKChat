@@ -40,7 +40,7 @@ import { NavigationActions } from 'react-navigation'
 
 import { enterContacts, removeFavorite, addFavorite, showOrHideFriendLists, onLoadMore, onSearchFriend, selectChat } from '../../redux/actions.js'
 import {store} from '../../redux'
-import {sendTheMessage, fetchFriendProfile } from '../../redux/api'
+import {sendTheMessage, fetchFriendProfile, createNewRoom } from '../../redux/api'
 import {
     emit_update_friend_chat_list,
     emit_unsubscribe,
@@ -244,7 +244,13 @@ export default class RecieveMessage extends React.Component {
         })
     }
 
-     _pushMessage = async (chatInfo) => {
+    _pushMessage = async (chatInfo) => {
+        // create new chat room if not exist before
+        if(!chatInfo.chat_room_id) {
+            const resCreateNewRoom = await createNewRoom(chatInfo.friend_user_id)
+            chatInfo.chat_room_id = resCreateNewRoom.data.data.chat_room_id
+        }
+
         const resSendTheMessage = await sendTheMessage(chatInfo.chat_room_id, '1', this.state.sharedMessage, '', '')
 
         if(_.get(resSendTheMessage.data, 'error')) {
@@ -266,6 +272,7 @@ export default class RecieveMessage extends React.Component {
         } else {
             emit_update_friend_chat_list(this.state.user.user_id, chatInfo.friend_user_id)
         }
+
         BackAndroid.exitApp()
     }
 

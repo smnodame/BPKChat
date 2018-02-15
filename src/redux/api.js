@@ -256,7 +256,7 @@ export const inviteFriendToGroupWithOpenCase = (data) => {
 export const createNewRoom = (friend_user_id) => {
     return getAuth().then((user_id) => {
         return axios.post(`http://itsmartone.com/bpk_connect/api/chat/create?token=asdf1234aaa`, {
-            user_id: '3963',
+            user_id: user_id,
             friend_user_id
         })
     })
