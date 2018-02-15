@@ -53,3 +53,7 @@ export const getMemberInGroup = state => {
 export const getOptionMessageLists = state => {
     return state.chat.optionMessage
 }
+
+export const getSharedMessage = state => {
+    return state.system.sharedMessage
+}

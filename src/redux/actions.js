@@ -352,3 +352,17 @@ export const isShowSearchBar = (isShow) => ({
         isShow
     }
 })
+
+export const onRecieveShareMessage = (sharedMsg) => ({
+    type: 'ON_RECIEVE_SHARE_MESSAGE',
+    payload: {
+        sharedMsg
+    }
+})
+
+export const sharedMessage = (txt) => ({
+    type: 'SHARED_MESSAGE',
+    payload: {
+        sharedMessage: txt
+    }
+})

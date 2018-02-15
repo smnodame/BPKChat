@@ -47,6 +47,10 @@ const system = (state = {
             return Object.assign(state, {
                 navigate: action.payload.navigate
             })
+        case 'SHARED_MESSAGE':
+            return Object.assign(state, {
+                sharedMessage: action.payload.sharedMessage
+            })
         default:
             return state
     }

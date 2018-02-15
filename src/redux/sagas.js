@@ -25,7 +25,8 @@ import {
     optionMessage,
     enterContact,
     enterSplash,
-    onFetchMessageLists
+    onFetchMessageLists,
+    sharedMessage
 } from './actions'
 import { NavigationActions } from 'react-navigation'
 import {
@@ -74,7 +75,8 @@ import {
     getUserInfo,
     getInviteFriendLists,
     getMemberInGroup,
-    getOptionMessageLists
+    getOptionMessageLists,
+    getSharedMessage
 } from './selectors'
 import { start_socket, emit_subscribe, on_message, emit_message, emit_update_friend_chat_list, emit_as_seen } from './socket.js'
 
@@ -347,15 +349,23 @@ function* enterContactSaga() {
 
         const user_id = yield call(getAuth)
 
+        const sharedMsg = yield select(getSharedMessage)
+
+        // if running on share message should go to RecieveMessage page
+        let nextState = 'App'
+        if(sharedMsg) {
+            nextState = 'RecieveMessage'
+        }
+
         // navigate to app
         const navigate = yield select(navigateSelector)
         const resetAction = NavigationActions.reset({
             index: 0,
             actions: [
-                NavigationActions.navigate({ routeName: 'App'})
+                NavigationActions.navigate({ routeName: nextState})
             ]
         })
-        console.log('[enterSplashSaga] navigate to App')
+        console.log('[enterSplashSaga] navigate to ', nextState)
         navigate.dispatch(resetAction)
     }
 }
@@ -961,6 +971,33 @@ function* enterSplashSaga() {
     }
 }
 
+function* onRecieveShareMessageSaga() {
+    while (true) {
+        const { payload: { sharedMsg }} = yield take('ON_RECIEVE_SHARE_MESSAGE')
+
+        yield put(sharedMessage(sharedMsg))
+
+        const user_id = yield call(getAuth)
+
+        const navigate = yield select(navigateSelector)
+
+        if(user_id) {
+            yield put(enterContact())
+            continue
+        } else {
+            const resetAction = NavigationActions.reset({
+                index: 0,
+                actions: [
+                    NavigationActions.navigate({ routeName: 'Login'})
+                ]
+            })
+            console.log('[enterSplashSaga] navigate to Login')
+            navigate.dispatch(resetAction)
+            continue
+        }
+    }
+}
+
 export function* rootSaga() {
     yield all([
         signin(),
@@ -995,6 +1032,7 @@ export function* rootSaga() {
         onLoadMoreOptionMessageSaga(),
         onInviteFriendToGroupWithOpenCaseSaga(),
         enterSplashSaga(),
-        onFetchMessageListsSaga()
+        onFetchMessageListsSaga(),
+        onRecieveShareMessageSaga()
     ])
 }

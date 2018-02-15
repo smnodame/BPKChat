@@ -3,7 +3,7 @@ import { StyleSheet, Image, View, AsyncStorage } from 'react-native'
 import { NavigationActions } from 'react-navigation'
 import ShareMenu from 'react-native-share-menu'
 
-import { signin, start_app, navigate, enterSplash  } from '../../redux/actions.js'
+import { signin, start_app, navigate, enterSplash, onRecieveShareMessage  } from '../../redux/actions.js'
 import {store} from '../../redux'
 
 
@@ -16,8 +16,7 @@ export default class Splash extends React.Component {
     async componentDidMount() {
         ShareMenu.getSharedText((text :string) => {
             if (text && text.length) {
-                console.log('text')
-                console.log(text)
+                store.dispatch(onRecieveShareMessage(text))
             } else {
                 store.dispatch(enterSplash())
             }
