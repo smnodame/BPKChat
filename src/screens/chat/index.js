@@ -10,7 +10,8 @@ import {
   StyleSheet,
   Keyboard,
   Modal as ModalNative,
-  Clipboard
+  Clipboard,
+  Share
 } from 'react-native';
 import { InteractionManager, WebView } from 'react-native';
 import {
@@ -740,7 +741,11 @@ export default class Chat extends React.Component {
                   }}>
                       <Text>FORWORD</Text>
                   </Button>
-                  <Button block light>
+                  <Button block light onPress={() => {
+                      Share.share({
+                          message: 'hello'
+                      }).then(result => console.log(result)).catch(errorMsg => console.log(errorMsg));
+                  }}>
                       <Text>SHARE</Text>
                   </Button>
                 </View>
