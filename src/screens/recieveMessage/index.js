@@ -177,9 +177,9 @@ export default class RecieveMessage extends React.Component {
     renderFavorite = () => {
         return this.state.friends.favorite.filter((friend) => {
             return true
-        }).map((friend) => {
+        }).map((friend, key) => {
             return (
-                <View>
+                <View key={key}>
                     <TouchableOpacity key={friend.friend_user_id} onPress={() => {
                         this._pushMessage(friend)
                     }}>
@@ -200,9 +200,9 @@ export default class RecieveMessage extends React.Component {
     renderOthers = () => {
         return this.state.friends.other.filter((friend) => {
             return true
-        }).map((friend) => {
+        }).map((friend, key) => {
             return (
-                <View>
+                <View key={key}>
                     <TouchableOpacity key={friend.friend_user_id} onPress={() => {
                         this._pushMessage(friend)
                     }}>
@@ -226,7 +226,7 @@ export default class RecieveMessage extends React.Component {
             return true
         }).map((friend, key) => {
             return (
-                <View>
+                <View key={key}>
                     <TouchableOpacity key={key} onPress={() => {
                         this._pushMessage(friend)
                     }}>
