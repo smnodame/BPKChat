@@ -11,16 +11,17 @@ import {store} from '../../redux'
 export default class Splash extends React.Component {
     constructor(props) {
         super(props)
-        store.dispatch(navigate(this.props.navigation))
-        setNavigator(this.props.navigation)
+
     }
 
     async componentDidMount() {
         ShareMenu.getSharedText((text :string) => {
             if (text && text.length) {
                 store.dispatch(onRecieveShareMessage(text))
+                setNavigator(this.props.navigation)
             } else {
                 store.dispatch(enterSplash())
+                store.dispatch(navigate(this.props.navigation))
             }
         })
     }

@@ -21,3 +21,7 @@ export function goBack() {
         config.navigator.dispatch(action);
     }
 }
+
+export function dispatch(action) {
+    config.navigator.dispatch(action);
+}

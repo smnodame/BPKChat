@@ -225,6 +225,9 @@ function* signin() {
     while (true) {
         const { payload: { username, password } } = yield take('SIGNIN')
         if(username && password) {
+            AsyncStorage.removeItem('user_id').then(() => {
+                AsyncStorage.setItem('user_id', username)
+            })
             // const res_loginApi = yield call(loginApi, username, password)
             // if(_.get(res_loginApi.data, 'error')) {
             //     yield put(signin_error(res_loginApi.data.error))
@@ -233,10 +236,6 @@ function* signin() {
             // const { data: { token, setting, user } } = res_loginApi
             // yield put(authenticated(token, setting))
             // yield put(signin_error(''))
-
-            AsyncStorage.setItem('user_id', username)
-
-            const navigate = yield select(navigateSelector)
 
             yield put(enterContact())
             continue
@@ -359,7 +358,6 @@ function* enterContactSaga() {
         }
 
         // navigate to app
-        const navigate = yield select(navigateSelector)
         const resetAction = NavigationActions.reset({
             index: 0,
             actions: [
@@ -367,7 +365,14 @@ function* enterContactSaga() {
             ]
         })
         console.log('[enterSplashSaga] navigate to ', nextState)
-        navigate.dispatch(resetAction)
+
+        // use different navigation for avoiding duplicate pointer
+        if(nextState=='RecieveMessage') {
+            NavigationService.dispatch(resetAction)
+        } else {
+            const navigate = yield select(navigateSelector)
+            navigate.dispatch(resetAction)
+        }
     }
 }
 
@@ -441,7 +446,8 @@ function* selectChatSaga() {
             }
 
             // navigate to chat page
-            NavigationService.navigate('Chat')
+            const navigate = yield select(navigateSelector)
+            navigate.navigate('Chat')
         } catch (err) {
             console.log('[selectChatSaga] ', err)
         }
@@ -992,7 +998,7 @@ function* onRecieveShareMessageSaga() {
                 ]
             })
             console.log('[enterSplashSaga] navigate to Login')
-            navigate.dispatch(resetAction)
+            NavigationService.dispatch(resetAction)
             continue
         }
     }

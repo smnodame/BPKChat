@@ -38,7 +38,7 @@ import {Avatar} from '../../components/avatar'
 import {FontAwesome} from '../../assets/icons'
 import { NavigationActions } from 'react-navigation'
 
-import { enterContacts, removeFavorite, addFavorite, showOrHideFriendLists, onLoadMore, onSearchFriend, selectChat } from '../../redux/actions.js'
+import { enterContacts, removeFavorite, addFavorite, showOrHideFriendLists, onLoadMore, onSearchFriend, selectChat, onRecieveShareMessage } from '../../redux/actions.js'
 import {store} from '../../redux'
 import {sendTheMessage, fetchFriendProfile, createNewRoom } from '../../redux/api'
 import {
@@ -280,6 +280,7 @@ export default class RecieveMessage extends React.Component {
     _handlerAfterFinish = async () => {
         // handle after select friend
         if(this.state.isForward) {
+            store.dispatch(onRecieveShareMessage(''))
             store.dispatch(onSearchFriend(''))
             this.props.navigation.dispatch(NavigationActions.back())
         } else {
