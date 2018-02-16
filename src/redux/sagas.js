@@ -79,6 +79,7 @@ import {
     getSharedMessage
 } from './selectors'
 import { start_socket, emit_subscribe, on_message, emit_message, emit_update_friend_chat_list, emit_as_seen } from './socket.js'
+import * as NavigationService from '../services/NavigationService.js'
 
 export const getAuth = () => {
     return AsyncStorage.getItem('user_id').then((user_id) => {
@@ -440,8 +441,7 @@ function* selectChatSaga() {
             }
 
             // navigate to chat page
-            const navigate = yield select(navigateSelector)
-            navigate.navigate('Chat')
+            NavigationService.navigate('Chat')
         } catch (err) {
             console.log('[selectChatSaga] ', err)
         }
