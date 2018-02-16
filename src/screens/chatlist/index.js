@@ -32,7 +32,8 @@ export default class ChatList extends React.Component {
         this.renderHeader = this._renderHeader.bind(this);
         this.renderItem = this._renderItem.bind(this);
         this.state = {
-            data: []
+            data: [],
+            query: ''
         }
     }
 
@@ -40,9 +41,11 @@ export default class ChatList extends React.Component {
         const state = store.getState()
         this.setState({
             chatLists: _.get(state, 'chat.chatLists', []),
+            chatListsClone: _.get(state, 'chat.chatLists', []),
             selectedChatRoomId: _.get(state, 'chat.selectedChatRoomId', ''),
             showPickerModal: _.get(state, 'chat.isShowActionChat', false)
         })
+        this._filter(this.state.query)
     }
 
 	async componentWillMount() {
@@ -67,15 +70,14 @@ export default class ChatList extends React.Component {
     }
 
     _filter(text) {
-        let pattern = new RegExp(text, 'i');
-        let chats = _.filter(this.chats, (chat) => {
-
-            if (chat.withUser.firstName.search(pattern) != -1
-            || chat.withUser.lastName.search(pattern) != -1)
-                return chat;
-        });
-
-        this.setState({data: chats});
+        if(text) {
+            let pattern = new RegExp(text, 'i')
+            let chats = _.filter(this.state.chatLists, (chat) => {
+                if (chat.display_name.search(pattern) != -1)
+                    return chat
+            })
+            this.setState({chatListsClone: chats})
+        }
     }
 
     _renderSeparator() {
@@ -89,7 +91,12 @@ export default class ChatList extends React.Component {
             <View style={styles.searchContainer}>
                 <RkTextInput autoCapitalize='none'
                     autoCorrect={false}
-                    onChange={(event) => this._filter(event.nativeEvent.text)}
+                    onChange={(event) => {
+                        this.setState({
+                            query: event.nativeEvent.text
+                        })
+                        this._filter(event.nativeEvent.text)
+                    }}
                     label={<RkText rkType='awesome'>{FontAwesome.search}</RkText>}
                     rkType='row'
                     placeholder='Search'/>
@@ -133,7 +140,7 @@ export default class ChatList extends React.Component {
     <View>
         <FlatList
           style={styles.root}
-          data={this.state.chatLists}
+          data={this.state.chatListsClone}
           extraData={this.state}
           ListHeaderComponent={this.renderHeader}
           ItemSeparatorComponent={this._renderSeparator}

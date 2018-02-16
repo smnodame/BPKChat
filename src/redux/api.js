@@ -20,7 +20,7 @@ export const fetchMyProfile = () => {
 
 export const fetchChatLists = () => {
     return getAuth().then((user_id) => {
-        return axios.get(`http://itsmartone.com/bpk_connect/api/chat/chat_list?token=asdf1234aaa&user_id=${user_id}&start=0&limit=50`)
+        return axios.get(`http://itsmartone.com/bpk_connect/api/chat/chat_list?token=asdf1234aaa&user_id=${user_id}&start=0&limit=1000`)
     })
 }
 
