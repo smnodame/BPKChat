@@ -75,7 +75,8 @@ export default class RecieveMessage extends React.Component {
                 group: 0,
                 department: 0
             },
-            filter: ''
+            filter: '',
+            isForward: _.get(this.props.navigation.state.params, 'isForward', false)
         }
 
         this.renderHeader = this._renderHeader.bind(this)
@@ -273,7 +274,17 @@ export default class RecieveMessage extends React.Component {
             emit_update_friend_chat_list(this.state.user.user_id, chatInfo.friend_user_id)
         }
 
-        BackAndroid.exitApp()
+        this._handlerAfterFinish()
+    }
+
+    _handlerAfterFinish = async () => {
+        // handle after select friend
+        if(this.state.isForward) {
+            store.dispatch(onSearchFriend(''))
+            this.props.navigation.dispatch(NavigationActions.back())
+        } else {
+            BackAndroid.exitApp()
+        }
     }
 
     render() {
@@ -282,8 +293,7 @@ export default class RecieveMessage extends React.Component {
             <Header style={{ backgroundColor: '#3b5998' }}>
                 <Left>
                     <Button transparent onPress={() => {
-                        store.dispatch(onSearchFriend(''))
-                        this.props.navigation.dispatch(NavigationActions.back())
+                        this._handlerAfterFinish()
                     }}>
                         <Icon style={{ color: 'white' }} name="md-arrow-round-back" />
                     </Button>

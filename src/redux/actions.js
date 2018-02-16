@@ -366,3 +366,10 @@ export const sharedMessage = (txt) => ({
         sharedMessage: txt
     }
 })
+
+export const onForward = (data) => ({
+    type: 'ON_FORWARD',
+    payload: {
+        data
+    }
+})

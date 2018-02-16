@@ -63,7 +63,8 @@ import {
     onLoadMoreOptionMessage,
     onInviteFriendToGroupWithOpenCase,
     onFetchMessageLists,
-    isShowSearchBar
+    isShowSearchBar,
+    onForward
 } from '../../redux/actions'
 import {sendTheMessage, fetchFriendProfile } from '../../redux/api'
 import {
@@ -732,7 +733,7 @@ export default class Chat extends React.Component {
                   </Button>
                   <Button block light onPress={() => {
                       this.setState({ showPickerModal: false })
-                      this.props.navigation.navigate('RecieveMessage')
+                      store.dispatch(onForward(this.state.copiedText))
                   }}>
                       <Text>FORWORD</Text>
                   </Button>

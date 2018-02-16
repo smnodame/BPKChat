@@ -998,6 +998,20 @@ function* onRecieveShareMessageSaga() {
     }
 }
 
+function* onForwardSaga() {
+    while (true) {
+        const { payload: { data }} = yield take('ON_FORWARD')
+
+        yield put(sharedMessage(data))
+
+        // navigate to chat page
+        const navigate = yield select(navigateSelector)
+        navigate.navigate('RecieveMessage', {
+            isForward: true
+        })
+    }
+}
+
 export function* rootSaga() {
     yield all([
         signin(),
@@ -1033,6 +1047,7 @@ export function* rootSaga() {
         onInviteFriendToGroupWithOpenCaseSaga(),
         enterSplashSaga(),
         onFetchMessageListsSaga(),
-        onRecieveShareMessageSaga()
+        onRecieveShareMessageSaga(),
+        onForwardSaga()
     ])
 }
