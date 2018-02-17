@@ -931,12 +931,7 @@ function* onInviteFriendToGroupWithOpenCaseSaga() {
             const navigate = yield select(navigateSelector)
             navigate.dispatch(NavigationActions.back())
 
-            yield put(selectChat({
-                chat_room_id: newChatRoomId,
-                display_name: displayName,
-                chat_room_type: 'G',
-                friend_user_ids: `${userInfo.user_id},${chatInfo.friend_user_id}${selected_invite_friend_user_id}`
-            }))
+            yield put(selectChat(resFetchChatInfo.data.data))
 
             // update own
             emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
