@@ -60,7 +60,8 @@ import {
     friendInGroup,
     updateProfile,
     inviteFriendToGroupWithOpenCase,
-    createNewRoom
+    createNewRoom,
+    updatePictureAuth
 } from './api'
 import {
     getFriendGroups,
@@ -862,7 +863,9 @@ function* updateProfileSaga() {
         const { payload: { profile, pic_base64 }} = yield take('ON_UPDATE_PROFILE')
         try {
             const userInfo = yield select(getUserInfo)
-
+            console.log('=================')
+            console.log(pic_base64)
+            console.log(profile)
             // update profile with api
             yield call(updateProfile, profile)
 
