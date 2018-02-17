@@ -26,7 +26,8 @@ import {
     enterContact,
     enterSplash,
     onFetchMessageLists,
-    sharedMessage
+    sharedMessage,
+    onUpdateGroupLists
 } from './actions'
 import { NavigationActions } from 'react-navigation'
 import {
@@ -729,6 +730,9 @@ function* inviteFriendToGroupSaga() {
                 // update chat list
                 emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
                 emit_update_friend_chat_list(userInfo.user_id, chatInfo.friend_user_id)
+
+                // update friend groups
+                yield put(onUpdateGroupLists())
             }
 
             continue
@@ -790,6 +794,9 @@ function* onExitTheGroupSaga() {
             // update chat list
             const resFetchChatLists = yield call(fetchChatLists)
             yield put(chatLists(_.get(resFetchChatLists, 'data.data', [])))
+
+            // update friend groups
+            yield put(onUpdateGroupLists())
         } catch (err) {
             console.log('[onExitTheGroupSaga] ', err)
         }
@@ -938,6 +945,9 @@ function* onInviteFriendToGroupWithOpenCaseSaga() {
             // update chat list
             emit_update_friend_chat_list(userInfo.user_id, selected_invite_friend_user_id)
             emit_update_friend_chat_list(userInfo.user_id, chatInfo.friend_user_id)
+
+            // update friend groups
+            yield put(onUpdateGroupLists())
             continue
         } catch (err) {
             console.log('[onInviteFriendToGroupWithOpenCaseSaga] ', err)
@@ -1012,6 +1022,21 @@ function* onForwardSaga() {
     }
 }
 
+function* onUpdateGroupListsSaga() {
+    while (true) {
+        yield take('ON_UPDATE_GROUP_LISTS')
+        const friendLists = yield select(getFriends)
+        const friendInGroup = yield call(fetchFriendLists, 'group', friendLists.group.length, 0, '')
+        friendLists.group = _.get(friendInGroup, 'data.data', [])
+
+        yield put(friends(friendLists))
+
+        // fetch number of friend lists
+        const numberOfFriend = yield call(fetchNumberOfGroup, '')
+        yield put(numberOfFriendLists(numberOfFriend))
+    }
+}
+
 export function* rootSaga() {
     yield all([
         signin(),
@@ -1048,6 +1073,7 @@ export function* rootSaga() {
         enterSplashSaga(),
         onFetchMessageListsSaga(),
         onRecieveShareMessageSaga(),
-        onForwardSaga()
+        onForwardSaga(),
+        onUpdateGroupListsSaga()
     ])
 }

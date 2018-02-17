@@ -22,6 +22,7 @@ import {store} from '../../redux'
 import axios from 'axios'
 import RNFetchBlob from 'react-native-fetch-blob'
 import { updatePicture, updateGroupSetting } from '../../redux/api'
+import { onUpdateGroupLists } from '../../redux/actions'
 
 const fs = RNFetchBlob.fs
 
@@ -162,6 +163,7 @@ export default class GroupSetting extends React.Component {
       ))
       this.props.navigation.dispatch(NavigationActions.back())
 
+    store.dispatch(onUpdateGroupLists())
   }
 
   render() {

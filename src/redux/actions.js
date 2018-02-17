@@ -373,3 +373,7 @@ export const onForward = (data) => ({
         data
     }
 })
+
+export const onUpdateGroupLists = () => ({
+    type: 'ON_UPDATE_GROUP_LISTS'
+})
