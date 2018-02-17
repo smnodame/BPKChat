@@ -265,7 +265,7 @@ export default class RecieveMessage extends React.Component {
         emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
 
         // update every friends in group
-        if(chatInfo.chat_room_type == 'G') {
+        if(chatInfo.chat_room_type == 'G' || chatInfo.chat_room_type == 'C') {
             const friend_user_ids = chatInfo.friend_user_ids.split(',')
             friend_user_ids.forEach((friend_user_id) => {
                 emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)

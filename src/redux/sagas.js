@@ -700,7 +700,7 @@ function* inviteFriendToGroupSaga() {
 
             const chatInfo = yield select(getChatInfo)
 
-            if(chatInfo.chat_room_type == 'G') {
+            if(chatInfo.chat_room_type == 'G' || chatInfo.chat_room_type == 'C') {
                 inviteFriendLists.data.forEach((friend, index) => {
                     if(inviteFriendLists.data[index].friend_user_id == friend_user_id) {
                         inviteFriendLists.data[index].status_quote = 'Invited. (Tap to remove)'
@@ -746,7 +746,7 @@ function* removeFriendFromGroupSaga() {
             const userInfo = yield select(getUserInfo)
             const chatInfo = yield select(getChatInfo)
 
-            if(chatInfo.chat_room_type == 'G') {
+            if(chatInfo.chat_room_type == 'G' || chatInfo.chat_room_type == 'C') {
                 if (!is_from_member_modal) {
                     const inviteFriendLists = yield select(getInviteFriendLists)
                     inviteFriendLists.data.forEach((friend, index) => {

@@ -169,7 +169,7 @@ export default class Chat extends React.Component {
             }
         }
         let options = []
-        if(_.get(state, 'chat.chatInfo').chat_room_type == 'G') {
+        if(_.get(state, 'chat.chatInfo').chat_room_type == 'G' || _.get(state, 'chat.chatInfo').chat_room_type == 'C') {
             options = options.concat([inviteAction, friendsAction, searchAction, settingAction, existGroupAction])
         } else {
             options = options.concat([inviteAction, openCaseAction, searchAction])
@@ -413,7 +413,7 @@ export default class Chat extends React.Component {
         emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
 
         // update every friends in group
-        if(this.state.chatInfo.chat_room_type == 'G') {
+        if(this.state.chatInfo.chat_room_type == 'G' || this.state.chatInfo.chat_room_type == 'C') {
             const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
             friend_user_ids.forEach((friend_user_id) => {
                 emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
@@ -619,7 +619,7 @@ export default class Chat extends React.Component {
                                                      store.dispatch(onInviteFriendToGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
                                                  }
 
-                                                if(this.state.chatInfo.chat_room_type != 'G') {
+                                                if(this.state.chatInfo.chat_room_type == 'N') {
                                                      this.setState({
                                                          showInviteModal: false
                                                      })
