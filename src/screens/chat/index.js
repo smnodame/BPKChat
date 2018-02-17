@@ -105,6 +105,10 @@ export default class Chat extends React.Component {
         this._renderItem = this._renderItem.bind(this)
     }
 
+    componentWillUnmount() {
+        this.unsubscribe()
+    }
+
     updateData = () => {
         const state = store.getState()
         const inviteAction = {
@@ -199,7 +203,7 @@ export default class Chat extends React.Component {
 
 	async componentWillMount() {
         this.updateData()
-		store.subscribe(() => {
+		this.unsubscribe = store.subscribe(() => {
             this.updateData()
 		})
     }

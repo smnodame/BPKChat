@@ -108,11 +108,15 @@ export default class RecieveMessage extends React.Component {
 
 	async componentWillMount() {
         this.updateData()
-		store.subscribe(() => {
+		this.unsubscribe = store.subscribe(() => {
             this.updateData()
 		})
     }
 
+    componentWillUnmount() {
+  		this.unsubscribe()
+	}
+    
     _renderHeader() {
         return (
             <View style={styles.searchContainer}>

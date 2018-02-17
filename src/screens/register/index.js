@@ -65,11 +65,15 @@ export default class Signup extends React.Component {
 
 	async componentWillMount() {
 		this.updateState()
-		store.subscribe(() => {
+		this.unsubscribe = store.subscribe(() => {
 			this.updateState()
 		})
     }
 
+	componentWillUnmount() {
+  		this.unsubscribe()
+	}
+	
 	async onSignup() {
 		store.dispatch(
 			signup(

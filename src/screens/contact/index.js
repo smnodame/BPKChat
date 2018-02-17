@@ -59,7 +59,11 @@ export default class Contacts extends React.Component {
     }
 
     saveGroupSetting = () => {
-        
+
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe()
     }
 
     updateData = () => {
@@ -89,7 +93,7 @@ export default class Contacts extends React.Component {
 
 	async componentWillMount() {
         this.updateData()
-		store.subscribe(() => {
+		this.unsubscribe = store.subscribe(() => {
             this.updateData()
 		})
     }

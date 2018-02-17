@@ -50,9 +50,13 @@ export default class ChatList extends React.Component {
 
 	async componentWillMount() {
         this.updateData()
-		store.subscribe(() => {
+		this.unsubscribe = store.subscribe(() => {
             this.updateData()
 		})
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe()
     }
 
     isBlocked = () => {

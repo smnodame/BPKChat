@@ -39,6 +39,10 @@ export default class GroupSetting extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+      this.unsubscribe()
+  }
+
   updateData = () => {
       const state = store.getState()
       this.setState({
@@ -149,7 +153,7 @@ export default class GroupSetting extends React.Component {
 
       await updateGroupSetting(groupData)
 
-      store.dispatch(onUpdateGroupSetting({
+      this.unsubscribe = store.dispatch(onUpdateGroupSetting({
           wall_pic_url: this.state.wall_pic_url,
           profile_pic_url: this.state.profile_pic_url,
           hn: this.state.hn,

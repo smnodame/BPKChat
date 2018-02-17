@@ -52,9 +52,13 @@ export default class ProfileSettings extends React.Component {
 
   async componentWillMount() {
       this.updateData()
-      store.subscribe(() => {
+      this.unsubscribe = store.subscribe(() => {
           this.updateData()
       })
+  }
+
+  componentWillUnmount() {
+      this.unsubscribe()
   }
 
   selectProfileImage = () => {

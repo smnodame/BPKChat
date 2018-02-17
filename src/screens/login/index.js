@@ -56,12 +56,16 @@ export default class Login extends React.Component {
     }
 
 	async componentWillMount() {
-        store.subscribe(() => {
+        this.unsubscribe = store.subscribe(() => {
             const state = store.getState()
 			this.setState({
 				error: state.user.error
 			})
         })
+    }
+
+	componentWillUnmount() {
+        this.unsubscribe()
     }
 
 	openControlPanel = () => {
