@@ -296,21 +296,28 @@ export default class Chat extends React.Component {
             {!inMessage && renderDate(info.item.create_date)}
           {
               info.item.message_type=='1' && <View style={[styles.balloon, {backgroundColor}]}>
-                  <TouchableWithoutFeedback onLongPress={() => this.setState({ showPickerModal: true, copiedText: info.item.content, selectedMessageId: info.item.chat_message_id })}>
+                  <TouchableWithoutFeedback onLongPress={() => this.setState({ showPickerModal: true, copiedText: info.item.content, selectedMessageId: info.item.chat_message_id, selectedMessageType: info.item.message_type })}>
                       <RkText rkType='primary2 mediumLine chat'>{info.item.content}</RkText>
                   </TouchableWithoutFeedback>
               </View>
           }
           {
               info.item.message_type=='2' && <TouchableWithoutFeedback
-                  onPress={() => {
-                      this.setState({
-                          selectedPhotoUrl: info.item.object_url
-                      })
-                      this.setState({
-                          showImageView: true
-                      })
-                  }}
+                onLongPress={() =>
+                    this.setState({
+                        showPickerModal: true,
+                        selectedMessageId: info.item.chat_message_id,
+                        selectedMessageType: info.item.message_type
+                    })
+                }
+                onPress={() => {
+                    this.setState({
+                        selectedPhotoUrl: info.item.object_url
+                    })
+                    this.setState({
+                        showImageView: true
+                    })
+                }}
               >
                   <Image
                       style={{ height: 120, width: 120 }}
@@ -320,37 +327,63 @@ export default class Chat extends React.Component {
               </TouchableWithoutFeedback>
           }
           {
-              info.item.message_type=='4' && <Image
-                  style={{ height: 100, width: 100 }}
-                  source={{uri: info.item.object_url }}
-              />
+              info.item.message_type=='4' && <TouchableWithoutFeedback
+                  onLongPress={() =>
+                      this.setState({
+                          showPickerModal: true,
+                          selectedMessageId: info.item.chat_message_id,
+                          selectedMessageType: info.item.message_type
+                      })
+                  }
+              >
+                  <Image
+                      style={{ height: 100, width: 100 }}
+                      source={{uri: info.item.object_url }}
+                  />
+              </TouchableWithoutFeedback>
           }
           {
-              info.item.message_type=='3' &&
-              <View style={[styles.balloon, { width: 150, height: 100 }, {backgroundColor}, { padding: 5 }]}>
-                  <View style={{ flex: 1, flexDirection: 'column' }}>
-                      <View style={{ flex: 1, borderColor: '#C0C0C0', borderBottomWidth: 0.5, marginBottom: 2, justifyContent: 'center', alignItems: 'center' }}>
-                          <Text style={{ color: '#C0C0C0', fontSize: 20 }}>10:50</Text>
-                      </View>
-                      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                          <View style={{ flex: 1, borderColor: '#C0C0C0', borderRightWidth: 0.5, justifyContent: 'center', alignItems: 'center' }}>
-                              <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
-                                  <Icon name='md-play' style={{ color: '#C0C0C0' }}/>
-                              </Button>
+              info.item.message_type=='3' &&  <TouchableWithoutFeedback
+                  onLongPress={() =>
+                      this.setState({
+                          showPickerModal: true,
+                          selectedMessageId: info.item.chat_message_id,
+                          selectedMessageType: info.item.message_type
+                      })
+                  }
+              >
+                  <View style={[styles.balloon, { width: 150, height: 100 }, {backgroundColor}, { padding: 5 }]}>
+                      <View style={{ flex: 1, flexDirection: 'column' }}>
+                          <View style={{ flex: 1, borderColor: '#C0C0C0', borderBottomWidth: 0.5, marginBottom: 2, justifyContent: 'center', alignItems: 'center' }}>
+                              <Text style={{ color: '#C0C0C0', fontSize: 20 }}>10:50</Text>
                           </View>
-                          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                              <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
-                                  <Icon name='md-download' style={{ color: '#C0C0C0' }}/>
-                              </Button>
+                          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                              <View style={{ flex: 1, borderColor: '#C0C0C0', borderRightWidth: 0.5, justifyContent: 'center', alignItems: 'center' }}>
+                                  <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
+                                      <Icon name='md-play' style={{ color: '#C0C0C0' }}/>
+                                  </Button>
+                              </View>
+                              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                  <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
+                                      <Icon name='md-download' style={{ color: '#C0C0C0' }}/>
+                                  </Button>
+                              </View>
                           </View>
                       </View>
                   </View>
-              </View>
-
+              </TouchableWithoutFeedback>
           }
           {
               info.item.message_type=='5' && <View style={[styles.balloon, {backgroundColor}]}>
                   <TouchableWithoutFeedback
+                      onLongPress={() =>
+                          this.setState({
+                              showPickerModal: true,
+                              selectedMessageId: info.item.chat_message_id,
+                              selectedMessageType: info.item.message_type
+                          })
+                      }
+
                       onPress={() => {
                           const url = info.item.object_url
                           const arr = url.split('.')
@@ -725,21 +758,23 @@ export default class Chat extends React.Component {
                     borderRadius: 4,
                     borderColor: 'rgba(0, 0, 0, 0.1)',
                 }}>
-                  <Button
-                      block
-                      light
-                      onPress={() => {
-                          Clipboard.setString(this.state.copiedText)
-                          this.setState({ showPickerModal: false })
-                      }}
-                  >
-                      <Text>COPY</Text>
-                  </Button>
+                  {
+                      this.state.selectedMessageType == '1' && <Button
+                          block
+                          light
+                          onPress={() => {
+                              Clipboard.setString(this.state.copiedText)
+                              this.setState({ showPickerModal: false })
+                          }}
+                      >
+                          <Text>COPY</Text>
+                      </Button>
+                  }
                   <Button block light>
                       <Text>SAVE IN KEEP</Text>
                   </Button>
                   <Button block light>
-                      <Text>DELETE MESSEGES</Text>
+                      <Text>DELETE</Text>
                   </Button>
                   <Button block light onPress={() => {
                       this.setState({ showPickerModal: false })
@@ -747,13 +782,15 @@ export default class Chat extends React.Component {
                   }}>
                       <Text>FORWORD</Text>
                   </Button>
-                  <Button block light onPress={() => {
-                      Share.share({
-                          message: this.state.copiedText
-                      }).then(result => console.log(result)).catch(errorMsg => console.log(errorMsg));
-                  }}>
-                      <Text>SHARE</Text>
-                  </Button>
+                  {
+                      this.state.selectedMessageType == '1' && <Button block light onPress={() => {
+                          Share.share({
+                              message: this.state.copiedText
+                          }).then(result => console.log(result)).catch(errorMsg => console.log(errorMsg));
+                      }}>
+                          <Text>SHARE</Text>
+                      </Button>
+                  }
                 </View>
             </Modal>
             <RkAvoidKeyboard style={styles.container} onResponderRelease={(event) => {
