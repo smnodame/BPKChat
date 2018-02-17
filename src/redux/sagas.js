@@ -911,11 +911,12 @@ function* onInviteFriendToGroupWithOpenCaseSaga() {
         const { payload: { chat_room_id, selected_invite_friend_user_id, selected_option_message_id }} = yield take('ON_INVITE_FRIEND_TO_GROUP_WITH_OPEN_CASE')
         try {
             const userInfo = yield select(getUserInfo)
+            const chatInfo = yield select(getChatInfo)
 
             const resInviteFriendToGroup = yield call(inviteFriendToGroupWithOpenCase, {
                 chat_room_id: chat_room_id,
                 user_id: userInfo.user_id,
-                friend_user_id: selected_invite_friend_user_id,
+                friend_user_id: chatInfo.friend_user_id,
                 chat_message_ids: selected_option_message_id
             })
             const newChatRoomId = resInviteFriendToGroup.data.new_chat_room_id
@@ -923,10 +924,8 @@ function* onInviteFriendToGroupWithOpenCaseSaga() {
 
             const resFetchChatInfo = yield call(fetchChatInfo, newChatRoomId)
 
-            const chatInfo = yield select(getChatInfo)
-
             // add owner friend to new group room
-            yield call(inviteFriendToGroup, newChatRoomId, chatInfo.friend_user_id)
+            yield call(inviteFriendToGroup, newChatRoomId, selected_invite_friend_user_id)
 
             const navigate = yield select(navigateSelector)
             navigate.dispatch(NavigationActions.back())
