@@ -716,6 +716,35 @@ function* inviteFriendToGroupSaga() {
 
                 // update chat list
                 emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
+
+                const split = chatInfo.friend_user_ids.split(',')
+                split.push(`${friend_user_id}`)
+                const newFriendUserIds = split.join(',')
+
+                chatInfo.friend_user_ids = newFriendUserIds
+                yield put(selectedChatInfo(chatInfo))
+
+                // update friend_user_ids in friend lists
+                const friendLists = yield select(getFriends)
+                friendLists.group = friendLists.group.map((friend) => {
+                    if(chatInfo.chat_room_id == friend.chat_room_id) {
+                        friend.friend_user_ids = newFriendUserIds
+                    }
+                    return friend
+                })
+
+                yield put(friends(friendLists))
+
+                // update friend_user_ids in chat lists
+                const chatListsFromStore = yield select(getChatLists)
+                const chatListsForSaveToStore = chatListsFromStore.map((chat) => {
+                    if(chatInfo.chat_room_id == chat.chat_room_id) {
+                        chat.friend_user_ids = newFriendUserIds
+                    }
+                    return chat
+                })
+
+                yield put(chatLists(chatListsForSaveToStore))
             } else {
                 const navigate = yield select(navigateSelector)
                 navigate.dispatch(NavigationActions.back())
@@ -773,6 +802,36 @@ function* removeFriendFromGroupSaga() {
                 emit_update_friend_chat_list(userInfo.user_id, userInfo.user_id)
                 // update chat list
                 emit_update_friend_chat_list(userInfo.user_id, friend_user_id)
+
+                const split = chatInfo.friend_user_ids.split(',')
+                const filter = split.filter((id) => id != friend_user_id)
+                const join = filter.join(',')
+                const newFriendUserIds = join
+
+                chatInfo.friend_user_ids = newFriendUserIds
+                yield put(selectedChatInfo(chatInfo))
+
+                // update friend_user_ids in friend lists
+                const friendLists = yield select(getFriends)
+                friendLists.group = friendLists.group.map((friend) => {
+                    if(chatInfo.chat_room_id == friend.chat_room_id) {
+                        friend.friend_user_ids = newFriendUserIds
+                    }
+                    return friend
+                })
+
+                yield put(friends(friendLists))
+
+                // update friend_user_ids in chat lists
+                const chatListsFromStore = yield select(getChatLists)
+                const chatListsForSaveToStore = chatListsFromStore.map((chat) => {
+                    if(chatInfo.chat_room_id == chat.chat_room_id) {
+                        chat.friend_user_ids = newFriendUserIds
+                    }
+                    return chat
+                })
+
+                yield put(chatLists(chatListsForSaveToStore))
             }
         } catch (err) {
             console.log('[removeFriendFromGroupSaga] ', err)
@@ -863,9 +922,7 @@ function* updateProfileSaga() {
         const { payload: { profile, pic_base64 }} = yield take('ON_UPDATE_PROFILE')
         try {
             const userInfo = yield select(getUserInfo)
-            console.log('=================')
-            console.log(pic_base64)
-            console.log(profile)
+
             // update profile with api
             yield call(updateProfile, profile)
 
