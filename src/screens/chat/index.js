@@ -64,7 +64,8 @@ import {
     onInviteFriendToGroupWithOpenCase,
     onFetchMessageLists,
     isShowSearchBar,
-    onForward
+    onForward,
+    inviteFriends
 } from '../../redux/actions'
 import {sendTheMessage, fetchFriendProfile } from '../../redux/api'
 import {
@@ -497,6 +498,9 @@ export default class Chat extends React.Component {
                     <Button transparent onPress={() => {
                         emit_unsubscribe(this.state.chatInfo.chat_room_id)
                         store.dispatch(isShowSearchBar(false))
+                        store.dispatch(inviteFriends({
+                            data: []
+                        }))
                         this.props.navigation.dispatch(NavigationActions.back())
                     }}>
                         <Icon style={{ color: 'white' }} name="md-arrow-round-back" />
