@@ -150,14 +150,20 @@ export default class Chat extends React.Component {
             icon: 'md-settings',
             name: 'Setting',
             event: () => {
-                fetchFriendProfile(this.state.chatInfo.friend_user_id).then((res) => {
-                    const friendInfo = res.data.data
-                    this.props.navigation.navigate('GroupSetting', {
-                        selectedFriend: friendInfo,
-                        saveGroupSetting: () => {
+                this.props.navigation.navigate('GroupSetting', {
+                    selectedFriend: {
+                        display_name: _.get(this.state.chatInfo, 'display_name', ''),
+                        wall_pic_url: _.get(this.state.chatInfo, 'friend_wall_pic_url', ''),
+                        profile_pic_url: _.get(this.state.chatInfo, 'profile_pic_url', ''),
+                        c_patient_name: _.get(this.state.chatInfo, 'patient_name', ''),
+                        c_hn: _.get(this.state.chatInfo, 'hn', ''),
+                        c_description: _.get(this.state.chatInfo, 'description', ''),
+                        chat_room_id: _.get(this.state.chatInfo, 'chat_room_id', ''),
+                        chat_room_type: _.get(this.state.chatInfo, 'chat_room_type', 'Z')
+                    },
+                    saveGroupSetting: () => {
 
-                        }
-                    })
+                    }
                 })
             }
         }
