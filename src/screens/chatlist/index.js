@@ -124,9 +124,6 @@ export default class ChatList extends React.Component {
                         </View>
                         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
                             <RkText style={{ width: '70%' }} numberOfLines={2} rkType='primary3 mediumLine'>{ info.last_message }</RkText>
-                            <Badge warning>
-                                <Text>2</Text>
-                            </Badge>
                         </View>
 
                     </View>

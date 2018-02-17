@@ -176,8 +176,7 @@ export default class App extends Component<{}> {
                         <Icon style={{ color: 'white' }} name="md-contacts" />
                         <Text style={{ color: 'white' }}>Contacts</Text>
                       </Button>
-                      <Button badge vertical onPress={() => this.onTabClick('Chats')}>
-                        <Badge ><Text>51</Text></Badge>
+                      <Button vertical onPress={() => this.onTabClick('Chats')}>
                         <Icon style={{ color: 'white' }} name="md-chatboxes" />
                         <Text style={{ color: 'white' }}>Chat Lists</Text>
                       </Button>
