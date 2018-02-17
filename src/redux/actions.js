@@ -377,3 +377,10 @@ export const onForward = (data) => ({
 export const onUpdateGroupLists = () => ({
     type: 'ON_UPDATE_GROUP_LISTS'
 })
+
+export const onUpdateGroupSetting = (data) => ({
+    type: 'ON_UPDATE_GROUP_SETTING',
+    payload: {
+        data
+    }
+})

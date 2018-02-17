@@ -22,7 +22,7 @@ import {store} from '../../redux'
 import axios from 'axios'
 import RNFetchBlob from 'react-native-fetch-blob'
 import { updatePicture, updateGroupSetting } from '../../redux/api'
-import { onUpdateGroupLists } from '../../redux/actions'
+import { onUpdateGroupLists, onUpdateGroupSetting } from '../../redux/actions'
 
 const fs = RNFetchBlob.fs
 
@@ -149,21 +149,19 @@ export default class GroupSetting extends React.Component {
 
       await updateGroupSetting(groupData)
 
-      const saveGroupSetting = _.get(this.props.navigation.state.params, 'saveGroupSetting')
-      saveGroupSetting(Object.assign(
-          this.props.navigation.state.params.selectedFriend,
-          {
-              wall_pic_url: this.state.wall_pic_url,
-              profile_pic_url: this.state.profile_pic_url,
-              c_hn: this.state.hn,
-              c_patient_name: this.state.patient_name,
-              c_description: this.state.description,
-              display_name: this.state.display_name
-          }
-      ))
+      store.dispatch(onUpdateGroupSetting({
+          wall_pic_url: this.state.wall_pic_url,
+          profile_pic_url: this.state.profile_pic_url,
+          hn: this.state.hn,
+          patient_name: this.state.patient_name,
+          description: this.state.description,
+          display_name: this.state.display_name,
+          chat_room_id: this.state.chat_room_id,
+          chat_room_type: this.state.chat_room_type
+      }))
+
       this.props.navigation.dispatch(NavigationActions.back())
 
-    store.dispatch(onUpdateGroupLists())
   }
 
   render() {

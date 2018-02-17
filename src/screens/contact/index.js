@@ -58,10 +58,8 @@ export default class Contacts extends React.Component {
         this.renderHeader = this._renderHeader.bind(this)
     }
 
-    saveGroupSetting = (selectedFriend) => {
-        this.setState({
-            selectedFriend: selectedFriend
-        })
+    saveGroupSetting = () => {
+        
     }
 
     updateData = () => {

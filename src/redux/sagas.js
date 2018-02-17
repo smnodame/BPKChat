@@ -1037,6 +1037,44 @@ function* onUpdateGroupListsSaga() {
     }
 }
 
+function* onUpdateGroupSettingSaga() {
+    while (true) {
+        const { payload: { data }} = yield take('ON_UPDATE_GROUP_SETTING')
+
+        // update in friend lists
+        const friendLists = yield select(getFriends)
+        friendLists.group = friendLists.group.map((friend) => {
+            if(data.chat_room_id == friend.chat_room_id) {
+                friend.wall_pic_url = data.wall_pic_url
+                friend.profile_pic_url = data.profile_pic_url
+                friend.c_hn = data.hn
+                friend.c_patient_name = data.patient_name
+                friend.c_description = data.description
+                friend.display_name = data.display_name
+            }
+            return friend
+        })
+
+        yield put(friends(friendLists))
+
+        // update in chat lists
+        const chatListsFromStore = yield select(getChatLists)
+        const chatListsForSaveToStore = chatListsFromStore.map((chat) => {
+            if(data.chat_room_id == chat.chat_room_id) {
+                chat.friend_wall_pic_url = data.wall_pic_url
+                chat.profile_pic_url = data.profile_pic_url
+                chat.hn = data.hn
+                chat.patient_name = data.patient_name
+                chat.description = data.description
+                chat.display_name = data.display_name
+            }
+            return chat
+        })
+
+        yield put(chatLists(chatListsForSaveToStore))
+    }
+}
+
 export function* rootSaga() {
     yield all([
         signin(),
@@ -1074,6 +1112,7 @@ export function* rootSaga() {
         onFetchMessageListsSaga(),
         onRecieveShareMessageSaga(),
         onForwardSaga(),
-        onUpdateGroupListsSaga()
+        onUpdateGroupListsSaga(),
+        onUpdateGroupSettingSaga()
     ])
 }
