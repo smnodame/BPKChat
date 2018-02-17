@@ -118,10 +118,10 @@ export const fetchChat = (chatRoomId, topChatMessageId = '', after_chat_message_
     })
 }
 
-export const sendTheMessage = (chat_room_id, message_type, content, sticker_path, image_base64) => {
+export const sendTheMessage = (chat_room_id, message_type, content, sticker_path, image_base64, copy_chat_message_id = '') => {
     return getAuth().then((user_id) => {
         return axios.post(`http://itsmartone.com/bpk_connect/api/message/send?token=asdf1234aaa` ,
-            { user_id: user_id, chat_room_id, message_type, content, sticker_path, image_base64 }
+            { user_id: user_id, chat_room_id, message_type, content, sticker_path, image_base64, copy_chat_message_id }
         )
     })
 }

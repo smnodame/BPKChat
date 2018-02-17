@@ -296,7 +296,7 @@ export default class Chat extends React.Component {
             {!inMessage && renderDate(info.item.create_date)}
           {
               info.item.message_type=='1' && <View style={[styles.balloon, {backgroundColor}]}>
-                  <TouchableWithoutFeedback onLongPress={() => this.setState({ showPickerModal: true, copiedText: info.item.content })}>
+                  <TouchableWithoutFeedback onLongPress={() => this.setState({ showPickerModal: true, copiedText: info.item.content, selectedMessageId: info.item.chat_message_id })}>
                       <RkText rkType='primary2 mediumLine chat'>{info.item.content}</RkText>
                   </TouchableWithoutFeedback>
               </View>
@@ -743,7 +743,7 @@ export default class Chat extends React.Component {
                   </Button>
                   <Button block light onPress={() => {
                       this.setState({ showPickerModal: false })
-                      store.dispatch(onForward(this.state.copiedText))
+                      store.dispatch(onForward(this.state.selectedMessageId))
                   }}>
                       <Text>FORWORD</Text>
                   </Button>

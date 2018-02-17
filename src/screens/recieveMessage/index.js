@@ -38,7 +38,7 @@ import {Avatar} from '../../components/avatar'
 import {FontAwesome} from '../../assets/icons'
 import { NavigationActions } from 'react-navigation'
 
-import { enterContacts, removeFavorite, addFavorite, showOrHideFriendLists, onLoadMore, onSearchFriend, selectChat, onRecieveShareMessage } from '../../redux/actions.js'
+import { enterContacts, removeFavorite, addFavorite, showOrHideFriendLists, onLoadMore, onSearchFriend, selectChat, onRecieveShareMessage, sharedMessage } from '../../redux/actions.js'
 import {store} from '../../redux'
 import {sendTheMessage, fetchFriendProfile, createNewRoom } from '../../redux/api'
 import {
@@ -252,14 +252,15 @@ export default class RecieveMessage extends React.Component {
             chatInfo.chat_room_id = resCreateNewRoom.data.data.chat_room_id
         }
 
-        const resSendTheMessage = await sendTheMessage(chatInfo.chat_room_id, '1', this.state.sharedMessage, '', '')
 
-        if(_.get(resSendTheMessage.data, 'error')) {
-            return;
+        if(this.state.isForward) {
+            await sendTheMessage(chatInfo.chat_room_id, '', '', '', '', this.state.sharedMessage)
+        } else {
+            await sendTheMessage(chatInfo.chat_room_id, '1', this.state.sharedMessage, '', '')
         }
 
         // update message for everyone in group
-        emit_message(this.state.sharedMessage, chatInfo.chat_room_id)
+        emit_message('forward the message', chatInfo.chat_room_id)
 
         // update our own
         emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
@@ -280,7 +281,7 @@ export default class RecieveMessage extends React.Component {
     _handlerAfterFinish = async () => {
         // handle after select friend
         if(this.state.isForward) {
-            store.dispatch(onRecieveShareMessage(''))
+            store.dispatch(sharedMessage(''))
             store.dispatch(onSearchFriend(''))
             this.props.navigation.dispatch(NavigationActions.back())
         } else {
