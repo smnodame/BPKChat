@@ -111,6 +111,23 @@ export default class Chat extends React.Component {
 
     updateData = () => {
         const state = store.getState()
+        this.setState({
+            chat: _.get(state, 'chat.chat', []),
+            chatInfo: _.get(state, 'chat.chatInfo', {
+                chat_room_type: this.props.navigation.state.params.chat_room_type
+            }),
+            isGroup: _.get(state, 'chat.chatInfo.friend_user_id', 'F')[0] == 'G',
+            inviteFriends: _.get(state, 'chat.inviteFriends.data', []),
+            member: _.get(state, 'chat.memberInGroup.data', []),
+            optionMessage: _.get(state, 'chat.optionMessage', []),
+            isShowSearchBar: _.get(state, 'chat.isShowSearchBar', false)
+        })
+
+    }
+
+    initState = () => {
+        const state = store.getState()
+
         const inviteAction = {
             icon: 'md-person-add',
             name: 'Invite',
@@ -180,36 +197,28 @@ export default class Chat extends React.Component {
             }
         }
         let options = []
-        if(_.get(state, 'chat.chatInfo').chat_room_type == 'G' || _.get(state, 'chat.chatInfo').chat_room_type == 'C') {
+        if(this.props.navigation.state.params.chat_room_type == 'G' || this.props.navigation.state.params.chat_room_type == 'C') {
             options = options.concat([inviteAction, friendsAction, searchAction, settingAction, existGroupAction])
         } else {
             options = options.concat([inviteAction, openCaseAction, searchAction])
         }
 
         this.setState({
-            chat: _.get(state, 'chat.chat', []),
-            chatInfo: _.get(state, 'chat.chatInfo'),
             user: _.get(state, 'user.user'),
             sticker: _.get(state, 'chat.sticker', []),
-            isGroup: _.get(state, 'chat.chatInfo.friend_user_id', 'F')[0] == 'G',
-            inviteFriends: _.get(state, 'chat.inviteFriends.data', []),
             optionLists: options,
-            member: _.get(state, 'chat.memberInGroup.data', []),
-            optionMessage: _.get(state, 'chat.optionMessage', []),
-            isShowSearchBar: _.get(state, 'chat.isShowSearchBar', false)
         })
-
     }
 
 	async componentWillMount() {
-        this.updateData()
+        this.initState()
 		this.unsubscribe = store.subscribe(() => {
             this.updateData()
 		})
     }
 
     componentDidMount() {
-        store.dispatch(onEnterOptionMessage())
+        // store.dispatch(onEnterOptionMessage())
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -544,7 +553,7 @@ export default class Chat extends React.Component {
                     </Button>
                 </Left>
                 <Body>
-                    <Title>{ _.get(this.state, 'chatInfo.display_name', '') }</Title>
+                    <Title>{ _.get(this.state, 'chatInfo.display_name', this.props.navigation.state.params.display_name ) }</Title>
                 </Body>
                 <Right>
                     {
