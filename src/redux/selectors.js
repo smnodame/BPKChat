@@ -57,3 +57,7 @@ export const getOptionMessageLists = state => {
 export const getSharedMessage = state => {
     return state.system.sharedMessage
 }
+
+export const getKeepProfile = state => {
+    return state.user.keepProfile
+}

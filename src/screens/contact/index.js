@@ -18,7 +18,7 @@ import {Avatar} from '../../components/avatar'
 import {FontAwesome} from '../../assets/icons'
 import { NavigationActions } from 'react-navigation'
 
-import { enterContacts, removeFavorite, addFavorite, showOrHideFriendLists, onLoadMore, onSearchFriend, selectChat } from '../../redux/actions.js'
+import { enterContacts, removeFavorite, addFavorite, showOrHideFriendLists, onLoadMore, onSearchFriend, selectChat, onSelectKeep } from '../../redux/actions.js'
 import {store} from '../../redux'
 
 export default class Contacts extends React.Component {
@@ -310,7 +310,12 @@ export default class Contacts extends React.Component {
                             <Icon name='md-person' style={{ color: 'gray' }} />
                             <Text style={{ color: 'gray' }}>Edit Profile</Text>
                         </Button>
-                        <Button transparent style={{ flexDirection: 'column', marginLeft: 10 }}>
+                        <Button transparent style={{ flexDirection: 'column', marginLeft: 10 }} onPress={() => {
+
+                            this.setState({ showProfileModal: false }, () => {
+                                store.dispatch(onSelectKeep())
+                            })
+                        }}>
                             <Icon name='md-cloud-download' style={{ color: 'gray' }} />
                             <Text style={{ color: 'gray' }}>KEEP</Text>
                         </Button>

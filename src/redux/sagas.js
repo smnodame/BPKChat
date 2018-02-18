@@ -80,7 +80,8 @@ import {
     getInviteFriendLists,
     getMemberInGroup,
     getOptionMessageLists,
-    getSharedMessage
+    getSharedMessage,
+    getKeepProfile
 } from './selectors'
 import { start_socket, emit_subscribe, on_message, emit_message, emit_update_friend_chat_list, emit_as_seen } from './socket.js'
 import * as NavigationService from '../services/NavigationService.js'
@@ -1149,6 +1150,9 @@ function* onUpdateGroupSettingSaga() {
 function* onSelectKeepSaga() {
     while (true) {
         yield take('ON_SELECT_KEEP')
+
+        const kProfile = yield select(getKeepProfile)
+        yield put(selectChat(kProfile))
     }
 }
 
