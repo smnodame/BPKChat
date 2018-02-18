@@ -21,6 +21,10 @@ const user = (state = {}, action) => {
           return Object.assign(state, {
               signupError: action.payload.error
           })
+      case 'KEEP_PROFILE':
+          return Object.assign(state, {
+              keepProfile: action.payload.keepProfile
+          })
       default:
         return state
     }

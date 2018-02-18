@@ -261,3 +261,9 @@ export const createNewRoom = (friend_user_id) => {
         })
     })
 }
+
+export const fetchKeepProfile = () => {
+    return getAuth().then((user_id) => {
+        return axios.get(`http://itsmartone.com/bpk_connect/api/chat/get_keep_room_data?token=asdf1234aaa&user_id=${user_id}`)
+    })
+}

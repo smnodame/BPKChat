@@ -384,3 +384,14 @@ export const onUpdateGroupSetting = (data) => ({
         data
     }
 })
+
+export const onSelectKeep = () => ({
+    type: 'ON_SELECT_KEEP'
+})
+
+export const keepProfile = (profile) => ({
+    type: 'KEEP_PROFILE',
+    payload: {
+        keepProfile: profile
+    }
+})

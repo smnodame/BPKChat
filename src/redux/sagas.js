@@ -27,7 +27,8 @@ import {
     enterSplash,
     onFetchMessageLists,
     sharedMessage,
-    onUpdateGroupLists
+    onUpdateGroupLists,
+    keepProfile
 } from './actions'
 import { NavigationActions } from 'react-navigation'
 import {
@@ -61,7 +62,8 @@ import {
     updateProfile,
     inviteFriendToGroupWithOpenCase,
     createNewRoom,
-    updatePictureAuth
+    updatePictureAuth,
+    fetchKeepProfile
 } from './api'
 import {
     getFriendGroups,
@@ -343,9 +345,6 @@ function* enterContactSaga() {
         const numberOfFriend = yield call(fetchNumberOfGroup, filter)
         yield put(numberOfFriendLists(numberOfFriend))
 
-        // fetch sticker
-        yield put(onSticker())
-
         const user_id = yield call(getAuth)
 
         // start socket after enter the contact
@@ -375,6 +374,12 @@ function* enterContactSaga() {
             const navigate = yield select(navigateSelector)
             navigate.dispatch(resetAction)
         }
+
+        const resFetchKeepProfile = yield call(fetchKeepProfile)
+        yield put(keepProfile(_.get(resFetchKeepProfile, 'data.data', '')))
+
+        // fetch sticker
+        yield put(onSticker())
     }
 }
 
@@ -1141,6 +1146,12 @@ function* onUpdateGroupSettingSaga() {
     }
 }
 
+function* onSelectKeepSaga() {
+    while (true) {
+        yield take('ON_SELECT_KEEP')
+    }
+}
+
 export function* rootSaga() {
     yield all([
         signin(),
@@ -1179,6 +1190,7 @@ export function* rootSaga() {
         onRecieveShareMessageSaga(),
         onForwardSaga(),
         onUpdateGroupListsSaga(),
-        onUpdateGroupSettingSaga()
+        onUpdateGroupSettingSaga(),
+        onSelectKeepSaga()
     ])
 }
