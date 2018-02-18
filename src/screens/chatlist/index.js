@@ -85,9 +85,9 @@ export default class ChatList extends React.Component {
     }
 
     loadmore = () => {
-        const length = this.state.chatListsClone.length
+        const length = this.state.chatListsClone.length || 0
         this.setState({
-            chatListsClone: this.state.chatListsClone.concat(_.get(this.state, 'chatLists', []).splice(length-1, length+10))
+            chatListsClone: this.state.chatListsClone.concat(_.get(this.state, 'chatLists', []).slice(length, length+10))
         })
     }
 
