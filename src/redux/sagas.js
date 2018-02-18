@@ -426,15 +426,13 @@ function* selectChatSaga() {
         const { payload: { chatInfo }} = yield take('SELECT_CHAT')
         // fetch chat list from userID
         try {
-            console.log('===============1=================')
             // navigate to chat page
             const navigate = yield select(navigateSelector)
             navigate.navigate('Chat', {
                 display_name: chatInfo.display_name,
                 chat_room_type: chatInfo.chat_room_type
             })
-            console.log('===============2=================')
-            console.log(chatInfo.chat_room_id)
+
             if(!chatInfo.chat_room_id) {
                 const resCreateNewRoom = yield call(createNewRoom, chatInfo.friend_user_id)
                 chatInfo.chat_room_id = resCreateNewRoom.data.data.chat_room_id
