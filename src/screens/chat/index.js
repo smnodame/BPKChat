@@ -542,18 +542,26 @@ export default class Chat extends React.Component {
             <Header style={{ backgroundColor: '#3b5998' }}>
                 <Left>
                     <Button transparent onPress={() => {
-                        emit_unsubscribe(this.state.chatInfo.chat_room_id)
-                        store.dispatch(isShowSearchBar(false))
-                        store.dispatch(inviteFriends({
-                            data: []
-                        }))
+                        new Promise(() => {
+                            store.dispatch(isShowSearchBar(false))
+                        })
+                        new Promise(() => {
+                            store.dispatch(
+                                inviteFriends({
+                                    data: []
+                                })
+                            )
+                        })
+                        new Promise(() => {
+                            emit_unsubscribe(this.state.chatInfo.chat_room_id)
+                        })
                         this.props.navigation.dispatch(NavigationActions.back())
                     }}>
                         <Icon style={{ color: 'white' }} name="md-arrow-round-back" />
                     </Button>
                 </Left>
                 <Body>
-                    <Title>{ _.get(this.state, 'chatInfo.display_name', this.props.navigation.state.params.display_name ) }</Title>
+                    <Title>{ this.props.navigation.state.params.display_name }</Title>
                 </Body>
                 <Right>
                     {
