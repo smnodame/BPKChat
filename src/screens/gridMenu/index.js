@@ -18,32 +18,11 @@ import {
 import Modal from 'react-native-modal'
 import { Thumbnail, Icon, Text, Button } from 'native-base'
 import {FontIcons} from '../../assets/icons'
+import {store} from '../../redux'
+import { onSelectKeep } from '../../redux/actions.js'
 const paddingValue = 8
 
-const MainRoutes = [
-    {
-        id: 'ProfileSettings',
-        title: 'Profile',
-        icon: FontIcons.profile,
-        children: []
-    },
-    {
-        id: 'keep',
-        title: 'Keep',
-        icon: FontIcons.article,
-        children: []
-    },
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-]
+
 
 export default class GridMenu extends React.Component {
 
@@ -61,11 +40,41 @@ export default class GridMenu extends React.Component {
 
     _getEmptyCount(size) {
         let rowCount = Math.ceil((this.state.dimensions.height - 20) / size)
-        return rowCount * 3 - MainRoutes.length
+        return rowCount * 3 - 13
     }
 
     render() {
         const navigate = this.props.screenProps.rootNavigation.navigate
+        const MainRoutes = [
+            {
+                id: 'ProfileSettings',
+                title: 'Profile',
+                icon: FontIcons.profile,
+                children: [],
+                onPress: function() {
+                    navigate('ProfileSettings')
+                }
+            },
+            {
+                id: 'keep',
+                title: 'Keep',
+                icon: FontIcons.article,
+                children: [],
+                onPress: function() {
+                    store.dispatch(onSelectKeep())
+                }
+            },
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+        ]
 
         let items = <View/>
         if (this.state.dimensions) {
@@ -78,7 +87,7 @@ export default class GridMenu extends React.Component {
                         style={{height: size, width: size}}
                         key={index}
                         onPress={() => {
-                            navigate(route.id)
+                            console.log(route.onPress())
                         }}>
                         <RkText style={styles.icon} rkType='primary moon xxlarge'>
                             {route.icon}
