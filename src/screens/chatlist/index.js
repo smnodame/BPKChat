@@ -41,11 +41,11 @@ export default class ChatList extends React.Component {
         const state = store.getState()
         this.setState({
             chatLists: _.get(state, 'chat.chatLists', []),
-            chatListsClone: _.get(state, 'chat.chatLists', []),
+            chatListsClone: _.get(state, 'chat.chatLists', []).slice(0, 10),
             selectedChatRoomId: _.get(state, 'chat.selectedChatRoomId', ''),
             showPickerModal: _.get(state, 'chat.isShowActionChat', false)
         })
-        this._filter(this.state.query)
+        // this._filter(this.state.query)
     }
 
 	async componentWillMount() {
@@ -84,6 +84,13 @@ export default class ChatList extends React.Component {
         }
     }
 
+    loadmore = () => {
+        const length = this.state.chatListsClone.length
+        this.setState({
+            chatListsClone: this.state.chatListsClone.concat(_.get(this.state, 'chatLists', []).splice(length-1, length+10))
+        })
+    }
+
     _renderSeparator() {
         return (
             <View style={styles.separator}/>
@@ -118,7 +125,7 @@ export default class ChatList extends React.Component {
                 store.dispatch(onIsShowActionChat(true, info.chat_room_id))
             }}>
                 <View style={styles.container}>
-                    <Thumbnail source={{ uri: info.profile_pic_url }} />
+                    <Thumbnail resizeMethod={'resize'} source={{ uri: info.profile_pic_url }} />
                     <View style={styles.content}>
                         <View style={styles.contentHeader}>
                             <RkText numberOfLines={1} style={{ width: '60%' }} rkType='header5'>{ info.display_name }</RkText>
@@ -135,7 +142,7 @@ export default class ChatList extends React.Component {
             </TouchableOpacity>
         )
     }
-
+// ListHeaderComponent={this.renderHeader}
   render() {
     return (
     <View>
@@ -143,8 +150,10 @@ export default class ChatList extends React.Component {
           style={styles.root}
           data={this.state.chatListsClone}
           extraData={this.state}
-          ListHeaderComponent={this.renderHeader}
+
           ItemSeparatorComponent={this._renderSeparator}
+          onEndReached={() => this.loadmore()}
+          onEndReachedThreshold={0.1}
           keyExtractor={(item, index) => item.chat_room_id}
           renderItem={this.renderItem}/>
           <Modal
