@@ -267,3 +267,16 @@ export const fetchKeepProfile = () => {
         return axios.get(`http://itsmartone.com/bpk_connect/api/chat/get_keep_room_data?token=asdf1234aaa&user_id=${user_id}`)
     })
 }
+
+export const saveInKeep = (copy_chat_message_id) => {
+    return getAuth().then((user_id) => {
+        return axios.post(`http://itsmartone.com/bpk_connect/api/message/keep?token=asdf1234aaa`, {
+            user_id,
+            chat_room_id: "",
+            message_type: "",
+            copy_chat_message_id,
+            content: "",
+            sticker_path: ""
+        })
+    })
+}

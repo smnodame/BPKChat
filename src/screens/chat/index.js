@@ -67,7 +67,7 @@ import {
     onForward,
     inviteFriends
 } from '../../redux/actions'
-import {sendTheMessage, fetchFriendProfile } from '../../redux/api'
+import {sendTheMessage, fetchFriendProfile, saveInKeep } from '../../redux/api'
 import {
     emit_update_friend_chat_list,
     emit_unsubscribe,
@@ -804,7 +804,12 @@ export default class Chat extends React.Component {
                       </Button>
                   }
                   {
-                      this.props.navigation.state.params.display_name.toLowerCase() != 'keep' && <Button block light>
+                      this.props.navigation.state.params.display_name.toLowerCase() != 'keep' && <Button block light onPress={() => {
+                          this.setState({ showPickerModal: false })
+                          new Promise(() => {
+                              saveInKeep(this.state.selectedMessageId)
+                          })
+                      }}>
                           <Text>SAVE IN KEEP</Text>
                       </Button>
                   }
@@ -813,7 +818,9 @@ export default class Chat extends React.Component {
                   </Button>
                   <Button block light onPress={() => {
                       this.setState({ showPickerModal: false })
-                      store.dispatch(onForward(this.state.selectedMessageId))
+                      new Promise(() => {
+                         store.dispatch(onForward(this.state.selectedMessageId))
+                      })
                   }}>
                       <Text>FORWORD</Text>
                   </Button>

@@ -111,7 +111,7 @@ export default class ChatList extends React.Component {
     _renderItem(data) {
         const info = data.item
         return (
-            <TouchableOpacity onPress={() =>  store.dispatch(selectChat(info))} onLongPress={() =>  {
+            <TouchableOpacity key={info.chat_room_id} onPress={() =>  store.dispatch(selectChat(info))} onLongPress={() =>  {
                 this.setState({
                     selectedChatRoomId: info.chat_room_id
                 })
@@ -145,6 +145,7 @@ export default class ChatList extends React.Component {
           extraData={this.state}
           ListHeaderComponent={this.renderHeader}
           ItemSeparatorComponent={this._renderSeparator}
+          keyExtractor={(item, index) => item.chat_room_id}
           renderItem={this.renderItem}/>
           <Modal
               onRequestClose={() => store.dispatch(onIsShowActionChat(false, ''))}
