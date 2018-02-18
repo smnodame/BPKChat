@@ -131,7 +131,9 @@ export default class Chat extends React.Component {
             icon: 'md-person-add',
             name: 'Invite',
             event: () => {
-                store.dispatch(onFetchInviteFriend())
+                new Promise(() => {
+                    store.dispatch(onFetchInviteFriend())
+                })
                 this.setState({
                     showInviteModal : true,
                     isOpenCase: false
@@ -142,7 +144,9 @@ export default class Chat extends React.Component {
             icon: 'md-contacts',
             name: 'member',
             event: () => {
-                store.dispatch(onFetchFriendInGroup())
+                new Promise(() => {
+                    store.dispatch(onFetchFriendInGroup())
+                })
                 this.setState({ showMemberModal : true })
             }
         }
@@ -150,7 +154,9 @@ export default class Chat extends React.Component {
             icon: 'md-mail-open',
             name: 'Open Case',
             event: () => {
-                store.dispatch(onFetchInviteFriend())
+                new Promise(() => {
+                    store.dispatch(onFetchInviteFriend())
+                })
                 this.setState({
                     showInviteModal : true,
                     isOpenCase: true
@@ -164,7 +170,9 @@ export default class Chat extends React.Component {
                 this.setState({
                     isShowAdditionalHeader: false
                 })
-                store.dispatch(isShowSearchBar(true))
+                new Promise(() => {
+                    store.dispatch(isShowSearchBar(true))
+                })
             }
         }
         const settingAction = {
@@ -217,7 +225,7 @@ export default class Chat extends React.Component {
     }
 
     componentDidMount() {
-        // store.dispatch(onEnterOptionMessage())
+
     }
 
     componentDidUpdate(prevProps, prevState) {

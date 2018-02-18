@@ -111,7 +111,7 @@ export default class ChatList extends React.Component {
     _renderItem(data) {
         const info = data.item
         return (
-            <TouchableWithoutFeedback onPress={() =>  store.dispatch(selectChat(info))} onLongPress={() =>  {
+            <TouchableOpacity onPress={() =>  store.dispatch(selectChat(info))} onLongPress={() =>  {
                 this.setState({
                     selectedChatRoomId: info.chat_room_id
                 })
@@ -132,7 +132,7 @@ export default class ChatList extends React.Component {
 
                     </View>
                 </View>
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
         )
     }
 
