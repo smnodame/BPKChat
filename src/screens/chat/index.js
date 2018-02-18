@@ -683,6 +683,9 @@ export default class Chat extends React.Component {
                                                     chat_room_id: this.state.chatInfo.chat_room_id,
                                                     selected_invite_friend_user_id: item.friend_user_id
                                                 })
+                                                new Promise(() => {
+                                                    store.dispatch(onEnterOptionMessage())
+                                                })
                                              } else {
                                                  if(item.invited) {
                                                      store.dispatch(onRemoveFriendFromGroup(this.state.chatInfo.chat_room_id, item.friend_user_id, false))
