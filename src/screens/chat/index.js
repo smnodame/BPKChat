@@ -206,6 +206,8 @@ export default class Chat extends React.Component {
         let options = []
         if(this.props.navigation.state.params.chat_room_type == 'G' || this.props.navigation.state.params.chat_room_type == 'C') {
             options = options.concat([inviteAction, friendsAction, searchAction, settingAction, existGroupAction])
+        } else if(this.props.navigation.state.params.display_name.toLowerCase() == 'keep') {
+            options = options.concat([searchAction])
         } else {
             options = options.concat([inviteAction, openCaseAction, searchAction])
         }
@@ -801,9 +803,11 @@ export default class Chat extends React.Component {
                           <Text>COPY</Text>
                       </Button>
                   }
-                  <Button block light>
-                      <Text>SAVE IN KEEP</Text>
-                  </Button>
+                  {
+                      this.props.navigation.state.params.display_name.toLowerCase() != 'keep' && <Button block light>
+                          <Text>SAVE IN KEEP</Text>
+                      </Button>
+                  }
                   <Button block light>
                       <Text>DELETE</Text>
                   </Button>
