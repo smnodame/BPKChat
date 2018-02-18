@@ -38,6 +38,15 @@ import { NavigationActions } from 'react-navigation'
 import { signin, start_app, navigate  } from '../../redux/actions.js'
 import {store} from '../../redux'
 
+import {NotificationsAndroid} from 'react-native-notifications';
+console.log('---- run ----')
+console.log(NotificationsAndroid)
+// On Android, we allow for only one (global) listener per each event type.
+NotificationsAndroid.setRegistrationTokenUpdateListener((deviceToken) => {
+	// TODO: Send the token to my server so it could send back push notifications...
+	console.log('Push-notifications registered!', deviceToken)
+});
+
 export default class Login extends React.Component {
     constructor(props) {
         super(props);

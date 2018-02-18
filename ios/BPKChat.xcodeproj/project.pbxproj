@@ -56,6 +56,7 @@
 		9A95B21C951C4D37802C7420 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2033304800AA43EF81586140 /* libz.tbd */; };
 		5942183F34B446E4A54B4B9C /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 203A793739DB4D4C8A6F3C01 /* libRNImagePicker.a */; };
 		5F03B3F0A1F84694899C0351 /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B31F195A93D42FA99E7F8A0 /* libRNFetchBlob.a */; };
+		9E2BC0231F724EE4853605C2 /* libRNNotifications.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CB0403093D9C441FB410CA07 /* libRNNotifications.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -307,6 +308,8 @@
 		203A793739DB4D4C8A6F3C01 /* libRNImagePicker.a */ = {isa = PBXFileReference; name = "libRNImagePicker.a"; path = "libRNImagePicker.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		783ECCF9F2C64D93BBC3D30F /* RNFetchBlob.xcodeproj */ = {isa = PBXFileReference; name = "RNFetchBlob.xcodeproj"; path = "../node_modules/react-native-fetch-blob/ios/RNFetchBlob.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		4B31F195A93D42FA99E7F8A0 /* libRNFetchBlob.a */ = {isa = PBXFileReference; name = "libRNFetchBlob.a"; path = "libRNFetchBlob.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		0A838E6C0F224C71AED87708 /* RNNotifications.xcodeproj */ = {isa = PBXFileReference; name = "RNNotifications.xcodeproj"; path = "../node_modules/react-native-notifications/RNNotifications/RNNotifications.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		CB0403093D9C441FB410CA07 /* libRNNotifications.a */ = {isa = PBXFileReference; name = "libRNNotifications.a"; path = "libRNNotifications.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -341,6 +344,7 @@
 				9A95B21C951C4D37802C7420 /* libz.tbd in Frameworks */,
 				5942183F34B446E4A54B4B9C /* libRNImagePicker.a in Frameworks */,
 				5F03B3F0A1F84694899C0351 /* libRNFetchBlob.a in Frameworks */,
+				9E2BC0231F724EE4853605C2 /* libRNNotifications.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -513,6 +517,7 @@
 				7E45E9F077E548BD9C772061 /* RealmReact.xcodeproj */,
 				2591BF37E63A404E88389C13 /* RNImagePicker.xcodeproj */,
 				783ECCF9F2C64D93BBC3D30F /* RNFetchBlob.xcodeproj */,
+				0A838E6C0F224C71AED87708 /* RNNotifications.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1112,6 +1117,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1119,6 +1125,7 @@
 					"$(SRCROOT)/../node_modules/realm/src/**",
 					"$(SRCROOT)/../node_modules/react-native-image-picker/ios",
 					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-notifications/RNNotifications",
 				);
 			};
 			name = Debug;
@@ -1143,6 +1150,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1150,6 +1158,7 @@
 					"$(SRCROOT)/../node_modules/realm/src/**",
 					"$(SRCROOT)/../node_modules/react-native-image-picker/ios",
 					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-notifications/RNNotifications",
 				);
 			};
 			name = Release;
@@ -1175,6 +1184,7 @@
 					"$(SRCROOT)/../node_modules/realm/src/**",
 					"$(SRCROOT)/../node_modules/react-native-image-picker/ios",
 					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-notifications/RNNotifications",
 				);
 			};
 			name = Debug;
@@ -1199,6 +1209,7 @@
 					"$(SRCROOT)/../node_modules/realm/src/**",
 					"$(SRCROOT)/../node_modules/react-native-image-picker/ios",
 					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-notifications/RNNotifications",
 				);
 			};
 			name = Release;
@@ -1232,6 +1243,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1239,6 +1251,7 @@
 					"$(SRCROOT)/../node_modules/realm/src/**",
 					"$(SRCROOT)/../node_modules/react-native-image-picker/ios",
 					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-notifications/RNNotifications",
 				);
 			};
 			name = Debug;
@@ -1272,6 +1285,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1279,6 +1293,7 @@
 					"$(SRCROOT)/../node_modules/realm/src/**",
 					"$(SRCROOT)/../node_modules/react-native-image-picker/ios",
 					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-notifications/RNNotifications",
 				);
 			};
 			name = Release;
@@ -1307,6 +1322,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};
 			name = Debug;
@@ -1331,6 +1347,7 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
