@@ -40,7 +40,6 @@ export default class GroupSetting extends React.Component {
   }
 
   componentWillUnmount() {
-      this.unsubscribe()
   }
 
   updateData = () => {
