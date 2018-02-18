@@ -5,7 +5,9 @@ import { fetchChatLists, fetchChat, setAsSeen } from './api.js'
 import { chatLists, chat } from './actions.js'
 import { store } from './index.js'
 
-const socket = SocketIOClient('http://192.168.1.39:4444/')
+const socket = SocketIOClient('http://192.168.1.39:4444/', {
+    transports: ['websocket']
+})
 let user_id = ''
 
 export const on_message = () => {
@@ -116,20 +118,27 @@ export const emit_message = (message, chat_room_id) => {
     })
 }
 
-export const start_socket = () => {
+export const start_socket = (user_id_from_store) => {
     // Connect!
     socket.connect();
 
     // An event to be fired on connection to socket
     socket.on('connect', () => {
         console.log(' socket conntected ')
+        // get user_id from store
+        user_id = user_id_from_store
+        emit_subscribe_chat_list(user_id)
+        on_update_friend_chat_list()
+        on_as_seen()
+        on_message()
     })
 
-    // get user_id from store
-    user_id = _.get(store.getState(), 'user.user.user_id')
+    socket.on('reconnect', (socket) => {
+        console.log('Re-connected')
+    })
 
-    emit_subscribe_chat_list(user_id)
-    on_update_friend_chat_list()
-    on_as_seen()
-    on_message()
+    socket.on('connect_error', function(error){
+        console.log('Connection Failed')
+        console.log(error)
+    })
 }

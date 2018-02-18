@@ -346,10 +346,10 @@ function* enterContactSaga() {
         // fetch sticker
         yield put(onSticker())
 
-        // start socket after enter the contact
-        start_socket()
-
         const user_id = yield call(getAuth)
+
+        // start socket after enter the contact
+        start_socket(user_id)
 
         const sharedMsg = yield select(getSharedMessage)
 
