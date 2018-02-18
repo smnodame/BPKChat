@@ -49,6 +49,14 @@ import { store } from './src/redux'
 
 import RNFetchBlob from 'react-native-fetch-blob'
 
+import {NotificationsAndroid} from 'react-native-notifications';
+
+// On Android, we allow for only one (global) listener per each event type.
+NotificationsAndroid.setRegistrationTokenUpdateListener((deviceToken) => {
+	// TODO: Send the token to my server so it could send back push notifications...
+	console.log('Push-notifications registered!', deviceToken)
+});
+
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
     'Cmd+D or shake for dev menu',
