@@ -125,13 +125,14 @@ export const start_socket = (user_id_from_store) => {
     // An event to be fired on connection to socket
     socket.on('connect', () => {
         console.log(' socket conntected ')
-        // get user_id from store
-        user_id = user_id_from_store
-        emit_subscribe_chat_list(user_id)
-        on_update_friend_chat_list()
-        on_as_seen()
-        on_message()
     })
+
+    // get user_id from store
+    user_id = user_id_from_store
+    emit_subscribe_chat_list(user_id)
+    on_update_friend_chat_list()
+    on_as_seen()
+    on_message()
 
     socket.on('reconnect', (socket) => {
         console.log('Re-connected')
