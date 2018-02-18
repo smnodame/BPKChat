@@ -122,7 +122,6 @@ export default class Chat extends React.Component {
             optionMessage: _.get(state, 'chat.optionMessage', []),
             isShowSearchBar: _.get(state, 'chat.isShowSearchBar', false)
         })
-
     }
 
     initState = () => {

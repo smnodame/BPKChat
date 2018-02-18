@@ -487,12 +487,15 @@ function* onLoadMoreMessageListsSaga() {
 
             const topChatMessageId = _.get(messageLists[messageLists.length - 1], 'chat_message_id', '0')
 
-            const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, topChatMessageId, '', filterMessage)
-            const chatData = _.get(resFetchChat, 'data.data', [])
+            if(topChatMessageId != 0) {
+                console.log(topChatMessageId)
+                const resFetchChat = yield call(fetchChat, chatInfo.chat_room_id, topChatMessageId, '', filterMessage)
+                const chatData = _.get(resFetchChat, 'data.data', [])
 
-            const newMessageLists = messageLists.concat(chatData)
+                const newMessageLists = messageLists.concat(chatData)
 
-            yield put(chat(newMessageLists))
+                yield put(chat(newMessageLists))
+            }
         } catch (err) {
             console.log('[onLoadMoreMessageListsSaga] ', err)
         }

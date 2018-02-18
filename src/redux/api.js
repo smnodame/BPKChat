@@ -103,7 +103,10 @@ export const updateGroupSetting = (data) => {
 
 export const fetchChat = (chatRoomId, topChatMessageId = '', after_chat_message_id = '', search = '') => {
     return getAuth().then((user_id) => {
+        console.log(`http://itsmartone.com/bpk_connect/api/message/message_list?token=asdf1234aaa&user_id=${user_id}&chat_room_id=${chatRoomId}&after_chat_message_id=${after_chat_message_id}&before_chat_message_id=${topChatMessageId}&limit=50&search=${search}`)
         return axios.get(`http://itsmartone.com/bpk_connect/api/message/message_list?token=asdf1234aaa&user_id=${user_id}&chat_room_id=${chatRoomId}&after_chat_message_id=${after_chat_message_id}&before_chat_message_id=${topChatMessageId}&limit=50&search=${search}`).then((res) => {
+            console.log('========= chat ========')
+            console.log(res)
             return res
         }, (err) => {
             console.log('[fetchChat] Reject ', err)
