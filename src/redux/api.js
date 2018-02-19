@@ -49,8 +49,15 @@ export const fetchChatInfo = (chat_room_id) => {
         return axios.get(`http://itsmartone.com/bpk_connect/api/chat/data?token=asdf1234aaa&user_id=${user_id}&chat_room_id=${chat_room_id}`)
     })
 }
+
 export const loginApi = (username, password) => {
     return axios.get(`http://itsmartone.com/bpk_connect/api/user/check_login?user_id=${username}&password=${password}`)
+}
+
+export const logoutApi = () => {
+    return getAuth().then((user_id) => {
+        return axios.get(`http://itsmartone.com/bpk_connect/api/user/logout?token=asdf1234aaa&user_id=${user_id}`)
+    })
 }
 
 export const fetchLanguage = () => {

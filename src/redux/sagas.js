@@ -64,7 +64,8 @@ import {
     inviteFriendToGroupWithOpenCase,
     createNewRoom,
     updatePictureAuth,
-    fetchKeepProfile
+    fetchKeepProfile,
+    logoutApi
 } from './api'
 import {
     getFriendGroups,
@@ -428,6 +429,8 @@ function* loadmoreSaga() {
 function* logout() {
     while (true) {
         yield take('LOGOUT')
+
+        yield call(logoutApi)
 
         const navigate = yield select(navigateSelector)
         AsyncStorage.removeItem('user_id')
