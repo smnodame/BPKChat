@@ -146,6 +146,11 @@ export default class ChatList extends React.Component {
   render() {
     return (
     <View>
+        {
+            this.state.chatListsClone.length == 0&&<View>
+                <Text style={{ textAlign: 'center', color: '#d4d8da', marginTop: 20, fontSize: 20 }}>ไม่พบข้อมูล</Text>
+            </View>
+        }
         <FlatList
           style={styles.root}
           data={this.state.chatListsClone}
