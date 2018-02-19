@@ -120,7 +120,7 @@ export default class App extends Component<{}> {
             return (
                 <ChatList screenProps={{ rootNavigation: this.props.navigation }} />
             )
-        } else if (this.state.selectedTab == 'Profile') {
+        } else if (this.state.selectedTab == 'Setting') {
             return (
                 <GridMenu screenProps={{ rootNavigation: this.props.navigation }} />
             )
@@ -193,7 +193,7 @@ export default class App extends Component<{}> {
                         <Icon style={{ color: 'white' }} name="md-chatboxes" />
                         <Text style={{ color: 'white' }}>Chat Lists</Text>
                       </Button>
-                      <Button vertical onPress={() => this.onTabClick('Profile')}>
+                      <Button vertical onPress={() => this.onTabClick('Setting')}>
                         <Icon style={{ color: 'white' }} active name="md-settings" />
                         <Text style={{ color: 'white' }}>SETTINGS</Text>
                       </Button>

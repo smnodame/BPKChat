@@ -304,7 +304,7 @@ export default class Contacts extends React.Component {
                                 this.setState({
                                     showProfileModal: false
                                 })
-                                this.props.onTabClick("Profile")
+                                this.props.screenProps.rootNavigation.navigate('ProfileSettings')
                             }}
                         >
                             <Icon name='md-person' style={{ color: 'gray' }} />
