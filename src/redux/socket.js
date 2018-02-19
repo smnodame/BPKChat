@@ -79,7 +79,7 @@ export const emit_unsubscribeall = () => {
 }
 
 export const emit_subscribe_chat_list = (user_id) => {
-    console.log('[emit_subscribe_chat_list]')
+    console.log('[emit_subscribe_chat_list]', user_id)
     socket.emit('subscribeChatList', {
         user_id
     })
@@ -93,7 +93,7 @@ export const emit_unsubscribe_chat_list = (user_id) => {
 }
 
 export const emit_update_friend_chat_list = (user_id, friend_user_id) => {
-    console.log('[emit_update_friend_chat_list]')
+    console.log('[emit_update_friend_chat_list]', user_id, friend_user_id)
     socket.emit('updateFriendChatList', {
         user_id,
         friend_user_id

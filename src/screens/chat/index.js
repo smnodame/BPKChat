@@ -252,9 +252,9 @@ export default class Chat extends React.Component {
         const reader = info.item.who_read.filter((id) => {
             return id != this.state.user.user_id
         })
-        if(this.state.isGroup && reader.length != 0) {
+        if((this.props.navigation.state.params.chat_room_type == 'G' || this.props.navigation.state.params.chat_room_type == 'C') && reader.length != 0) {
             seenMessage = `seen by ${reader.length}`
-        } else if(!this.state.isGroup && reader.length != 0){
+        } else if(reader.length != 0){
             seenMessage = `seen`
         }
         let backgroundColor = inMessage
@@ -268,7 +268,7 @@ export default class Chat extends React.Component {
                 { `${moment(date).fromNow()}` }
             </RkText>
             {
-                (!inMessage||this.state.isGroup)&&<RkText style={{ marginLeft: 15, paddingRight: 30, width: '100%', textAlign: inMessage? 'left' : 'right' }} rkType='secondary7 hintColor'>
+                (!inMessage||(this.props.navigation.state.params.chat_room_type == 'G' || this.props.navigation.state.params.chat_room_type == 'C'))&&<RkText style={{ marginLeft: 15, paddingRight: 30, width: '100%', textAlign: inMessage? 'left' : 'right' }} rkType='secondary7 hintColor'>
                     {
                         seenMessage
                     }
