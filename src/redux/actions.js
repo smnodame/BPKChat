@@ -133,10 +133,10 @@ export const onLoadMore = (group) => ({
     }
 })
 
-export const isLoading = () => ({
+export const isLoading = (loading) => ({
     type: 'IS_LOADING',
     payload: {
-
+        loading
     }
 })
 

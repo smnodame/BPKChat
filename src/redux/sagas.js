@@ -28,7 +28,8 @@ import {
     onFetchMessageLists,
     sharedMessage,
     onUpdateGroupLists,
-    keepProfile
+    keepProfile,
+    isLoading
 } from './actions'
 import { NavigationActions } from 'react-navigation'
 import {
@@ -229,23 +230,31 @@ const checkAuthAyncStorage = async (user_id) => {
 function* signin() {
     while (true) {
         const { payload: { username, password } } = yield take('SIGNIN')
+        yield put(isLoading(true))
         if(username && password) {
+            const res_loginApi = yield call(loginApi, username, password)
+
+            console.log(' finsihed sign in ')
+            console.log(res_loginApi)
+
+            if(_.get(res_loginApi.data, 'error')) {
+                yield put(signin_error(res_loginApi.data.error))
+                yield put(isLoading(false))
+                continue
+            }
+            const { data: { token, setting, user } } = res_loginApi
+            yield put(authenticated(token, setting))
+            yield put(signin_error(''))
+
             AsyncStorage.removeItem('user_id').then(() => {
-                AsyncStorage.setItem('user_id', username)
+                AsyncStorage.setItem('user_id', user.user_id)
             })
-            // const res_loginApi = yield call(loginApi, username, password)
-            // if(_.get(res_loginApi.data, 'error')) {
-            //     yield put(signin_error(res_loginApi.data.error))
-            //     continue
-            // }
-            // const { data: { token, setting, user } } = res_loginApi
-            // yield put(authenticated(token, setting))
-            // yield put(signin_error(''))
 
             yield put(enterContact())
             continue
         }
         yield put(signin_error('กรุณาระบุ Username เเละ Password'))
+        yield put(isLoading(false))
     }
 }
 
@@ -266,6 +275,10 @@ function* signup() {
                 continue
             }
             const res_create_new_account = yield call(createNewAccount, id, password, display_name, mobile_no, language_id)
+
+            console.log(' finsihed sign up')
+            console.log(res_create_new_account)
+
             if(res_create_new_account.error) {
                 yield put(signupEror(res_create_new_account.error))
                 continue
@@ -367,6 +380,8 @@ function* enterContactSaga() {
             ]
         })
         console.log('[enterSplashSaga] navigate to ', nextState)
+
+        yield put(isLoading(false))
 
         // use different navigation for avoiding duplicate pointer
         if(nextState=='RecieveMessage') {

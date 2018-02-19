@@ -35,7 +35,7 @@ import {
 } from 'react-native-ui-kitten'
 import { NavigationActions } from 'react-navigation'
 
-import { signin, start_app, navigate  } from '../../redux/actions.js'
+import { signin, start_app, navigate, isLoading  } from '../../redux/actions.js'
 import {store} from '../../redux'
 
 export default class Login extends React.Component {
@@ -59,7 +59,8 @@ export default class Login extends React.Component {
         this.unsubscribe = store.subscribe(() => {
             const state = store.getState()
 			this.setState({
-				error: state.user.error
+				error: state.user.error,
+				loading: state.system.isLoading
 			})
         })
     }
@@ -106,7 +107,9 @@ export default class Login extends React.Component {
 						/>
             		</Item>
             		<Button block style={{ marginRight: 15, marginLeft: 15, marginTop: 15, backgroundColor: '#8b9dc3' }}
-						onPress={() =>  this.onLogin()}
+						onPress={() =>  {
+							this.onLogin()
+						}}
 					>
 						{
 							this.state.loading&&<ActivityIndicator size='large' />

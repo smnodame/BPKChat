@@ -55,6 +55,10 @@ const system = (state = {
             return Object.assign(state, {
                 sharedMessage: action.payload.sharedMessage
             })
+        case 'IS_LOADING':
+            return Object.assign(state, {
+                isLoading: action.payload.loading
+            })
         default:
             return state
     }
