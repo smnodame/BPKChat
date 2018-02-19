@@ -46,6 +46,7 @@ const deviceWidth = Dimensions.get("window").width
 
 import { enterContacts } from './src/redux/actions.js'
 import { store } from './src/redux'
+import { saveNotiToken } from './src/redux/api.js'
 
 import RNFetchBlob from 'react-native-fetch-blob'
 
@@ -55,6 +56,10 @@ import {NotificationsAndroid} from 'react-native-notifications';
 NotificationsAndroid.setRegistrationTokenUpdateListener((deviceToken) => {
 	// TODO: Send the token to my server so it could send back push notifications...
 	console.log('Push-notifications registered!', deviceToken)
+    saveNotiToken(deviceToken).then((res) => {
+        console.log('Finished Save Token to Server')
+        console.log(res)
+    })
 });
 
 const instructions = Platform.select({
