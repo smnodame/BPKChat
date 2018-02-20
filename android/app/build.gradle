@@ -148,6 +148,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-audio-toolkit')
     compile project(':react-native-file-picker')
     compile project(':react-native-notifications')
     compile project(':react-native-share-menu')
