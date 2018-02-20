@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
   FlatList,
   View,
@@ -11,9 +11,10 @@ import {
   Keyboard,
   Modal as ModalNative,
   Clipboard,
-  Share
-} from 'react-native';
-import { InteractionManager, WebView } from 'react-native';
+  Share,
+  NativeModules
+} from 'react-native'
+import { InteractionManager, WebView } from 'react-native'
 import {
   RkButton,
   RkText,
@@ -21,10 +22,10 @@ import {
   RkAvoidKeyboard,
   RkStyleSheet,
   RkTheme
-} from 'react-native-ui-kitten';
-import RoundCheckbox from 'rn-round-checkbox';
-import Modal from 'react-native-modal';
-import _ from 'lodash';
+} from 'react-native-ui-kitten'
+import RoundCheckbox from 'rn-round-checkbox'
+import Modal from 'react-native-modal'
+import _ from 'lodash'
 import {
     Container,
     Header,
@@ -44,10 +45,10 @@ import {
     Badge,
     Item,
     Input
-} from 'native-base';
-import {FontAwesome} from '../../assets/icons';
-import {scale} from '../../utils/scale';
-import GridView from 'react-native-super-grid';
+} from 'native-base'
+import {FontAwesome} from '../../assets/icons'
+import {scale} from '../../utils/scale'
+import GridView from 'react-native-super-grid'
 
 import {store} from '../../redux'
 import {
@@ -75,9 +76,10 @@ import {
 } from '../../redux/socket.js'
 
 import ImagePicker from 'react-native-image-picker'
+const FilePickerManager = NativeModules.FilePickerManager
 
 import { NavigationActions } from 'react-navigation'
-let moment = require('moment');
+let moment = require('moment')
 
 import * as mime from 'react-native-mime-types'
 import RNFetchBlob from 'react-native-fetch-blob'
@@ -85,13 +87,13 @@ import RNFetchBlob from 'react-native-fetch-blob'
 import ImageView from 'react-native-image-view'
 
 let getUserId = (navigation) => {
-  return navigation.state.params ? navigation.state.params.userId : undefined;
+  return navigation.state.params ? navigation.state.params.userId : undefined
 }
 
 export default class Chat extends React.Component {
 
     constructor(props) {
-        super(props);
+        super(props)
 
         this.state = {
             isShowAdditionalHeader: false,
@@ -247,7 +249,7 @@ export default class Chat extends React.Component {
     }
 
     _renderItem(info) {
-        let inMessage = info.item.username != this.state.user.username;
+        let inMessage = info.item.username != this.state.user.username
         let seenMessage = ''
         const reader = info.item.who_read.filter((id) => {
             return id != this.state.user.user_id
@@ -259,8 +261,8 @@ export default class Chat extends React.Component {
         }
         let backgroundColor = inMessage
             ? RkTheme.current.colors.chat.messageInBackground
-                : RkTheme.current.colors.chat.messageOutBackground;
-        let itemStyle = inMessage ? styles.itemIn : styles.itemOut;
+                : RkTheme.current.colors.chat.messageOutBackground
+        let itemStyle = inMessage ? styles.itemIn : styles.itemOut
 
         let renderDate = (date) => (
         <View>
@@ -275,7 +277,7 @@ export default class Chat extends React.Component {
                 </RkText>
             }
         </View>
-    );
+    )
 
     return (
         <TouchableWithoutFeedback
@@ -452,12 +454,28 @@ export default class Chat extends React.Component {
         </View>
         </View>
         </TouchableWithoutFeedback>
-    )
-  }
+    )}
 
     _scroll() {
 
     }
+
+    _openFilePicker = async () => {
+        FilePickerManager.showFilePicker(null, (response) => {
+            console.log('Response = ', response)
+
+            if (response.didCancel) {
+                console.log('User cancelled file picker')
+            } else if (response.error) {
+                console.log('FilePickerManager Error: ', response.error)
+            } else {
+                this.setState({
+                    file: response
+                })
+            }
+        })
+    }
+
 
     async _pushMessage() {
         if (!this.state.message)
@@ -465,7 +483,7 @@ export default class Chat extends React.Component {
         const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '1', this.state.message, '', '')
 
         if(_.get(resSendTheMessage.data, 'error')) {
-            return;
+            return
         }
 
         // update message for everyone in group
@@ -495,7 +513,7 @@ export default class Chat extends React.Component {
         const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '4', '', sticker_path, '')
 
         if(_.get(resSendTheMessage.data, 'error')) {
-            return;
+            return
         }
 
         // update message for everyone in group
@@ -522,7 +540,7 @@ export default class Chat extends React.Component {
         const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '2', '', '', base64)
 
         if(_.get(resSendTheMessage.data, 'error')) {
-            return;
+            return
         }
 
         // update message for everyone in group
@@ -828,7 +846,7 @@ export default class Chat extends React.Component {
                       this.state.selectedMessageType == '1' && <Button block light onPress={() => {
                           Share.share({
                               message: this.state.copiedText
-                          }).then(result => console.log(result)).catch(errorMsg => console.log(errorMsg));
+                          }).then(result => console.log(result)).catch(errorMsg => console.log(errorMsg))
                       }}>
                           <Text>SHARE</Text>
                       </Button>
@@ -836,7 +854,7 @@ export default class Chat extends React.Component {
                 </View>
             </Modal>
             <RkAvoidKeyboard style={styles.container} onResponderRelease={(event) => {
-              Keyboard.dismiss();
+              Keyboard.dismiss()
             }}>
             {
                 this.state.isShowAdditionalHeader&&<View style={[styles.additionHeader, { backgroundColor: 'white',  borderColor: '#d3d3d3', borderBottomWidth: 0.5 }]}>
@@ -967,7 +985,7 @@ export default class Chat extends React.Component {
                             } else {
                                 this._pushPhoto(response.data)
                             }
-                        });
+                        })
                     }}>
                         <Icon ios='md-camera' android="md-camera" style={{fontSize: 20, color: 'gray'}}/>
                     </RkButton>
@@ -997,7 +1015,7 @@ export default class Chat extends React.Component {
                             } else {
                                 this._pushPhoto(response.data)
                             }
-                        });
+                        })
                     }}>
                         <Icon ios='md-photos' android="md-photos" style={{fontSize: 20, color: 'gray'}}/>
                     </RkButton>
@@ -1015,7 +1033,13 @@ export default class Chat extends React.Component {
                     </RkButton>
                 }
                 {
-                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear'>
+                    this.state.isShowMedie&&<RkButton
+                        style={styles.plus}
+                        rkType='clear'
+                        onPress={() => {
+                             this._openFilePicker()
+                        }}
+                    >
                         <Icon ios='attachment' android="md-folder-open" style={{fontSize: 20, color: 'gray'}}/>
                     </RkButton>
                 }
@@ -1186,4 +1210,4 @@ row: {
   borderColor: theme.colors.border.base,
   alignItems: 'center'
 },
-}));
+}))

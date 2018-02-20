@@ -3,6 +3,7 @@ package com.bpkchat;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.filepicker.FilePickerPackage;
 import com.wix.reactnativenotifications.RNNotificationsPackage;
 import com.meedan.ShareMenuPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
@@ -28,6 +29,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new FilePickerPackage(),
             new RNNotificationsPackage(MainApplication.this),
             new ShareMenuPackage(),
             new RNFetchBlobPackage(),
