@@ -12,7 +12,8 @@ import {
   Modal as ModalNative,
   Clipboard,
   Share,
-  NativeModules
+  NativeModules,
+  PermissionsAndroid
 } from 'react-native'
 import { InteractionManager, WebView } from 'react-native'
 import {
@@ -86,6 +87,8 @@ import RNFetchBlob from 'react-native-fetch-blob'
 
 import ImageView from 'react-native-image-view'
 
+import {AudioRecorder, AudioUtils} from 'react-native-audio'
+
 let getUserId = (navigation) => {
   return navigation.state.params ? navigation.state.params.userId : undefined
 }
@@ -101,7 +104,14 @@ export default class Chat extends React.Component {
             showImageView: false,
             page: 0,
             selectedOptionMessageId: {},
-            filterMessage: ''
+            filterMessage: '',
+            currentTime: 0.0,
+            recording: false,
+            paused: false,
+            stoppedRecording: false,
+            finished: false,
+            audioPath: AudioUtils.DocumentDirectoryPath + '/test.aac',
+            hasPermission: undefined,
         }
 
         this._renderItem = this._renderItem.bind(this)
@@ -109,6 +119,28 @@ export default class Chat extends React.Component {
 
     componentWillUnmount() {
         this.unsubscribe()
+    }
+
+    componentDidMount() {
+        this._checkPermission().then((hasPermission) => {
+            this.setState({ hasPermission })
+
+            if (!hasPermission)
+                return
+            this.prepareRecordingPath(this.state.audioPath)
+            AudioRecorder.onProgress = (data) => {
+                console.log('==============')
+                console.log(data.currentTime)
+                this.setState({currentTime: Math.floor(data.currentTime)})
+            }
+
+            AudioRecorder.onFinished = (data) => {
+                // Android callback comes in the form of a promise instead.
+                if (Platform.OS === 'ios') {
+                    this._finishRecording(data.status === "OK", data.audioFileURL)
+                }
+            }
+        })
     }
 
     updateData = () => {
@@ -124,6 +156,80 @@ export default class Chat extends React.Component {
             optionMessage: _.get(state, 'chat.optionMessage', []),
             isShowSearchBar: _.get(state, 'chat.isShowSearchBar', false)
         })
+    }
+
+    _finishRecording = (didSucceed, filePath) => {
+        this.setState({ finished: didSucceed })
+        console.log(`Finished recording of duration ${this.state.currentTime} seconds at path: ${filePath}`)
+    }
+
+    _record = async () => {
+        if (this.state.recording) {
+            console.warn('Already recording!')
+            return
+        }
+
+        if (!this.state.hasPermission) {
+            console.warn('Can\'t record, no permission granted!')
+            return
+        }
+
+        if(this.state.stoppedRecording){
+            this.prepareRecordingPath(this.state.audioPath)
+        }
+
+        this.setState({recording: true, paused: false})
+        try {
+            const filePath = await AudioRecorder.startRecording()
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    _stop = async () => {
+        if (!this.state.recording) {
+            console.warn('Can\'t stop, not recording!')
+            return
+        }
+
+        this.setState({stoppedRecording: true, recording: false, paused: false})
+
+        try {
+            const filePath = await AudioRecorder.stopRecording()
+            if (Platform.OS === 'android') {
+                this._finishRecording(true, filePath)
+        }
+            return filePath
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    prepareRecordingPath = (audioPath) => {
+        AudioRecorder.prepareRecordingAtPath(audioPath, {
+            SampleRate: 22050,
+            Channels: 1,
+            AudioQuality: "Low",
+            AudioEncoding: "aac",
+            AudioEncodingBitRate: 32000
+        })
+    }
+
+    _checkPermission() {
+        if (Platform.OS !== 'android') {
+            return Promise.resolve(true)
+        }
+
+        const rationale = {
+            'title': 'Microphone Permission',
+            'message': 'AudioExample needs access to your microphone so you can record audio.'
+        }
+
+        return PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO, rationale)
+            .then((result) => {
+                console.log('Permission result:', result)
+                return (result === true || result === PermissionsAndroid.RESULTS.GRANTED)
+            })
     }
 
     initState = () => {
@@ -226,10 +332,6 @@ export default class Chat extends React.Component {
 		this.unsubscribe = store.subscribe(() => {
             this.updateData()
 		})
-    }
-
-    componentDidMount() {
-
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -1120,12 +1222,25 @@ export default class Chat extends React.Component {
               {
                   this.state.isShowRecord && <View style={{ height: 200, backgroundColor: '#f9f9f9' }}>
                         <View style={{ height: 50, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text>0:00</Text>
+
                         </View>
                         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                            <View style={{ backgroundColor: '#ff6666', width: 120, height: 120, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: 'white' }}>Record</Text>
-                            </View>
+                            <TouchableOpacity style={{ backgroundColor: '#ff6666', width: 120, height: 120, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
+                                if(this.state.recording) {
+                                    this._stop()
+                                } else {
+                                    this._record()
+                                }
+                            }}>
+                                <Text style={{ color: 'white' }}>{ this.state.recording? 'Stop' : 'Record' }</Text>
+                                {
+                                    this.state.recording && <Text style={{ color: 'white' }}>
+                                        {
+                                            Math.floor(this.state.currentTime)
+                                        }
+                                    </Text>
+                                }
+                            </TouchableOpacity>
                         </View>
 
                   </View>
