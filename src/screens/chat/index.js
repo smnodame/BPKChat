@@ -111,7 +111,7 @@ export default class Chat extends React.Component {
             paused: false,
             stoppedRecording: false,
             finished: false,
-            audioPath: AudioUtils.DocumentDirectoryPath + '/test.aac',
+            audioPath: AudioUtils.DocumentDirectoryPath + '/test.wav',
             hasPermission: undefined,
             roundRecording: 0
         }
@@ -349,19 +349,36 @@ export default class Chat extends React.Component {
                 if (error) {
                     console.log('failed to load the sound', error)
                 }
+
+                console.log('duration in seconds: ' + sound.getDuration())
             })
 
             setTimeout(() => {
+                let refreshId = ''
+
                 sound.play((success) => {
                     if (success) {
+                        this.setState({
+                            playingAudio: false
+                        })
                         console.log('successfully finished playing')
+                        clearInterval(refreshId)
                     } else {
                         console.log('playback failed due to audio decoding errors')
                     }
+
                 })
 
-                // Get the current playback point in seconds
-                sound.getCurrentTime((seconds) => console.log('at ' + seconds));
+                this.setState({
+                    playingAudio: true
+                }, () => {
+                    refreshId = setInterval(function() {
+                        sound.getCurrentTime((seconds) => {
+                            console.log('second : ', seconds)
+                        })
+                    }, 600)
+                })
+
             }, 100)
         }, 100)
     }
