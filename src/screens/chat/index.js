@@ -112,6 +112,7 @@ export default class Chat extends React.Component {
             finished: false,
             audioPath: AudioUtils.DocumentDirectoryPath + '/test.aac',
             hasPermission: undefined,
+            roundRecording: 0
         }
 
         this._renderItem = this._renderItem.bind(this)
@@ -129,8 +130,6 @@ export default class Chat extends React.Component {
                 return
             this.prepareRecordingPath(this.state.audioPath)
             AudioRecorder.onProgress = (data) => {
-                console.log('==============')
-                console.log(data.currentTime)
                 this.setState({currentTime: Math.floor(data.currentTime)})
             }
 
@@ -161,6 +160,9 @@ export default class Chat extends React.Component {
     _finishRecording = (didSucceed, filePath) => {
         this.setState({ finished: didSucceed })
         console.log(`Finished recording of duration ${this.state.currentTime} seconds at path: ${filePath}`)
+        this.setState({
+            roundRecording: this.state.roundRecording + 1
+        })
     }
 
     _record = async () => {
@@ -1221,26 +1223,41 @@ export default class Chat extends React.Component {
               }
               {
                   this.state.isShowRecord && <View style={{ height: 200, backgroundColor: '#f9f9f9' }}>
-                        <View style={{ height: 50, justifyContent: 'center', alignItems: 'center' }}>
 
-                        </View>
-                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                            <TouchableOpacity style={{ backgroundColor: '#ff6666', width: 120, height: 120, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
-                                if(this.state.recording) {
-                                    this._stop()
-                                } else {
+                        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
+                            {
+                                this.state.roundRecording >= 1 && this.state.recording == false  && <TouchableOpacity style={{ marginRight: 10, backgroundColor: '#edb730', width: 80, height: 80, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
                                     this._record()
-                                }
-                            }}>
-                                <Text style={{ color: 'white' }}>{ this.state.recording? 'Stop' : 'Record' }</Text>
-                                {
-                                    this.state.recording && <Text style={{ color: 'white' }}>
-                                        {
-                                            Math.floor(this.state.currentTime)
-                                        }
-                                    </Text>
-                                }
-                            </TouchableOpacity>
+                                }}>
+                                 <Icon name='md-sync' style={{ color: 'white', fontSize: 35 }}/>
+                                </TouchableOpacity>
+                            }
+                            {
+                                this.state.roundRecording >= 1 && this.state.recording == false  && <TouchableOpacity style={{ marginLeft: 10, backgroundColor: '#ff6666', width: 80, height: 80, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
+
+                                }}>
+                                    <Text style={{ color: 'white' }}>Send</Text>
+                                </TouchableOpacity>
+                            }
+                            {
+                                (this.state.roundRecording == 0 || this.state.recording == true ) && <TouchableOpacity style={{ backgroundColor: '#ff6666', width: 120, height: 120, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
+                                    if(this.state.recording) {
+                                        this._stop()
+                                    } else {
+                                        this._record()
+                                    }
+                                }}>
+                                    <Text style={{ color: 'white' }}>{ this.state.recording? 'Stop' : 'Record' }</Text>
+                                    {
+                                        this.state.recording && <Text style={{ color: 'white' }}>
+                                            {
+                                                Math.floor(this.state.currentTime)
+                                            }
+                                        </Text>
+                                    }
+                                </TouchableOpacity>
+                            }
+
                         </View>
 
                   </View>
