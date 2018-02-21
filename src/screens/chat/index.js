@@ -87,6 +87,7 @@ import RNFetchBlob from 'react-native-fetch-blob'
 
 import ImageView from 'react-native-image-view'
 
+import Sound from 'react-native-sound'
 import {AudioRecorder, AudioUtils} from 'react-native-audio'
 
 let getUserId = (navigation) => {
@@ -334,6 +335,35 @@ export default class Chat extends React.Component {
 		this.unsubscribe = store.subscribe(() => {
             this.updateData()
 		})
+    }
+
+    _play = async () => {
+        if (this.state.recording) {
+            await this._stop()
+        }
+
+        // These timeouts are a hacky workaround for some issues with react-native-sound.
+        // See https://github.com/zmxv/react-native-sound/issues/89.
+        setTimeout(() => {
+            var sound = new Sound(this.state.audioPath, '', (error) => {
+                if (error) {
+                    console.log('failed to load the sound', error)
+                }
+            })
+
+            setTimeout(() => {
+                sound.play((success) => {
+                    if (success) {
+                        console.log('successfully finished playing')
+                    } else {
+                        console.log('playback failed due to audio decoding errors')
+                    }
+                })
+
+                // Get the current playback point in seconds
+                sound.getCurrentTime((seconds) => console.log('at ' + seconds));
+            }, 100)
+        }, 100)
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -1234,7 +1264,7 @@ export default class Chat extends React.Component {
                             }
                             {
                                 this.state.roundRecording >= 1 && this.state.recording == false  && <TouchableOpacity style={{ marginLeft: 10, backgroundColor: '#ff6666', width: 80, height: 80, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
-
+                                    this._play()
                                 }}>
                                     <Text style={{ color: 'white' }}>Send</Text>
                                 </TouchableOpacity>
