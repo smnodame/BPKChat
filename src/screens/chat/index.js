@@ -345,42 +345,57 @@ export default class Chat extends React.Component {
         // These timeouts are a hacky workaround for some issues with react-native-sound.
         // See https://github.com/zmxv/react-native-sound/issues/89.
         setTimeout(() => {
-            var sound = new Sound(this.state.audioPath, '', (error) => {
-                if (error) {
-                    console.log('failed to load the sound', error)
-                }
-
-                console.log('duration in seconds: ' + sound.getDuration())
+            RNFetchBlob
+            .config({
+                // add this option that makes response data to be stored as a file,
+                // this is much more performant.
+                fileCache : true,
             })
+            .fetch('GET', 'http://itsmartone.com/bpk_connect/upload_chat_audio/5029.wav', {
+                //some headers ..
+            })
+            .then((res) => {
+                // the temp file path
 
-            setTimeout(() => {
-                let refreshId = ''
-
-                sound.play((success) => {
-                    if (success) {
-                        this.setState({
-                            playingAudio: false
-                        })
-                        console.log('successfully finished playing')
-                        clearInterval(refreshId)
-                    } else {
-                        console.log('playback failed due to audio decoding errors')
+                console.log('The file saved to ', res.path())
+                var sound = new Sound(res.path(), '', (error) => {
+                    if (error) {
+                        console.log('failed to load the sound', error)
                     }
 
+                    console.log('duration in seconds: ' + sound.getDuration())
                 })
 
-                this.setState({
-                    playingAudio: true
-                }, () => {
-                    refreshId = setInterval(function() {
-                        sound.getCurrentTime((seconds) => {
-                            console.log('second : ', seconds)
-                        })
-                    }, 600)
-                })
+                setTimeout(() => {
+                    let refreshId = ''
 
-            }, 100)
+                    sound.play((success) => {
+                        if (success) {
+                            this.setState({
+                                playingAudio: false
+                            })
+                            console.log('successfully finished playing')
+                            clearInterval(refreshId)
+                        } else {
+                            console.log('playback failed due to audio decoding errors')
+                        }
+
+                    })
+
+                    this.setState({
+                        playingAudio: true
+                    }, () => {
+                        refreshId = setInterval(function() {
+                            sound.getCurrentTime((seconds) => {
+                                console.log('second : ', seconds)
+                            })
+                        }, 600)
+                    })
+
+                }, 100)
+            })
         }, 100)
+
     }
 
     componentDidUpdate(prevProps, prevState) {
