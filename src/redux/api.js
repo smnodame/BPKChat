@@ -143,8 +143,7 @@ export const sendFileMessage = (chat_room_id, message_type, file) => {
         bodyFormData.append('sticker_path', '')
         bodyFormData.append('image_base64', '')
         bodyFormData.append('file', file)
-        console.log('==========')
-        console.log(bodyFormData)
+        
         return axios({
             method: 'post',
             url: 'http://itsmartone.com/bpk_connect/api/message/send?token=asdf1234aaa',
