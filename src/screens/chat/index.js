@@ -94,6 +94,7 @@ import {AudioRecorder, AudioUtils} from 'react-native-audio'
 let getUserId = (navigation) => {
   return navigation.state.params ? navigation.state.params.userId : undefined
 }
+const audioName = 'audio.wav'
 
 export default class Chat extends React.Component {
 
@@ -112,7 +113,7 @@ export default class Chat extends React.Component {
             paused: false,
             stoppedRecording: false,
             finished: false,
-            audioPath: AudioUtils.DocumentDirectoryPath + '/test.wav',
+            audioPath: AudioUtils.DocumentDirectoryPath + '/' + audioName,
             hasPermission: undefined,
             roundRecording: 0
         }
@@ -214,7 +215,7 @@ export default class Chat extends React.Component {
             SampleRate: 22050,
             Channels: 1,
             AudioQuality: "Low",
-            AudioEncoding: "aac",
+            AudioEncoding: "wav",
             AudioEncodingBitRate: 32000
         })
     }
@@ -715,13 +716,15 @@ export default class Chat extends React.Component {
     }
 
     async _pushFile(file) {
-        const resSendTheMessage = await sendFileMessage(this.state.chatInfo.chat_room_id, '5', file)
-        console.log(' send file message ')
-        console.log(resSendTheMessage)
+        const resSendTheMessage = await sendFileMessage(this.state.chatInfo.chat_room_id, '5', {
+            fileName: file.fileName,
+            type: file.type,
+            uri: file.uri
+        })
 
         // update message for everyone in group
         emit_message(this.state.message, this.state.chatInfo.chat_room_id)
-        
+
         // update our own
         emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
 
@@ -734,7 +737,32 @@ export default class Chat extends React.Component {
         this.setState({
             message: ''
         })
+    }
 
+    async _pushAudio() {
+        const resSendTheMessage = await sendFileMessage(this.state.chatInfo.chat_room_id, '3', {
+            fileName: audioName,
+            type: "audio/wav",
+            uri: Platform.OS !== 'android'? AudioUtils.DocumentDirectoryPath + '/' + audioName : 'file://' + AudioUtils.DocumentDirectoryPath + '/' + audioName
+        })
+        console.log(' send file message ')
+        console.log(resSendTheMessage)
+
+        // update message for everyone in group
+        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
+
+        // update our own
+        emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
+
+        // update every friends in group
+        const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
+        friend_user_ids.forEach((friend_user_id) => {
+            emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
+        })
+
+        this.setState({
+            message: ''
+        })
     }
 
   render() {
@@ -1304,7 +1332,7 @@ export default class Chat extends React.Component {
                             }
                             {
                                 this.state.roundRecording >= 1 && this.state.recording == false  && <TouchableOpacity style={{ marginLeft: 10, backgroundColor: '#ff6666', width: 80, height: 80, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
-                                    // this._play()
+                                    this._pushAudio()
                                 }}>
                                     <Text style={{ color: 'white' }}>Send</Text>
                                 </TouchableOpacity>
