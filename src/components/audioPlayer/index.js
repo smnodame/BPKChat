@@ -54,6 +54,10 @@ import {AudioRecorder, AudioUtils} from 'react-native-audio'
 export default class AudioPlayer extends React.Component {
     constructor(props) {
         super(props)
+
+        this.state = {
+            progressText: '00:00'
+        }
         // backgroundColor
         // object_url
     }
@@ -69,6 +73,10 @@ export default class AudioPlayer extends React.Component {
 
         // These timeouts are a hacky workaround for some issues with react-native-sound.
         // See https://github.com/zmxv/react-native-sound/issues/89.
+        this.setState({
+            progressText: 'Loading'
+        })
+
         setTimeout(() => {
             RNFetchBlob
             .config({
@@ -109,11 +117,22 @@ export default class AudioPlayer extends React.Component {
                     this.setState({
                         playingAudio: true
                     }, () => {
-                        refreshId = setInterval(function() {
-                            sound.getCurrentTime((seconds) => {
-                                console.log('second : ', seconds)
-                            })
-                        }, 600)
+                        this.setState({
+                                progressText: `${Math.floor(sound.getDuration())} seconds`
+                        })
+                        // let seconds = 0
+                        // refreshId = setInterval(() => {
+                        //     // sound.getCurrentTime((seconds) => {
+                        //     //     console.log('second : ', seconds)
+                        //     //
+                        //     //     this.setState({
+                        //     //         progressText: `${Math.floor(seconds)} seconds`
+                        //     //     })
+                        //     // })
+                        //     this.setState({
+                        //         progressText: `${Math.floor(seconds)} seconds`
+                        //     })
+                        // }, 1000)
                     })
 
                 }, 100)
@@ -128,7 +147,7 @@ export default class AudioPlayer extends React.Component {
         <View style={[styles.balloon, { width: 150, height: 100 }, {backgroundColor},  { padding: 5 }]}>
             <View style={{ flex: 1, flexDirection: 'column' }}>
                 <View style={{ flex: 1, borderColor: '#C0C0C0', borderBottomWidth: 0.5, marginBottom: 2, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ color: '#C0C0C0', fontSize: 20 }}>00:00</Text>
+                    <Text style={{ color: '#C0C0C0', fontSize: 20 }}>{ this.state.progressText }</Text>
                 </View>
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                     <View style={{ flex: 1, borderColor: '#C0C0C0', borderRightWidth: 0.5, justifyContent: 'center', alignItems: 'center' }}>
