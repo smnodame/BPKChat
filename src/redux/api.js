@@ -147,8 +147,6 @@ export const sendFileMessage = (chat_room_id, message_type, file) => {
             type: file.type,
             uri: file.uri
         })
-        console.log('=====')
-        console.log(file)
         return fetch('http://itsmartone.com/bpk_connect/api/message/send?token=asdf1234aaa', {
             method: 'post',
             body: bodyFormData
