@@ -24,6 +24,7 @@ import {
   RkStyleSheet,
   RkTheme
 } from 'react-native-ui-kitten'
+import AudioPlayer from '../../components/audioPlayer'
 import RoundCheckbox from 'rn-round-checkbox'
 import Modal from 'react-native-modal'
 import _ from 'lodash'
@@ -337,66 +338,65 @@ export default class Chat extends React.Component {
 		})
     }
 
-    _play = async (audioPath) => {
-        // if (this.state.recording) {
-        //     await this._stop()
-        // }
-
-        // These timeouts are a hacky workaround for some issues with react-native-sound.
-        // See https://github.com/zmxv/react-native-sound/issues/89.
-        setTimeout(() => {
-            RNFetchBlob
-            .config({
-                // add this option that makes response data to be stored as a file,
-                // this is much more performant.
-                fileCache : true,
-            })
-            .fetch('GET', audioPath, {
-                //some headers ..
-            })
-            .then((res) => {
-                // the temp file path
-
-                console.log('The file saved to ', res.path())
-                var sound = new Sound(res.path(), '', (error) => {
-                    if (error) {
-                        console.log('failed to load the sound', error)
-                    }
-
-                    console.log('duration in seconds: ' + sound.getDuration())
-                })
-
-                setTimeout(() => {
-                    let refreshId = ''
-
-                    sound.play((success) => {
-                        if (success) {
-                            this.setState({
-                                playingAudio: false
-                            })
-                            console.log('successfully finished playing')
-                            clearInterval(refreshId)
-                        } else {
-                            console.log('playback failed due to audio decoding errors')
-                        }
-
-                    })
-
-                    this.setState({
-                        playingAudio: true
-                    }, () => {
-                        refreshId = setInterval(function() {
-                            sound.getCurrentTime((seconds) => {
-                                console.log('second : ', seconds)
-                            })
-                        }, 600)
-                    })
-
-                }, 100)
-            })
-        }, 100)
-
-    }
+    // _play = async (audioPath) => {
+    //     // if (this.state.recording) {
+    //     //     await this._stop()
+    //     // }
+    //
+    //     // These timeouts are a hacky workaround for some issues with react-native-sound.
+    //     // See https://github.com/zmxv/react-native-sound/issues/89.
+    //     setTimeout(() => {
+    //         RNFetchBlob
+    //         .config({
+    //             // add this option that makes response data to be stored as a file,
+    //             // this is much more performant.
+    //             fileCache : true,
+    //         })
+    //         .fetch('GET', audioPath, {
+    //             //some headers ..
+    //         })
+    //         .then((res) => {
+    //             // the temp file path
+    //
+    //             console.log('The file saved to ', res.path())
+    //             var sound = new Sound(res.path(), '', (error) => {
+    //                 if (error) {
+    //                     console.log('failed to load the sound', error)
+    //                 }
+    //
+    //                 console.log('duration in seconds: ' + sound.getDuration())
+    //             })
+    //
+    //             setTimeout(() => {
+    //                 let refreshId = ''
+    //
+    //                 sound.play((success) => {
+    //                     if (success) {
+    //                         this.setState({
+    //                             playingAudio: false
+    //                         })
+    //                         console.log('successfully finished playing')
+    //                         clearInterval(refreshId)
+    //                     } else {
+    //                         console.log('playback failed due to audio decoding errors')
+    //                     }
+    //                 })
+    //
+    //                 this.setState({
+    //                     playingAudio: true
+    //                 }, () => {
+    //                     refreshId = setInterval(function() {
+    //                         sound.getCurrentTime((seconds) => {
+    //                             console.log('second : ', seconds)
+    //                         })
+    //                     }, 600)
+    //                 })
+    //
+    //             }, 100)
+    //         })
+    //     }, 100)
+    //
+    // }
 
     componentDidUpdate(prevProps, prevState) {
 
@@ -542,50 +542,8 @@ export default class Chat extends React.Component {
                       })
                   }
               >
-                  <View style={[styles.balloon, { width: 150, height: 100 }, {backgroundColor}, { padding: 5 }]}>
-                      <View style={{ flex: 1, flexDirection: 'column' }}>
-                          <View style={{ flex: 1, borderColor: '#C0C0C0', borderBottomWidth: 0.5, marginBottom: 2, justifyContent: 'center', alignItems: 'center' }}>
-                              <Text style={{ color: '#C0C0C0', fontSize: 20 }}>10:50</Text>
-                          </View>
-                          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                              <View style={{ flex: 1, borderColor: '#C0C0C0', borderRightWidth: 0.5, justifyContent: 'center', alignItems: 'center' }}>
-                                  <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }} onPress={() => {
-                                      this._play(info.item.object_url)
-                                  }}>
-                                      <Icon name='md-play' style={{ color: '#C0C0C0' }}/>
-                                  </Button>
-                              </View>
-                              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                  <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }} onPress={() => {
-                                      const url = info.item.object_url
-                                      const arr = url.split('.')
-                                      const filetype = arr[arr.length - 1]
-
-                                      RNFetchBlob
-                                      .config({
-                                          addAndroidDownloads : {
-                                              useDownloadManager : true, // <-- this is the only thing required
-                                              // Optional, override notification setting (default to true)
-                                              notification : true,
-                                              // Optional, but recommended since android DownloadManager will fail when
-                                              // the url does not contains a file extension, by default the mime type will be text/plain
-                                              title: info.item.file_name,
-                                              mime : mime.lookup(filetype),
-                                              description : 'File downloaded by download manager.'
-                                          }
-                                      })
-                                      .fetch('GET', url)
-                                      .then((resp) => {
-                                        // the path of downloaded file
-                                        resp.path()
-                                      })
-                                  }}>
-                                      <Icon name='md-download' style={{ color: '#C0C0C0' }}/>
-                                  </Button>
-                              </View>
-                          </View>
-                      </View>
-                  </View>
+              <AudioPlayer fileName={info.item.file_name} url={info.item.object_url} backgroundColor={backgroundColor} />
+                
               </TouchableWithoutFeedback>
           }
           {
@@ -760,7 +718,7 @@ export default class Chat extends React.Component {
         const resSendTheMessage = await sendFileMessage(this.state.chatInfo.chat_room_id, '5', file)
         console.log(' send file message ')
         console.log(resSendTheMessage)
-        
+
         // update our own
         emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
 
@@ -1343,7 +1301,7 @@ export default class Chat extends React.Component {
                             }
                             {
                                 this.state.roundRecording >= 1 && this.state.recording == false  && <TouchableOpacity style={{ marginLeft: 10, backgroundColor: '#ff6666', width: 80, height: 80, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
-                                    this._play()
+                                    // this._play()
                                 }}>
                                     <Text style={{ color: 'white' }}>Send</Text>
                                 </TouchableOpacity>
