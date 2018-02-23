@@ -68,7 +68,13 @@ export default class AudioPlayer extends React.Component {
 
     _play = async (audioPath) => {
         if(this.path) {
-            this._start()
+            this.setState({
+                isLoading: true,
+                progressText: 'Loading',
+                playingAudio: true
+            }, () => {
+                this._start()
+            })
         } else {
             this.setState({
                 isLoading: true,
@@ -90,18 +96,14 @@ export default class AudioPlayer extends React.Component {
                     // the temp file path
                     console.log('The file saved to ', res.path())
                     this.duration = 0
-                    this.setState({
-                        isLoading: false
-                    }, () => {
-                        this.sound = new Sound(res.path(), '', (error) => {
-                            if (error) {
-                                console.log('failed to load the sound', error)
-                            }
-                            this.path = res.path()
-                            this.duration = Math.floor(this.sound.getDuration())
-                            console.log('duration in seconds: ' + this.duration)
-                            this._start()
-                        })
+                    this.sound = new Sound(res.path(), '', (error) => {
+                        if (error) {
+                            console.log('failed to load the sound', error)
+                        }
+                        this.path = res.path()
+                        this.duration = Math.floor(this.sound.getDuration())
+                        console.log('duration in seconds: ' + this.duration)
+                        this._start()
                     })
                 })
             }, 100)
@@ -109,6 +111,9 @@ export default class AudioPlayer extends React.Component {
     }
 
     _start = async = () => {
+        this.setState({
+            isLoading: false
+        })
         this.playAudio = setTimeout(() => {
             let seconds = 0
             this.refreshId = setInterval(() => {
@@ -142,15 +147,14 @@ export default class AudioPlayer extends React.Component {
     }
 
     _stop = async () => {
-        if(this.playAudio) {
-            clearTimeout(this.playAudio)
-        }
         if(this.sound) {
+            clearTimeout(this.playAudio)
             this.setState({
                 playingAudio: false,
                 progressText: `${Math.floor(this.duration)} seconds`
             }, () => {
                 this.sound.stop()
+                this.sound.setCurrentTime(0.0)
                 clearInterval(this.refreshId)
             })
         }
