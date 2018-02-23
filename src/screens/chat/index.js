@@ -761,7 +761,8 @@ export default class Chat extends React.Component {
         })
 
         this.setState({
-            message: ''
+            message: '',
+            roundRecording: 0
         })
     }
 
@@ -1325,7 +1326,11 @@ export default class Chat extends React.Component {
                         <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
                             {
                                 this.state.roundRecording >= 1 && this.state.recording == false  && <TouchableOpacity style={{ marginRight: 10, backgroundColor: '#edb730', width: 80, height: 80, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
-                                    this._record()
+                                    this.setState({
+                                        currentTime: 0.0
+                                    }, () => {
+                                        this._record()
+                                    })
                                 }}>
                                  <Icon name='md-sync' style={{ color: 'white', fontSize: 35 }}/>
                                 </TouchableOpacity>
