@@ -588,8 +588,7 @@ export default class Chat extends React.Component {
                               <Icon name='md-list-box' style={{ color: '#A9A9A9' }}/>
                           </View>
                           <View>
-                              <RkText rkType='primary2 mediumLine chat' style={{ marginBottom: 8, height: 22 }}>
-
+                              <RkText rkType='primary2 mediumLine chat' numberOfLines={1} style={{ marginBottom: 8, height: 22 }}>
                                   {  `${info.item.file_name}`}
                               </RkText>
                               <RkText rkType='secondary4 hintColor'>
