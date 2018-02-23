@@ -56,10 +56,10 @@ export default class AudioPlayer extends React.Component {
         super(props)
 
         this.state = {
-            progressText: '00:00'
+            progressText: '00:00',
+            duration: 0,
+            isLoading: false
         }
-        // backgroundColor
-        // object_url
     }
 
     async componentDidMount() {
@@ -67,78 +67,93 @@ export default class AudioPlayer extends React.Component {
     }
 
     _play = async (audioPath) => {
-        // if (this.state.recording) {
-        //     await this._stop()
-        // }
-
-        // These timeouts are a hacky workaround for some issues with react-native-sound.
-        // See https://github.com/zmxv/react-native-sound/issues/89.
-        this.setState({
-            progressText: 'Loading'
-        })
-
-        setTimeout(() => {
-            RNFetchBlob
-            .config({
-                // add this option that makes response data to be stored as a file,
-                // this is much more performant.
-                fileCache : true,
+        if(this.path) {
+            this._start()
+        } else {
+            this.setState({
+                isLoading: true,
+                progressText: 'Loading',
+                playingAudio: true
             })
-            .fetch('GET', audioPath, {
-                //some headers ..
-            })
-            .then((res) => {
-                // the temp file path
 
-                console.log('The file saved to ', res.path())
-                var sound = new Sound(res.path(), '', (error) => {
-                    if (error) {
-                        console.log('failed to load the sound', error)
-                    }
-
-                    console.log('duration in seconds: ' + sound.getDuration())
+            this.fetchAudio = setTimeout(() => {
+                RNFetchBlob
+                .config({
+                    // add this option that makes response data to be stored as a file,
+                    // this is much more performant.
+                    fileCache : true,
                 })
+                .fetch('GET', audioPath, {
+                    //some headers ..
+                })
+                .then((res) => {
+                    // the temp file path
+                    console.log('The file saved to ', res.path())
+                    this.duration = 0
+                    this.setState({
+                        isLoading: false
+                    }, () => {
+                        this.sound = new Sound(res.path(), '', (error) => {
+                            if (error) {
+                                console.log('failed to load the sound', error)
+                            }
+                            this.path = res.path()
+                            this.duration = Math.floor(this.sound.getDuration())
+                            console.log('duration in seconds: ' + this.duration)
+                            this._start()
+                        })
+                    })
+                })
+            }, 100)
+        }
+    }
 
-                setTimeout(() => {
-                    let refreshId = ''
-
-                    sound.play((success) => {
+    _start = async = () => {
+        this.playAudio = setTimeout(() => {
+            let seconds = 0
+            this.refreshId = setInterval(() => {
+                if(seconds == 0) {
+                    this.sound.play((success) => {
                         if (success) {
                             this.setState({
-                                playingAudio: false
+                                playingAudio: false,
+                                progressText: `${Math.floor(this.duration)} seconds`
                             })
                             console.log('successfully finished playing')
-                            clearInterval(refreshId)
                         } else {
+                            this.setState({
+                                playingAudio: false,
+                                progressText: `${Math.floor(this.duration)} seconds`
+                            })
+                            console.log('successfully finished playing')
                             console.log('playback failed due to audio decoding errors')
                         }
                     })
-
-                    this.setState({
-                        playingAudio: true
-                    }, () => {
-                        this.setState({
-                                progressText: `${Math.floor(sound.getDuration())} seconds`
-                        })
-                        // let seconds = 0
-                        // refreshId = setInterval(() => {
-                        //     // sound.getCurrentTime((seconds) => {
-                        //     //     console.log('second : ', seconds)
-                        //     //
-                        //     //     this.setState({
-                        //     //         progressText: `${Math.floor(seconds)} seconds`
-                        //     //     })
-                        //     // })
-                        //     this.setState({
-                        //         progressText: `${Math.floor(seconds)} seconds`
-                        //     })
-                        // }, 1000)
-                    })
-
-                }, 100)
-            })
+                }
+                this.setState({
+                    progressText: `${this.duration - Math.floor(seconds)} seconds`
+                })
+                if(seconds == this.duration) {
+                    clearInterval(this.refreshId)
+                }
+                seconds = seconds + 1
+            }, 1000)
         }, 100)
+    }
 
+    _stop = async () => {
+        if(this.playAudio) {
+            clearTimeout(this.playAudio)
+        }
+        if(this.sound) {
+            this.setState({
+                playingAudio: false,
+                progressText: `${Math.floor(this.duration)} seconds`
+            }, () => {
+                this.sound.stop()
+                clearInterval(this.refreshId)
+            })
+        }
     }
 
     render() {
@@ -151,11 +166,20 @@ export default class AudioPlayer extends React.Component {
                 </View>
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                     <View style={{ flex: 1, borderColor: '#C0C0C0', borderRightWidth: 0.5, justifyContent: 'center', alignItems: 'center' }}>
-                        <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }} onPress={() => {
-                            this._play(this.props.url)
-                        }}>
-                            <Icon name='md-play' style={{ color: '#C0C0C0' }}/>
-                        </Button>
+                        {
+                            !this.state.playingAudio && <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }} onPress={() => {
+                                this._play(this.props.url)
+                            }}>
+                                <Icon name='md-play' style={{ color: '#C0C0C0' }}/>
+                            </Button>
+                        }
+                        {
+                            this.state.playingAudio && <Button disabled={this.state.isLoading} iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }} onPress={() => {
+                                this._stop()
+                            }}>
+                                <Icon name='md-pause' style={{ color: '#C0C0C0' }}/>
+                            </Button>
+                        }
                     </View>
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }} onPress={() => {
