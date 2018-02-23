@@ -337,10 +337,10 @@ export default class Chat extends React.Component {
 		})
     }
 
-    _play = async () => {
-        if (this.state.recording) {
-            await this._stop()
-        }
+    _play = async (audioPath) => {
+        // if (this.state.recording) {
+        //     await this._stop()
+        // }
 
         // These timeouts are a hacky workaround for some issues with react-native-sound.
         // See https://github.com/zmxv/react-native-sound/issues/89.
@@ -351,7 +351,7 @@ export default class Chat extends React.Component {
                 // this is much more performant.
                 fileCache : true,
             })
-            .fetch('GET', 'http://itsmartone.com/bpk_connect/upload_chat_audio/5029.wav', {
+            .fetch('GET', audioPath, {
                 //some headers ..
             })
             .then((res) => {
@@ -549,12 +549,37 @@ export default class Chat extends React.Component {
                           </View>
                           <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                               <View style={{ flex: 1, borderColor: '#C0C0C0', borderRightWidth: 0.5, justifyContent: 'center', alignItems: 'center' }}>
-                                  <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
+                                  <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }} onPress={() => {
+                                      this._play(info.item.object_url)
+                                  }}>
                                       <Icon name='md-play' style={{ color: '#C0C0C0' }}/>
                                   </Button>
                               </View>
                               <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                  <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
+                                  <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }} onPress={() => {
+                                      const url = info.item.object_url
+                                      const arr = url.split('.')
+                                      const filetype = arr[arr.length - 1]
+
+                                      RNFetchBlob
+                                      .config({
+                                          addAndroidDownloads : {
+                                              useDownloadManager : true, // <-- this is the only thing required
+                                              // Optional, override notification setting (default to true)
+                                              notification : true,
+                                              // Optional, but recommended since android DownloadManager will fail when
+                                              // the url does not contains a file extension, by default the mime type will be text/plain
+                                              title: info.item.file_name,
+                                              mime : mime.lookup(filetype),
+                                              description : 'File downloaded by download manager.'
+                                          }
+                                      })
+                                      .fetch('GET', url)
+                                      .then((resp) => {
+                                        // the path of downloaded file
+                                        resp.path()
+                                      })
+                                  }}>
                                       <Icon name='md-download' style={{ color: '#C0C0C0' }}/>
                                   </Button>
                               </View>
