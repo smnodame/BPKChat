@@ -543,7 +543,7 @@ export default class Chat extends React.Component {
                   }
               >
               <AudioPlayer fileName={info.item.file_name} url={info.item.object_url} backgroundColor={backgroundColor} />
-                
+
               </TouchableWithoutFeedback>
           }
           {
@@ -719,6 +719,9 @@ export default class Chat extends React.Component {
         console.log(' send file message ')
         console.log(resSendTheMessage)
 
+        // update message for everyone in group
+        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
+        
         // update our own
         emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
 

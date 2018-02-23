@@ -142,14 +142,19 @@ export const sendFileMessage = (chat_room_id, message_type, file) => {
         bodyFormData.append('content', '')
         bodyFormData.append('sticker_path', '')
         bodyFormData.append('image_base64', '')
-        bodyFormData.append('file', file)
-        
-        return axios({
-            method: 'post',
-            url: 'http://itsmartone.com/bpk_connect/api/message/send?token=asdf1234aaa',
-            data: bodyFormData,
-            config: { headers: {'Content-Type': 'multipart/form-data' }}
+        bodyFormData.append('file', {
+            name: file.fileName,
+            type: file.type,
+            uri: file.uri
         })
+        console.log('=====')
+        console.log(file)
+        return fetch('http://itsmartone.com/bpk_connect/api/message/send?token=asdf1234aaa', {
+            method: 'post',
+            body: bodyFormData
+            }).then(res => {
+                return res
+            })
     })
 }
 
