@@ -69,7 +69,7 @@ import {
     onForward,
     inviteFriends
 } from '../../redux/actions'
-import {sendTheMessage, fetchFriendProfile, saveInKeep } from '../../redux/api'
+import {sendTheMessage, fetchFriendProfile, saveInKeep, sendFileMessage } from '../../redux/api'
 import {
     emit_update_friend_chat_list,
     emit_unsubscribe,
@@ -663,6 +663,8 @@ export default class Chat extends React.Component {
                 this.setState({
                     file: response
                 })
+                this._pushFile(response)
+                console.log('finished send message as file type ')
             }
         })
     }
@@ -751,6 +753,26 @@ export default class Chat extends React.Component {
         })
 
         this._scroll(true)
+
+    }
+
+    async _pushFile(file) {
+        const resSendTheMessage = await sendFileMessage(this.state.chatInfo.chat_room_id, '5', file)
+        console.log(' send file message ')
+        console.log(resSendTheMessage)
+        
+        // update our own
+        emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
+
+        // update every friends in group
+        const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
+        friend_user_ids.forEach((friend_user_id) => {
+            emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
+        })
+
+        this.setState({
+            message: ''
+        })
 
     }
 
