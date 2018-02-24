@@ -897,6 +897,10 @@ export default class Chat extends React.Component {
                                      data={this.state.inviteFriends}
                                      onEndReached={() => this.loadMoreInviteFriendLists()}
                                      onEndReachedThreshold={0.4}
+                                     keyExtractor={(item) => {
+                                         return item.friend_user_id
+                                     }}
+                                     extraData={this.state}
                                      renderItem={({item}) => (
                                          <ListItem avatar onPress={() => {
                                              if(this.state.isOpenCase) {
@@ -922,9 +926,7 @@ export default class Chat extends React.Component {
                                                  }
                                              }
                                         }}>
-                                             <Left>
-                                                 <Thumbnail source={{ uri: item.profile_pic_url }} />
-                                             </Left>
+                                             
                                              <Body>
                                                  <Text>{ item.display_name }</Text>
                                                  <Text note style={{ marginLeft: 2 }}>{ item.status_quote }</Text>
