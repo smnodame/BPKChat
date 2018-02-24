@@ -790,8 +790,28 @@ export default class Chat extends React.Component {
             }
             {
                  this.state.showInviteModal && <ModalNative
-                     onRequestClose={() => this.setState({ showInviteModal: false })}
-                     onBackdropPress={() => this.setState({ showInviteModal: false })}
+                     onRequestClose={() => {
+                         this.setState({ showInviteModal: false }, () => {
+                             new Promise(() => {
+                                 this.setState({
+                                     selectedOptionMessageId: {},
+                                     inviteFriends: [],
+                                     inviteFriendSeachText: ''
+                                 })
+                             })
+                         })
+                     }}
+                     onBackdropPress={() => {
+                         this.setState({ showInviteModal: false }, () => {
+                             new Promise(() => {
+                                 this.setState({
+                                     selectedOptionMessageId: {},
+                                     inviteFriends: [],
+                                     inviteFriendSeachText: ''
+                                 })
+                             })
+                         })
+                     }}
                      isVisible={true}
                  >
                      <Container style={{
@@ -802,7 +822,15 @@ export default class Chat extends React.Component {
                          <Header style={{ backgroundColor: '#3b5998' }}>
                              <Left>
                                  <Button transparent onPress={() => {
-                                     this.setState({ showInviteModal: false })
+                                     this.setState({ showInviteModal: false }, () => {
+                                         new Promise(() => {
+                                             this.setState({
+                                                 selectedOptionMessageId: {},
+                                                 inviteFriends: [],
+                                                 inviteFriendSeachText: ''
+                                             })
+                                         })
+                                     })
                                  }}>
                                      <Icon style={{ color: 'white' }} name="md-close" />
                                  </Button>
