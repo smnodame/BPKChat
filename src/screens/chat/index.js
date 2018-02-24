@@ -339,76 +339,12 @@ export default class Chat extends React.Component {
 		})
     }
 
-    // _play = async (audioPath) => {
-    //     // if (this.state.recording) {
-    //     //     await this._stop()
-    //     // }
-    //
-    //     // These timeouts are a hacky workaround for some issues with react-native-sound.
-    //     // See https://github.com/zmxv/react-native-sound/issues/89.
-    //     setTimeout(() => {
-    //         RNFetchBlob
-    //         .config({
-    //             // add this option that makes response data to be stored as a file,
-    //             // this is much more performant.
-    //             fileCache : true,
-    //         })
-    //         .fetch('GET', audioPath, {
-    //             //some headers ..
-    //         })
-    //         .then((res) => {
-    //             // the temp file path
-    //
-    //             console.log('The file saved to ', res.path())
-    //             var sound = new Sound(res.path(), '', (error) => {
-    //                 if (error) {
-    //                     console.log('failed to load the sound', error)
-    //                 }
-    //
-    //                 console.log('duration in seconds: ' + sound.getDuration())
-    //             })
-    //
-    //             setTimeout(() => {
-    //                 let refreshId = ''
-    //
-    //                 sound.play((success) => {
-    //                     if (success) {
-    //                         this.setState({
-    //                             playingAudio: false
-    //                         })
-    //                         console.log('successfully finished playing')
-    //                         clearInterval(refreshId)
-    //                     } else {
-    //                         console.log('playback failed due to audio decoding errors')
-    //                     }
-    //                 })
-    //
-    //                 this.setState({
-    //                     playingAudio: true
-    //                 }, () => {
-    //                     refreshId = setInterval(function() {
-    //                         sound.getCurrentTime((seconds) => {
-    //                             console.log('second : ', seconds)
-    //                         })
-    //                     }, 600)
-    //                 })
-    //
-    //             }, 100)
-    //         })
-    //     }, 100)
-    //
-    // }
-
     componentDidUpdate(prevProps, prevState) {
 
     }
 
     loadMoreInviteFriendLists = () => {
-        const page = this.state.page + 30
-        this.setState({
-            page: page + 1
-        })
-        store.dispatch(loadMoreInviteFriends(page, this.state.inviteFriendSeachText))
+        store.dispatch(loadMoreInviteFriends(0, this.state.inviteFriendSeachText))
     }
 
     onLoadMoreMemberInGroup = () => {
@@ -858,7 +794,7 @@ export default class Chat extends React.Component {
                      onBackdropPress={() => this.setState({ showInviteModal: false })}
                      isVisible={true}
                  >
-                     <View style={{
+                     <Container style={{
                          backgroundColor: 'white',
                          borderRadius: 4,
                          borderColor: 'rgba(0, 0, 0, 0.1)',
@@ -891,12 +827,11 @@ export default class Chat extends React.Component {
                                         rkType='row'
                                         placeholder='Search'/>
                          </View>
-                         <View style={{ marginBottom: 40 }}>
-                             <List>
+                         <Content>
                                 <FlatList
                                      data={this.state.inviteFriends}
                                      onEndReached={() => this.loadMoreInviteFriendLists()}
-                                     onEndReachedThreshold={0.4}
+                                     onEndReachedThreshold={0.1}
                                      keyExtractor={(item) => {
                                          return item.friend_user_id
                                      }}
@@ -926,7 +861,9 @@ export default class Chat extends React.Component {
                                                  }
                                              }
                                         }}>
-                                             
+                                             <Left>
+                                                 <Thumbnail source={{ uri: item.profile_pic_url }} />
+                                             </Left>
                                              <Body>
                                                  <Text>{ item.display_name }</Text>
                                                  <Text note style={{ marginLeft: 2 }}>{ item.status_quote }</Text>
@@ -934,9 +871,8 @@ export default class Chat extends React.Component {
                                           </ListItem>
                                      )}
                                  />
-                             </List>
-                         </View>
-                     </View>
+                         </Content>
+                     </Container>
                  </ModalNative>
              }
              {
