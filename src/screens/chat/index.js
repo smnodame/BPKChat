@@ -827,51 +827,54 @@ export default class Chat extends React.Component {
                                         rkType='row'
                                         placeholder='Search'/>
                          </View>
-                         <Content>
-                                <FlatList
-                                     data={this.state.inviteFriends}
-                                     onEndReached={() => this.loadMoreInviteFriendLists()}
-                                     onEndReachedThreshold={0.1}
-                                     keyExtractor={(item) => {
-                                         return item.friend_user_id
-                                     }}
-                                     extraData={this.state}
-                                     renderItem={({item}) => (
-                                         <ListItem avatar onPress={() => {
-                                             if(this.state.isOpenCase) {
-                                                this.setState({
-                                                    showOptionMessageModal: true,
-                                                    chat_room_id: this.state.chatInfo.chat_room_id,
-                                                    selected_invite_friend_user_id: item.friend_user_id
-                                                })
-                                                new Promise(() => {
-                                                    store.dispatch(onEnterOptionMessage())
-                                                })
-                                             } else {
-                                                 if(item.invited) {
-                                                     store.dispatch(onRemoveFriendFromGroup(this.state.chatInfo.chat_room_id, item.friend_user_id, false))
-                                                 } else {
-                                                     store.dispatch(onInviteFriendToGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
-                                                 }
+                        <FlatList
+                            getItemLayout={(data, index) => (
+                                {length: 100, offset: 100 * index, index}
+                            )}
+                             data={this.state.inviteFriends}
+                             onEndReached={() => {
+                                 this.loadMoreInviteFriendLists()
+                             }}
+                             onEndReachedThreshold={0.1}
+                             keyExtractor={(item) => {
+                                 return item.friend_user_id
+                             }}
+                             extraData={this.state}
+                             renderItem={({item}) => (
+                                 <ListItem avatar onPress={() => {
+                                     if(this.state.isOpenCase) {
+                                        this.setState({
+                                            showOptionMessageModal: true,
+                                            chat_room_id: this.state.chatInfo.chat_room_id,
+                                            selected_invite_friend_user_id: item.friend_user_id
+                                        })
+                                        new Promise(() => {
+                                            store.dispatch(onEnterOptionMessage())
+                                        })
+                                     } else {
+                                         if(item.invited) {
+                                             store.dispatch(onRemoveFriendFromGroup(this.state.chatInfo.chat_room_id, item.friend_user_id, false))
+                                         } else {
+                                             store.dispatch(onInviteFriendToGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
+                                         }
 
-                                                if(this.state.chatInfo.chat_room_type == 'N') {
-                                                     this.setState({
-                                                         showInviteModal: false
-                                                     })
-                                                 }
-                                             }
-                                        }}>
-                                             <Left>
-                                                 <Thumbnail source={{ uri: item.profile_pic_url }} />
-                                             </Left>
-                                             <Body>
-                                                 <Text>{ item.display_name }</Text>
-                                                 <Text note style={{ marginLeft: 2 }}>{ item.status_quote }</Text>
-                                             </Body>
-                                          </ListItem>
-                                     )}
-                                 />
-                         </Content>
+                                        if(this.state.chatInfo.chat_room_type == 'N') {
+                                             this.setState({
+                                                 showInviteModal: false
+                                             })
+                                         }
+                                     }
+                                }}>
+                                     <Left>
+                                         <Thumbnail source={{ uri: item.profile_pic_url }} />
+                                     </Left>
+                                     <Body>
+                                         <Text>{ item.display_name }</Text>
+                                         <Text note style={{ marginLeft: 2 }}>{ item.status_quote }</Text>
+                                     </Body>
+                                  </ListItem>
+                             )}
+                         />
                      </Container>
                  </ModalNative>
              }
@@ -1038,12 +1041,7 @@ export default class Chat extends React.Component {
                    onBackdropPress={() => this.setState({ showOptionMessageModal: false })}
                    isVisible={true}
                >
-                       <View style={{
-                           backgroundColor: 'white',
-                           borderRadius: 4,
-                           borderColor: 'rgba(0, 0, 0, 0.1)',
-                           flex: 1
-                       }}>
+                       <Container>
                            <Header style={{ backgroundColor: '#3b5998' }}>
                                <Left>
                                    <Button transparent onPress={() => {
@@ -1086,7 +1084,7 @@ export default class Chat extends React.Component {
                                 data={this.state.optionMessage}
                                 renderItem={this._renderItem.bind(this)}
                             />
-                    </View>
+                    </Container>
                 </ModalNative>
             }
               <View style={styles.footer}>
