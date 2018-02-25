@@ -686,7 +686,8 @@ export default class Chat extends React.Component {
             create_date: new Date(),
             profile_pic_url: this.state.user.profile_pic_url,
             message_type: '2',
-            object_url: uri
+            object_url: uri,
+
         }
 
         const messageLists = _.get(this.state, 'chat', [])
@@ -721,14 +722,36 @@ export default class Chat extends React.Component {
     }
 
     async _pushFile(file) {
+
+        const draft_message_id = this.generateID()
+        // send local message
+        const draftMessage = {
+            chat_message_id: draft_message_id,
+            draft_message_id: draft_message_id,
+            content: '',
+            username: this.state.user.username,
+            who_read: [],
+            create_date: new Date(),
+            profile_pic_url: this.state.user.profile_pic_url,
+            message_type: '5',
+            object_url: file.uri,
+            file_name: file.fileName,
+            file_extension: file.type
+        }
+
+        const messageLists = _.get(this.state, 'chat', [])
+        const chatData = [draftMessage].concat(messageLists)
+        store.dispatch(chat(chatData))
+
         const resSendTheMessage = await sendFileMessage(this.state.chatInfo.chat_room_id, '5', {
             fileName: file.fileName,
             type: file.type,
             uri: file.uri
         })
 
+        const chat_message_id = _.get(resSendTheMessage, 'new_chat_message.chat_message_id')
         // update message for everyone in group
-        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
+        emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
 
         // update our own
         emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)

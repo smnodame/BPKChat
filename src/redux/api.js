@@ -135,8 +135,6 @@ export const sendTheMessage = (chat_room_id, message_type, content, sticker_path
 
 export const sendFileMessage = (chat_room_id, message_type, file) => {
     return getAuth().then((user_id) => {
-        console.log('===========')
-        console.log()
         const bodyFormData = new FormData()
         bodyFormData.append('user_id', user_id)
         bodyFormData.append('chat_room_id', chat_room_id)
@@ -153,7 +151,7 @@ export const sendFileMessage = (chat_room_id, message_type, file) => {
             method: 'post',
             body: bodyFormData
             }).then(res => {
-                return res
+                return res.json()
             })
     })
 }
