@@ -463,20 +463,28 @@ export default class Chat extends React.Component {
             {!inMessage && renderDate(info.item.create_date)}
           {
               info.item.message_type=='1' && <View style={[styles.balloon, {backgroundColor}]}>
-                  <TouchableWithoutFeedback onLongPress={() => this.setState({ showPickerModal: true, copiedText: info.item.content, selectedMessageId: info.item.chat_message_id, selectedMessageType: info.item.message_type })}>
+                  <TouchableWithoutFeedback onLongPress={() => {
+                      if(isError) {
+                          return
+                      }
+                      this.setState({ showPickerModal: true, copiedText: info.item.content, selectedMessageId: info.item.chat_message_id, selectedMessageType: info.item.message_type })
+                  }}>
                       <RkText rkType='primary2 mediumLine chat'>{info.item.content}</RkText>
                   </TouchableWithoutFeedback>
               </View>
           }
           {
               info.item.message_type=='2' && <TouchableWithoutFeedback
-                onLongPress={() =>
+                onLongPress={() => {
+                    if(isError) {
+                        return
+                    }
                     this.setState({
                         showPickerModal: true,
                         selectedMessageId: info.item.chat_message_id,
                         selectedMessageType: info.item.message_type
                     })
-                }
+                }}
                 onPress={() => {
                     this.setState({
                         selectedPhotoUrl: info.item.object_url
@@ -495,13 +503,16 @@ export default class Chat extends React.Component {
           }
           {
               info.item.message_type=='4' && <TouchableWithoutFeedback
-                  onLongPress={() =>
+                  onLongPress={() => {
+                      if(isError) {
+                          return
+                      }
                       this.setState({
                           showPickerModal: true,
                           selectedMessageId: info.item.chat_message_id,
                           selectedMessageType: info.item.message_type
                       })
-                  }
+                  }}
               >
                   <Image
                       style={{ height: 100, width: 100 }}
@@ -510,29 +521,39 @@ export default class Chat extends React.Component {
               </TouchableWithoutFeedback>
           }
           {
-              info.item.message_type=='3' &&  <TouchableWithoutFeedback
-                  onLongPress={() =>
-                      this.setState({
-                          showPickerModal: true,
-                          selectedMessageId: info.item.chat_message_id,
-                          selectedMessageType: info.item.message_type
-                      })
-                  }
-              >
-              <AudioPlayer fileName={info.item.file_name} url={info.item.object_url} backgroundColor={backgroundColor} />
-
-              </TouchableWithoutFeedback>
-          }
-          {
-              info.item.message_type=='5' && <View style={[styles.balloon, {backgroundColor}]}>
+              info.item.message_type=='3' &&   <View style={[styles.balloon, { width: 150, height: 100 }, {backgroundColor},  { padding: 5 }]}>
                   <TouchableWithoutFeedback
-                      onLongPress={() =>
+                  style={{ backgroundColor: 'yellow'}}
+                      onLongPress={() => {
+                          alert('hello')
+                          if(isError) {
+                              return
+                          }
                           this.setState({
                               showPickerModal: true,
                               selectedMessageId: info.item.chat_message_id,
                               selectedMessageType: info.item.message_type
                           })
-                      }
+                      }}
+                  >
+                    <AudioPlayer fileName={info.item.file_name} url={info.item.object_url} backgroundColor={backgroundColor} />
+
+                  </TouchableWithoutFeedback>
+              </View>
+          }
+          {
+              info.item.message_type=='5' && <View style={[styles.balloon, {backgroundColor}]}>
+                  <TouchableWithoutFeedback
+                      onLongPress={() => {
+                          if(isError) {
+                              return
+                          }
+                          this.setState({
+                              showPickerModal: true,
+                              selectedMessageId: info.item.chat_message_id,
+                              selectedMessageType: info.item.message_type
+                          })
+                      }}
 
                       onPress={() => {
                           const url = info.item.object_url
@@ -821,7 +842,6 @@ export default class Chat extends React.Component {
 
             chatData[indexLocal].isError = true
             store.dispatch(chat(chatData))
-
             return
         }
 

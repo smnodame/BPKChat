@@ -163,7 +163,7 @@ export default class AudioPlayer extends React.Component {
     render() {
         const backgroundColor = this.props.backgroundColor
     return (
-        <View style={[styles.balloon, { width: 150, height: 100 }, {backgroundColor},  { padding: 5 }]}>
+
             <View style={{ flex: 1, flexDirection: 'column' }}>
                 <View style={{ flex: 1, borderColor: '#C0C0C0', borderBottomWidth: 0.5, marginBottom: 2, justifyContent: 'center', alignItems: 'center' }}>
                     <Text style={{ color: '#C0C0C0', fontSize: 20 }}>{ this.state.progressText }</Text>
@@ -215,7 +215,6 @@ export default class AudioPlayer extends React.Component {
                     </View>
                 </View>
             </View>
-        </View>
     )
   }
 }
