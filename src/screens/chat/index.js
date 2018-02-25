@@ -688,7 +688,7 @@ export default class Chat extends React.Component {
 
         const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
 
-        if(_.get(resSendTheMessage, 'data.error') || resSendTheMessage.status != 200 || true) {
+        if(_.get(resSendTheMessage, 'data.error') || resSendTheMessage.status != 200) {
             const indexLocal = chatData.findIndex((message) => {
                 return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
             })
