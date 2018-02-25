@@ -674,15 +674,34 @@ export default class Chat extends React.Component {
 
     }
 
-    async _pushPhoto(base64) {
+    async _pushPhoto(base64, uri) {
+        const draft_message_id = this.generateID()
+        // send local message
+        const draftMessage = {
+            chat_message_id: draft_message_id,
+            draft_message_id: draft_message_id,
+            content: '',
+            username: this.state.user.username,
+            who_read: [],
+            create_date: new Date(),
+            profile_pic_url: this.state.user.profile_pic_url,
+            message_type: '2',
+            object_url: uri
+        }
+
+        const messageLists = _.get(this.state, 'chat', [])
+        const chatData = [draftMessage].concat(messageLists)
+        store.dispatch(chat(chatData))
+
         const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '2', '', '', base64)
 
         if(_.get(resSendTheMessage.data, 'error')) {
             return
         }
 
+        const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
         // update message for everyone in group
-        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
+        emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
 
         // update our own
         emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
@@ -1200,7 +1219,7 @@ export default class Chat extends React.Component {
                             } else if (response.customButton) {
                                 console.log('User tapped custom button: ', response.customButton)
                             } else {
-                                this._pushPhoto(response.data)
+                                this._pushPhoto(response.data, response.uri)
                             }
                         })
                     }}>
@@ -1230,7 +1249,7 @@ export default class Chat extends React.Component {
                             } else if (response.customButton) {
                                 console.log('User tapped custom button: ', response.customButton)
                             } else {
-                                this._pushPhoto(response.data)
+                                this._pushPhoto(response.data, response.uri)
                             }
                         })
                     }}>
