@@ -133,6 +133,10 @@ const chat = (state = {
             return Object.assign(state, {
                 optionMessage: action.payload.message
             })
+        case 'LAST_MESSAGE_ID':
+            return Object.assign(state, {
+                lastMessageID: action.payload.lastMessageID
+            })
         case 'IS_SHOW_SEARCH_BAR':
             let chat = {}
             if(!action.payload.isShow) {

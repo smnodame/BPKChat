@@ -19,11 +19,9 @@ export const on_message = () => {
             const state = store.getState()
             const chatInfo = _.get(state, 'chat.chatInfo')
 
-            const messageLists = _.get(state, 'chat.chat')
+            const messageLists = _.get(state, 'chat.chat', [])
 
-            const lastChatMessageId = messageLists.find((message) => {
-                return message.chat_message_id[0] != '_'
-            }).chat_message_id
+            const lastChatMessageId = state.lastMessageID || '0'
 
             fetchChat(chatInfo.chat_room_id, '', lastChatMessageId).then((res) => {
                 // const chatData = _.get(res, 'data.data', []).concat(messageLists)

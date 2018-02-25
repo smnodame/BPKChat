@@ -395,3 +395,10 @@ export const keepProfile = (profile) => ({
         keepProfile: profile
     }
 })
+
+export const lastMessageID = (lastID) => ({
+    type: 'LAST_MESSAGE_ID',
+    payload: {
+        lastMessageID: lastID
+    }
+})

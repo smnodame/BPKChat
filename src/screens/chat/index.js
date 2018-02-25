@@ -570,13 +570,14 @@ export default class Chat extends React.Component {
     async _pushMessage() {
         if (!this.state.message)
             return
+        const message = this.state.message
 
         const draft_message_id = this.generateID()
         // send local message
         const draftMessage = {
             chat_message_id: draft_message_id,
             draft_message_id: draft_message_id,
-            content: this.state.message,
+            content: message,
             username: this.state.user.username,
             who_read: [],
             create_date: new Date(),
@@ -584,11 +585,15 @@ export default class Chat extends React.Component {
             message_type: '1'
         }
 
+        this.setState({
+            message: ''
+        })
+
         const messageLists = _.get(this.state, 'chat', [])
         const chatData = [draftMessage].concat(messageLists)
         store.dispatch(chat(chatData))
 
-        const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '1', this.state.message, '', '')
+        const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '1', message, '', '')
 
         const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
 
@@ -597,7 +602,7 @@ export default class Chat extends React.Component {
         }
 
         // update message for everyone in group
-        emit_message(this.state.message, this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
+        emit_message(message, this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
 
         // update our own
         emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
@@ -619,15 +624,38 @@ export default class Chat extends React.Component {
         this._scroll(true)
     }
 
-    async _pushSticker(sticker_path) {
+    async _pushSticker(sticker_path, url) {
+        const draft_message_id = this.generateID()
+        // send local message
+        const draftMessage = {
+            chat_message_id: draft_message_id,
+            draft_message_id: draft_message_id,
+            content: '',
+            username: this.state.user.username,
+            who_read: [],
+            create_date: new Date(),
+            profile_pic_url: this.state.user.profile_pic_url,
+            message_type: '4',
+            object_url: url
+        }
+
+        this.setState({
+            message: ''
+        })
+
+        const messageLists = _.get(this.state, 'chat', [])
+        const chatData = [draftMessage].concat(messageLists)
+        store.dispatch(chat(chatData))
+
         const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '4', '', sticker_path, '')
 
         if(_.get(resSendTheMessage.data, 'error')) {
             return
         }
 
+        const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
         // update message for everyone in group
-        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
+        emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
 
         // update our own
         emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
@@ -1272,7 +1300,7 @@ export default class Chat extends React.Component {
                             renderItem={item => (
                                 <View>
                                     <TouchableOpacity onPress={() => {
-                                        this._pushSticker(item.path)
+                                        this._pushSticker(item.path, item.url)
                                     }}>
                                         <Image
                                             style={{ height: 70 }}
