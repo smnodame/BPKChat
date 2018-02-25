@@ -585,10 +585,9 @@ export default class Chat extends React.Component {
         return '_' + Math.random().toString(36).substr(2, 9)
     }
 
-    async _pushMessage() {
-        if (!this.state.message)
+    async _pushMessage(message) {
+        if (!message)
             return
-        const message = this.state.message
 
         const draft_message_id = this.generateID()
         // send local message
@@ -650,7 +649,7 @@ export default class Chat extends React.Component {
         this._scroll(true)
     }
 
-    async _pushSticker(sticker_path, url) {
+    async _pushSticker(sticker_path, object_url) {
         const draft_message_id = this.generateID()
         // send local message
         const draftMessage = {
@@ -662,7 +661,8 @@ export default class Chat extends React.Component {
             create_date: new Date(),
             profile_pic_url: this.state.user.profile_pic_url,
             message_type: '4',
-            object_url: url
+            object_url: object_url,
+            sticker_path: sticker_path
         }
 
         this.setState({
@@ -700,7 +700,7 @@ export default class Chat extends React.Component {
 
     }
 
-    async _pushPhoto(base64, uri) {
+    async _pushPhoto(base64, object_url) {
         const draft_message_id = this.generateID()
         // send local message
         const draftMessage = {
@@ -712,8 +712,8 @@ export default class Chat extends React.Component {
             create_date: new Date(),
             profile_pic_url: this.state.user.profile_pic_url,
             message_type: '2',
-            object_url: uri,
-
+            object_url: object_url,
+            base64: base64
         }
 
         const messageLists = _.get(this.state, 'chat', [])
@@ -1377,7 +1377,7 @@ export default class Chat extends React.Component {
                         <Icon ios='attachment' android="md-happy" style={{fontSize: 20, color: 'gray'}}/>
                   </RkButton>
 
-                <RkButton onPress={() => this._pushMessage()} style={styles.send} rkType='circle highlight'>
+                <RkButton onPress={() => this._pushMessage(this.state.message)} style={styles.send} rkType='circle highlight'>
                     <Image source={require('../../assets/icons/sendIcon.png')}/>
                 </RkButton>
               </View>
