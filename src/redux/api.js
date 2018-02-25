@@ -151,6 +151,11 @@ export const sendFileMessage = (chat_room_id, message_type, file) => {
             method: 'post',
             body: bodyFormData
             }).then(res => {
+                if(res.status != 200) {
+                    return {
+                        error: 'lost connection'
+                    }
+                }
                 return res.json()
             })
     })
