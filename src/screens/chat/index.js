@@ -68,7 +68,8 @@ import {
     onFetchMessageLists,
     isShowSearchBar,
     onForward,
-    inviteFriends
+    inviteFriends,
+    chat
 } from '../../redux/actions'
 import {sendTheMessage, fetchFriendProfile, saveInKeep, sendFileMessage } from '../../redux/api'
 import {
@@ -381,7 +382,6 @@ export default class Chat extends React.Component {
             }
         </View>
     )
-
     return (
         <TouchableWithoutFeedback
 
@@ -563,18 +563,41 @@ export default class Chat extends React.Component {
         })
     }
 
+    generateID = () => {
+        return '_' + Math.random().toString(36).substr(2, 9)
+    }
 
     async _pushMessage() {
         if (!this.state.message)
             return
+
+        const draft_message_id = this.generateID()
+        // send local message
+        const draftMessage = {
+            chat_message_id: draft_message_id,
+            draft_message_id: draft_message_id,
+            content: this.state.message,
+            username: this.state.user.username,
+            who_read: [],
+            create_date: new Date(),
+            profile_pic_url: this.state.user.profile_pic_url,
+            message_type: '1'
+        }
+
+        const messageLists = _.get(this.state, 'chat', [])
+        const chatData = [draftMessage].concat(messageLists)
+        store.dispatch(chat(chatData))
+
         const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '1', this.state.message, '', '')
+
+        const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
 
         if(_.get(resSendTheMessage.data, 'error')) {
             return
         }
 
         // update message for everyone in group
-        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
+        emit_message(this.state.message, this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
 
         // update our own
         emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
