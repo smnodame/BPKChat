@@ -417,15 +417,15 @@ export default class Chat extends React.Component {
 
         let renderDate = (date) => (
         <View>
-            <RkText style={{ marginLeft: 15, marginRight: 15, marginTop: 10 }} rkType='secondary7 hintColor'>
+            <Text style={{ marginLeft: 15, marginRight: 15, marginTop: 10, fontSize: 12, color: '#7e7e7e' }} >
                 { `${moment(date).fromNow()}` }
-            </RkText>
+            </Text>
             {
-                (!inMessage||(this.props.navigation.state.params.chat_room_type == 'G' || this.props.navigation.state.params.chat_room_type == 'C'))&&<RkText style={{ marginLeft: 15, paddingRight: 30, width: '100%', textAlign: inMessage? 'left' : 'right' }} rkType='secondary7 hintColor'>
+                (!inMessage||(this.props.navigation.state.params.chat_room_type == 'G' || this.props.navigation.state.params.chat_room_type == 'C'))&&<Text style={{ fontSize: 12, color: '#7e7e7e', marginLeft: 15, paddingRight: 30, width: '100%', textAlign: inMessage? 'left' : 'right' }} rkType='secondary7 hintColor'>
                     {
                         seenMessage
                     }
-                </RkText>
+                </Text>
             }
             {
                 !inMessage && isError && <View style={{ marginRight: 20  }}>
@@ -499,7 +499,7 @@ export default class Chat extends React.Component {
                       }
                       this.setState({ showPickerModal: true, copiedText: info.item.content, selectedMessageId: info.item.chat_message_id, selectedMessageType: info.item.message_type })
                   }}>
-                      <RkText rkType='primary2 mediumLine chat'>{info.item.content}</RkText>
+                      <Text style={{ fontSize: 16 }}>{info.item.content}</Text>
                   </TouchableWithoutFeedback>
               </View>
           }
@@ -615,12 +615,12 @@ export default class Chat extends React.Component {
                               <Icon name='md-list-box' style={{ color: '#A9A9A9' }}/>
                           </View>
                           <View>
-                              <RkText rkType='primary2 mediumLine chat' numberOfLines={1} style={{ marginBottom: 8, height: 22 }}>
+                              <Text style={{ fontSize: 16 }} numberOfLines={1} style={{ marginBottom: 8, height: 22 }}>
                                   {  `${info.item.file_name}`}
-                              </RkText>
-                              <RkText rkType='secondary4 hintColor'>
+                              </Text>
+                              <Text style={{ fontSize: 12, color: '#7e7e7e' }}>
                                   {  `file extension: ${info.item.file_extension}`}
-                              </RkText>
+                              </Text>
                           </View>
                       </View>
                   </TouchableWithoutFeedback>
@@ -1362,9 +1362,9 @@ export default class Chat extends React.Component {
                                 <TouchableOpacity style={styles.plus} rkType='clear' onPress={item.event}>
                                     <Icon ios={item.icon} android={item.icon} style={{fontSize: 20, color: 'gray'}}/>
                                 </TouchableOpacity>
-                                <RkText rkType='secondary4 hintColor' style={{ textAlign: 'center'}}>
+                                <Text  style={{ textAlign: 'center', fontSize: 13, color: '#7e7e7e' }}>
                                      { item.name }
-                                </RkText>
+                                </Text>
                             </View>
                         )}
                     />
