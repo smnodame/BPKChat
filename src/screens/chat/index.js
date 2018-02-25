@@ -352,26 +352,50 @@ export default class Chat extends React.Component {
         store.dispatch(onLoadMoreMemberInGroup(this.state.memberSeachText))
     }
 
-    _resend = (message, index) => {
-        const messageLists = this.state.chat
-        messageLists.splice(index, 1)
-        store.dispatch(chat(messageLists))
+    _resend = () => {
+        this.setState({
+            showHandleError: false
+        }, () => {
+            const {
+                message,
+                index
+            } = this.state.selectedMessageError
 
-        if (message.message_type == '1') {
-            this._pushMessage(message.content)
-        } else if (message.message_type == '2') {
-            this._pushPhoto(message.base64, message.object_url)
-        } else if (message.message_type == '3') {
-            this._pushAudio()
-        } else if (message.message_type == '4') {
-            this._pushSticker(message.sticker_path, message.object_url)
-        } else if (message.message_type == '5') {
-            this._pushFile({
-                uri: message.object_url,
-                fileName: message.file_name,
-                type: message.file_extension
-            })
-        }
+            const messageLists = this.state.chat
+            messageLists.splice(index, 1)
+            store.dispatch(chat(messageLists))
+
+            if (message.message_type == '1') {
+                this._pushMessage(message.content)
+            } else if (message.message_type == '2') {
+                this._pushPhoto(message.base64, message.object_url)
+            } else if (message.message_type == '3') {
+                this._pushAudio()
+            } else if (message.message_type == '4') {
+                this._pushSticker(message.sticker_path, message.object_url)
+            } else if (message.message_type == '5') {
+                this._pushFile({
+                    uri: message.object_url,
+                    fileName: message.file_name,
+                    type: message.file_extension
+                })
+            }
+        })
+    }
+
+    _deleteErrorMessage = () => {
+        this.setState({
+            showHandleError: false
+        }, () => {
+            const {
+                message,
+                index
+            } = this.state.selectedMessageError
+
+            const messageLists = this.state.chat
+            messageLists.splice(index, 1)
+            store.dispatch(chat(messageLists))
+        })
     }
 
     _renderItem(info) {
@@ -408,7 +432,13 @@ export default class Chat extends React.Component {
                     <TouchableOpacity
                         style={{ width: '100%', flexDirection: 'row' }}
                         onPress={() => {
-                            this._resend(info.item, info.index)
+                            this.setState({
+                                showHandleError: true,
+                                selectedMessageError: {
+                                    message: info.item,
+                                    index: info.index
+                                }
+                            })
                         }}
                     >
                         <View style={{ flex: 1 }} />
@@ -522,24 +552,24 @@ export default class Chat extends React.Component {
           }
           {
               info.item.message_type=='3' &&   <View style={[styles.balloon, { width: 150, height: 100 }, {backgroundColor},  { padding: 5 }]}>
-                  <TouchableWithoutFeedback
-                  style={{ backgroundColor: 'yellow'}}
-                      onLongPress={() => {
-                          alert('hello')
-                          if(isError) {
-                              return
-                          }
-                          this.setState({
-                              showPickerModal: true,
-                              selectedMessageId: info.item.chat_message_id,
-                              selectedMessageType: info.item.message_type
-                          })
-                      }}
-                  >
-                    <AudioPlayer fileName={info.item.file_name} url={info.item.object_url} backgroundColor={backgroundColor} />
-
-                  </TouchableWithoutFeedback>
-              </View>
+                <TouchableWithoutFeedback
+                    style={{ backgroundColor: 'yellow'}}
+                    onLongPress={() => {
+                        if(isError) {
+                            return
+                        }
+                        this.setState({
+                            showPickerModal: true,
+                            selectedMessageId: info.item.chat_message_id,
+                            selectedMessageType: info.item.message_type
+                        })
+                    }}
+                >
+                    <View style={{ flex: 1 }}>
+                        <AudioPlayer fileName={info.item.file_name} url={info.item.object_url} backgroundColor={backgroundColor} />
+                    </View>
+                </TouchableWithoutFeedback>
+                </View>
           }
           {
               info.item.message_type=='5' && <View style={[styles.balloon, {backgroundColor}]}>
@@ -658,7 +688,7 @@ export default class Chat extends React.Component {
 
         const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
 
-        if(_.get(resSendTheMessage.data, 'error') || resSendTheMessage.status != 200) {
+        if(_.get(resSendTheMessage, 'data.error') || resSendTheMessage.status != 200 || true) {
             const indexLocal = chatData.findIndex((message) => {
                 return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
             })
@@ -719,7 +749,7 @@ export default class Chat extends React.Component {
 
         const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '4', '', sticker_path, '')
 
-        if(_.get(resSendTheMessage.data, 'error') || resSendTheMessage.status != 200) {
+        if(_.get(resSendTheMessage, 'data.error') || resSendTheMessage.status != 200) {
             const indexLocal = chatData.findIndex((message) => {
                 return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
             })
@@ -774,7 +804,7 @@ export default class Chat extends React.Component {
 
         const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '2', '', '', base64)
 
-        if(_.get(resSendTheMessage.data, 'error') || resSendTheMessage.status != 200) {
+        if(_.get(resSendTheMessage, 'data.error') || resSendTheMessage.status != 200) {
             const indexLocal = chatData.findIndex((message) => {
                 return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
             })
@@ -1244,6 +1274,36 @@ export default class Chat extends React.Component {
                           <Text>SHARE</Text>
                       </Button>
                   }
+                </View>
+            </Modal>
+            <Modal
+                onRequestClose={() => this.setState({ showHandleError: false })}
+                onBackdropPress={() => this.setState({ showHandleError: false })}
+                isVisible={this.state.showHandleError}
+            >
+                <View style={{
+                    backgroundColor: 'white',
+                    borderRadius: 4,
+                    borderColor: 'rgba(0, 0, 0, 0.1)',
+                }}>
+                      <Button
+                          block
+                          light
+                          onPress={() => {
+                              this._resend()
+                          }}
+                      >
+                          <Text>RESEND</Text>
+                      </Button>
+                      <Button
+                          block
+                          light
+                          onPress={() => {
+                              this._deleteErrorMessage()
+                          }}
+                      >
+                          <Text>DELETE</Text>
+                      </Button>
                 </View>
             </Modal>
             <RkAvoidKeyboard style={styles.container} onResponderRelease={(event) => {

@@ -163,7 +163,6 @@ export default class AudioPlayer extends React.Component {
     render() {
         const backgroundColor = this.props.backgroundColor
     return (
-
             <View style={{ flex: 1, flexDirection: 'column' }}>
                 <View style={{ flex: 1, borderColor: '#C0C0C0', borderBottomWidth: 0.5, marginBottom: 2, justifyContent: 'center', alignItems: 'center' }}>
                     <Text style={{ color: '#C0C0C0', fontSize: 20 }}>{ this.state.progressText }</Text>
