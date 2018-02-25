@@ -352,6 +352,28 @@ export default class Chat extends React.Component {
         store.dispatch(onLoadMoreMemberInGroup(this.state.memberSeachText))
     }
 
+    _resend = (message, index) => {
+        const messageLists = this.state.chat
+        messageLists.splice(index, 1)
+        store.dispatch(chat(messageLists))
+
+        if (message.message_type == '1') {
+            this._pushMessage(message.content)
+        } else if (message.message_type == '2') {
+            this._pushPhoto(message.base64, message.object_url)
+        } else if (message.message_type == '3') {
+            this._pushAudio()
+        } else if (message.message_type == '4') {
+            this._pushSticker(message.sticker_path, message.object_url)
+        } else if (message.message_type == '5') {
+            this._pushFile({
+                uri: message.object_url,
+                fileName: message.file_name,
+                type: message.file_extension
+            })
+        }
+    }
+
     _renderItem(info) {
         let inMessage = info.item.username != this.state.user.username
         let seenMessage = ''
@@ -386,7 +408,7 @@ export default class Chat extends React.Component {
                     <TouchableOpacity
                         style={{ width: '100%', flexDirection: 'row' }}
                         onPress={() => {
-                            alert('hello')
+                            this._resend(info.item, info.index)
                         }}
                     >
                         <View style={{ flex: 1 }} />
@@ -615,7 +637,7 @@ export default class Chat extends React.Component {
 
         const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
 
-        if(_.get(resSendTheMessage.data, 'error') || resSendTheMessage.status != 200 || true) {
+        if(_.get(resSendTheMessage.data, 'error') || resSendTheMessage.status != 200) {
             const indexLocal = chatData.findIndex((message) => {
                 return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
             })
@@ -662,7 +684,8 @@ export default class Chat extends React.Component {
             profile_pic_url: this.state.user.profile_pic_url,
             message_type: '4',
             object_url: object_url,
-            sticker_path: sticker_path
+            sticker_path: sticker_path,
+            isError: false
         }
 
         this.setState({
@@ -675,7 +698,14 @@ export default class Chat extends React.Component {
 
         const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '4', '', sticker_path, '')
 
-        if(_.get(resSendTheMessage.data, 'error')) {
+        if(_.get(resSendTheMessage.data, 'error') || resSendTheMessage.status != 200) {
+            const indexLocal = chatData.findIndex((message) => {
+                return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
+            })
+
+            chatData[indexLocal].isError = true
+            store.dispatch(chat(chatData))
+
             return
         }
 
@@ -713,7 +743,8 @@ export default class Chat extends React.Component {
             profile_pic_url: this.state.user.profile_pic_url,
             message_type: '2',
             object_url: object_url,
-            base64: base64
+            base64: base64,
+            isError: false
         }
 
         const messageLists = _.get(this.state, 'chat', [])
@@ -722,7 +753,14 @@ export default class Chat extends React.Component {
 
         const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '2', '', '', base64)
 
-        if(_.get(resSendTheMessage.data, 'error')) {
+        if(_.get(resSendTheMessage.data, 'error') || resSendTheMessage.status != 200) {
+            const indexLocal = chatData.findIndex((message) => {
+                return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
+            })
+
+            chatData[indexLocal].isError = true
+            store.dispatch(chat(chatData))
+
             return
         }
 
@@ -762,7 +800,8 @@ export default class Chat extends React.Component {
             message_type: '5',
             object_url: file.uri,
             file_name: file.fileName,
-            file_extension: file.type
+            file_extension: file.type,
+            isError: false
         }
 
         const messageLists = _.get(this.state, 'chat', [])
@@ -775,7 +814,19 @@ export default class Chat extends React.Component {
             uri: file.uri
         })
 
+        if(_.get(resSendTheMessage, 'error') || !resSendTheMessage) {
+            const indexLocal = chatData.findIndex((message) => {
+                return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
+            })
+
+            chatData[indexLocal].isError = true
+            store.dispatch(chat(chatData))
+
+            return
+        }
+
         const chat_message_id = _.get(resSendTheMessage, 'new_chat_message.chat_message_id')
+
         // update message for everyone in group
         emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
 
@@ -821,6 +872,17 @@ export default class Chat extends React.Component {
             type: "audio/wav",
             uri: uri
         })
+
+        if(_.get(resSendTheMessage, 'error') || !resSendTheMessage) {
+            const indexLocal = chatData.findIndex((message) => {
+                return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
+            })
+
+            chatData[indexLocal].isError = true
+            store.dispatch(chat(chatData))
+
+            return
+        }
 
         const chat_message_id = _.get(resSendTheMessage, 'new_chat_message.chat_message_id')
         // update message for everyone in group
