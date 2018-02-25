@@ -355,6 +355,7 @@ export default class Chat extends React.Component {
     _renderItem(info) {
         let inMessage = info.item.username != this.state.user.username
         let seenMessage = ''
+        const isError = _.get(info.item, 'isError', false)
         const reader = info.item.who_read.filter((id) => {
             return id != this.state.user.user_id
         })
@@ -379,6 +380,23 @@ export default class Chat extends React.Component {
                         seenMessage
                     }
                 </RkText>
+            }
+            {
+                !inMessage && isError && <View style={{ marginRight: 20  }}>
+                    <TouchableOpacity
+                        style={{ width: '100%', flexDirection: 'row' }}
+                        onPress={() => {
+                            alert('hello')
+                        }}
+                    >
+                        <View style={{ flex: 1 }} />
+                        <Icon
+                            style={{ color: '#A9A9A9' }}
+                            name='md-information-circle'
+                        />
+                    </TouchableOpacity>
+                </View>
+
             }
         </View>
     )
@@ -582,7 +600,8 @@ export default class Chat extends React.Component {
             who_read: [],
             create_date: new Date(),
             profile_pic_url: this.state.user.profile_pic_url,
-            message_type: '1'
+            message_type: '1',
+            isError: false
         }
 
         this.setState({
@@ -597,7 +616,14 @@ export default class Chat extends React.Component {
 
         const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
 
-        if(_.get(resSendTheMessage.data, 'error')) {
+        if(_.get(resSendTheMessage.data, 'error') || resSendTheMessage.status != 200 || true) {
+            const indexLocal = chatData.findIndex((message) => {
+                return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
+            })
+
+            chatData[indexLocal].isError = true
+            store.dispatch(chat(chatData))
+
             return
         }
 
