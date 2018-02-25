@@ -1359,9 +1359,9 @@ export default class Chat extends React.Component {
                         items={this.state.optionLists}
                         renderItem={item => (
                             <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                                <RkButton style={styles.plus} rkType='clear' onPress={item.event}>
+                                <TouchableOpacity style={styles.plus} rkType='clear' onPress={item.event}>
                                     <Icon ios={item.icon} android={item.icon} style={{fontSize: 20, color: 'gray'}}/>
-                                </RkButton>
+                                </TouchableOpacity>
                                 <RkText rkType='secondary4 hintColor' style={{ textAlign: 'center'}}>
                                      { item.name }
                                 </RkText>
@@ -1442,17 +1442,17 @@ export default class Chat extends React.Component {
             }
               <View style={styles.footer}>
                 {
-                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => this.setState({ isShowMedie: false })}>
+                    this.state.isShowMedie&&<TouchableOpacity style={styles.plus} rkType='clear' onPress={() => this.setState({ isShowMedie: false })}>
                       <Icon ios='md-camera' android="md-arrow-dropleft-circle" style={{fontSize: 20, color: 'gray'}}/>
-                    </RkButton>
+                    </TouchableOpacity>
                 }
                 {
-                    !this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => this.setState({ isShowMedie: true })}>
+                    !this.state.isShowMedie&&<TouchableOpacity style={styles.plus} rkType='clear' onPress={() => this.setState({ isShowMedie: true })}>
                         <Icon ios='md-camera' android="md-arrow-dropright-circle" style={{fontSize: 20, color: 'gray'}}/>
-                    </RkButton>
+                    </TouchableOpacity>
                 }
                 {
-                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => {
+                    this.state.isShowMedie&&<TouchableOpacity style={styles.plus} rkType='clear' onPress={() => {
                         Keyboard.dismiss()
                         // Launch Camera:
                         ImagePicker.launchCamera({
@@ -1479,10 +1479,10 @@ export default class Chat extends React.Component {
                         })
                     }}>
                         <Icon ios='md-camera' android="md-camera" style={{fontSize: 20, color: 'gray'}}/>
-                    </RkButton>
+                    </TouchableOpacity>
                 }
                 {
-                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => {
+                    this.state.isShowMedie&&<TouchableOpacity style={styles.plus} rkType='clear' onPress={() => {
                         Keyboard.dismiss()
                         // Launch Camera:
                         ImagePicker.launchImageLibrary({
@@ -1509,10 +1509,10 @@ export default class Chat extends React.Component {
                         })
                     }}>
                         <Icon ios='md-photos' android="md-photos" style={{fontSize: 20, color: 'gray'}}/>
-                    </RkButton>
+                    </TouchableOpacity>
                 }
                 {
-                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => {
+                    this.state.isShowMedie&&<TouchableOpacity style={styles.plus} rkType='clear' onPress={() => {
                         Keyboard.dismiss()
                         this.setState({
                             isShowRecord: !this.state.isShowRecord,
@@ -1521,10 +1521,10 @@ export default class Chat extends React.Component {
                         })
                     }}>
                         <Icon ios='attachment' android="md-mic" style={{fontSize: 20, color: 'gray'}}/>
-                    </RkButton>
+                    </TouchableOpacity>
                 }
                 {
-                    this.state.isShowMedie&&<RkButton
+                    this.state.isShowMedie&&<TouchableOpacity
                         style={styles.plus}
                         rkType='clear'
                         onPress={() => {
@@ -1532,7 +1532,7 @@ export default class Chat extends React.Component {
                         }}
                     >
                         <Icon ios='attachment' android="md-folder-open" style={{fontSize: 20, color: 'gray'}}/>
-                    </RkButton>
+                    </TouchableOpacity>
                 }
 
                 <ImageView
@@ -1544,27 +1544,27 @@ export default class Chat extends React.Component {
                       })
                   }}
                 />
-
-                <RkTextInput
-                  onFocus={() => {
-                      this._scroll(true)
-                      this.setState({ isShowMedie: false, isShowPhoto: false })
-                  }}
-                  onBlur={() => this._scroll(true)}
-                  onChangeText={(message) => this.setState({message})}
-                  value={this.state.message}
-                  rkType='row sticker'
-                  placeholder="Add a comment..."/>
-                  <RkButton style={styles.plus} rkType='clear' onPress={() => {
+                    <Item regular style={[styles.textInput, { marginLeft: 5, marginRight: 5, marginBottom: 5, backgroundColor: 'white', flex: 1 } ]}>
+                        <Input
+                            onFocus={() => {
+                            this._scroll(true)
+                            this.setState({ isShowMedie: false, isShowPhoto: false })
+                        }}
+                        onBlur={() => this._scroll(true)}
+                        onChangeText={(message) => this.setState({message})}
+                        value={this.state.message}
+                        placeholder="Add a comment ..."/>
+                    </Item>
+                  <TouchableOpacity style={styles.plus} rkType='clear' onPress={() => {
                       Keyboard.dismiss()
                       this.setState({ isShowPhoto: !this.state.isShowPhoto, isShowRecord: false, isShowAdditionalHeader: false })
                   }}>
                         <Icon ios='attachment' android="md-happy" style={{fontSize: 20, color: 'gray'}}/>
-                  </RkButton>
-
-                <RkButton onPress={() => this._pushMessage(this.state.message)} style={styles.send} rkType='circle highlight'>
+                  </TouchableOpacity>
+                <TouchableOpacity onPress={() => this._pushMessage(this.state.message)} style={{ backgroundColor: '#f64e59', width: 40, height: 40, borderRadius: 20, justifyContent: 'center',
+    alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/sendIcon.png')}/>
-                </RkButton>
+                </TouchableOpacity>
               </View>
               {
                   this.state.isShowPhoto&&<View style={{ height: 200 }}>
@@ -1733,4 +1733,10 @@ row: {
   borderColor: theme.colors.border.base,
   alignItems: 'center'
 },
+textInput: {
+    height: 45,
+    borderRadius: 10,
+    paddingHorizontal: 19,
+    paddingLeft: 10, paddingRight: 10
+}
 }))
