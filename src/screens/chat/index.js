@@ -684,11 +684,43 @@ export default class Chat extends React.Component {
         const chatData = [draftMessage].concat(messageLists)
         store.dispatch(chat(chatData))
 
-        const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '1', message, '', '')
+        try {
+            const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '1', message, '', '')
+            if(_.get(resSendTheMessage, 'data.error') || resSendTheMessage.status != 200) {
+                const indexLocal = chatData.findIndex((message) => {
+                    return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
+                })
 
-        const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
+                chatData[indexLocal].isError = true
+                store.dispatch(chat(chatData))
 
-        if(_.get(resSendTheMessage, 'data.error') || resSendTheMessage.status != 200) {
+                return;
+            }
+
+            const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
+
+            // update message for everyone in group
+            emit_message(message, this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
+
+            // update our own
+            emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
+
+            // update every friends in group
+            if(this.state.chatInfo.chat_room_type == 'G' || this.state.chatInfo.chat_room_type == 'C') {
+                const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
+                friend_user_ids.forEach((friend_user_id) => {
+                    emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
+                })
+            } else {
+                emit_update_friend_chat_list(this.state.user.user_id, this.state.chatInfo.friend_user_id)
+            }
+
+            this.setState({
+                message: ''
+            })
+
+            this._scroll(true)
+        } catch(err) {
             const indexLocal = chatData.findIndex((message) => {
                 return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
             })
@@ -696,30 +728,8 @@ export default class Chat extends React.Component {
             chatData[indexLocal].isError = true
             store.dispatch(chat(chatData))
 
-            return
+            return;
         }
-
-        // update message for everyone in group
-        emit_message(message, this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
-
-        // update our own
-        emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
-
-        // update every friends in group
-        if(this.state.chatInfo.chat_room_type == 'G' || this.state.chatInfo.chat_room_type == 'C') {
-            const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
-            friend_user_ids.forEach((friend_user_id) => {
-                emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
-            })
-        } else {
-            emit_update_friend_chat_list(this.state.user.user_id, this.state.chatInfo.friend_user_id)
-        }
-
-        this.setState({
-            message: ''
-        })
-
-        this._scroll(true)
     }
 
     async _pushSticker(sticker_path, object_url) {
@@ -747,9 +757,37 @@ export default class Chat extends React.Component {
         const chatData = [draftMessage].concat(messageLists)
         store.dispatch(chat(chatData))
 
-        const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '4', '', sticker_path, '')
+        try {
+            const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '4', '', sticker_path, '')
+            if(_.get(resSendTheMessage, 'data.error') || resSendTheMessage.status != 200) {
+                const indexLocal = chatData.findIndex((message) => {
+                    return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
+                })
 
-        if(_.get(resSendTheMessage, 'data.error') || resSendTheMessage.status != 200) {
+                chatData[indexLocal].isError = true
+                store.dispatch(chat(chatData))
+
+                return
+            }
+            const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
+            // update message for everyone in group
+            emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
+
+            // update our own
+            emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
+
+            // update every friends in group
+            const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
+            friend_user_ids.forEach((friend_user_id) => {
+                emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
+            })
+
+            this.setState({
+                message: ''
+            })
+
+            this._scroll(true)
+        } catch(err) {
             const indexLocal = chatData.findIndex((message) => {
                 return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
             })
@@ -759,26 +797,6 @@ export default class Chat extends React.Component {
 
             return
         }
-
-        const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
-        // update message for everyone in group
-        emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
-
-        // update our own
-        emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
-
-        // update every friends in group
-        const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
-        friend_user_ids.forEach((friend_user_id) => {
-            emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
-        })
-
-        this.setState({
-            message: ''
-        })
-
-        this._scroll(true)
-
     }
 
     async _pushPhoto(base64, object_url) {
@@ -802,9 +820,37 @@ export default class Chat extends React.Component {
         const chatData = [draftMessage].concat(messageLists)
         store.dispatch(chat(chatData))
 
-        const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '2', '', '', base64)
+        try {
+            const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '2', '', '', base64)
+            if(_.get(resSendTheMessage, 'data.error') || resSendTheMessage.status != 200) {
+                const indexLocal = chatData.findIndex((message) => {
+                    return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
+                })
 
-        if(_.get(resSendTheMessage, 'data.error') || resSendTheMessage.status != 200) {
+                chatData[indexLocal].isError = true
+                store.dispatch(chat(chatData))
+
+                return
+            }
+            const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
+            // update message for everyone in group
+            emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
+
+            // update our own
+            emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
+
+            // update every friends in group
+            const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
+            friend_user_ids.forEach((friend_user_id) => {
+                emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
+            })
+
+            this.setState({
+                message: ''
+            })
+
+            this._scroll(true)
+        } catch(err) {
             const indexLocal = chatData.findIndex((message) => {
                 return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
             })
@@ -814,26 +860,6 @@ export default class Chat extends React.Component {
 
             return
         }
-
-        const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
-        // update message for everyone in group
-        emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
-
-        // update our own
-        emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
-
-        // update every friends in group
-        const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
-        friend_user_ids.forEach((friend_user_id) => {
-            emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
-        })
-
-        this.setState({
-            message: ''
-        })
-
-        this._scroll(true)
-
     }
 
     async _pushFile(file) {
@@ -859,13 +885,39 @@ export default class Chat extends React.Component {
         const chatData = [draftMessage].concat(messageLists)
         store.dispatch(chat(chatData))
 
-        const resSendTheMessage = await sendFileMessage(this.state.chatInfo.chat_room_id, '5', {
-            fileName: file.fileName,
-            type: file.type,
-            uri: file.uri
-        })
+        try {
+            const resSendTheMessage = await sendFileMessage(this.state.chatInfo.chat_room_id, '5', {
+                fileName: file.fileName,
+                type: file.type,
+                uri: file.uri
+            })
+            if(_.get(resSendTheMessage, 'error') || !resSendTheMessage) {
+                const indexLocal = chatData.findIndex((message) => {
+                    return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
+                })
 
-        if(_.get(resSendTheMessage, 'error') || !resSendTheMessage) {
+                chatData[indexLocal].isError = true
+                store.dispatch(chat(chatData))
+                return
+            }
+            const chat_message_id = _.get(resSendTheMessage, 'new_chat_message.chat_message_id')
+
+            // update message for everyone in group
+            emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
+
+            // update our own
+            emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
+
+            // update every friends in group
+            const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
+            friend_user_ids.forEach((friend_user_id) => {
+                emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
+            })
+
+            this.setState({
+                message: ''
+            })
+        } catch(err) {
             const indexLocal = chatData.findIndex((message) => {
                 return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
             })
@@ -874,24 +926,6 @@ export default class Chat extends React.Component {
             store.dispatch(chat(chatData))
             return
         }
-
-        const chat_message_id = _.get(resSendTheMessage, 'new_chat_message.chat_message_id')
-
-        // update message for everyone in group
-        emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
-
-        // update our own
-        emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
-
-        // update every friends in group
-        const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
-        friend_user_ids.forEach((friend_user_id) => {
-            emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
-        })
-
-        this.setState({
-            message: ''
-        })
     }
 
     async _pushAudio() {
@@ -917,13 +951,40 @@ export default class Chat extends React.Component {
         const chatData = [draftMessage].concat(messageLists)
         store.dispatch(chat(chatData))
 
-        const resSendTheMessage = await sendFileMessage(this.state.chatInfo.chat_room_id, '3', {
-            fileName: audioName,
-            type: "audio/wav",
-            uri: uri
-        })
+        try {
+            const resSendTheMessage = await sendFileMessage(this.state.chatInfo.chat_room_id, '3', {
+                fileName: audioName,
+                type: "audio/wav",
+                uri: uri
+            })
+            if(_.get(resSendTheMessage, 'error') || !resSendTheMessage) {
+                const indexLocal = chatData.findIndex((message) => {
+                    return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
+                })
 
-        if(_.get(resSendTheMessage, 'error') || !resSendTheMessage) {
+                chatData[indexLocal].isError = true
+                store.dispatch(chat(chatData))
+
+                return
+            }
+            const chat_message_id = _.get(resSendTheMessage, 'new_chat_message.chat_message_id')
+            // update message for everyone in group
+            emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
+
+            // update our own
+            emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
+
+            // update every friends in group
+            const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
+            friend_user_ids.forEach((friend_user_id) => {
+                emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
+            })
+
+            this.setState({
+                message: '',
+                roundRecording: 0
+            })
+        } catch(err) {
             const indexLocal = chatData.findIndex((message) => {
                 return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
             })
@@ -933,24 +994,6 @@ export default class Chat extends React.Component {
 
             return
         }
-
-        const chat_message_id = _.get(resSendTheMessage, 'new_chat_message.chat_message_id')
-        // update message for everyone in group
-        emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
-
-        // update our own
-        emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
-
-        // update every friends in group
-        const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
-        friend_user_ids.forEach((friend_user_id) => {
-            emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
-        })
-
-        this.setState({
-            message: '',
-            roundRecording: 0
-        })
     }
 
   render() {
