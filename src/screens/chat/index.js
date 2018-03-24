@@ -686,16 +686,6 @@ export default class Chat extends React.Component {
 
         try {
             const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '1', message, '', '')
-            if(_.get(resSendTheMessage, 'data.error') || resSendTheMessage.status != 200) {
-                const indexLocal = chatData.findIndex((message) => {
-                    return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
-                })
-
-                chatData[indexLocal].isError = true
-                store.dispatch(chat(chatData))
-
-                return;
-            }
 
             const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
 
@@ -759,16 +749,6 @@ export default class Chat extends React.Component {
 
         try {
             const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '4', '', sticker_path, '')
-            if(_.get(resSendTheMessage, 'data.error') || resSendTheMessage.status != 200) {
-                const indexLocal = chatData.findIndex((message) => {
-                    return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
-                })
-
-                chatData[indexLocal].isError = true
-                store.dispatch(chat(chatData))
-
-                return
-            }
             const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
             // update message for everyone in group
             emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
@@ -822,16 +802,6 @@ export default class Chat extends React.Component {
 
         try {
             const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '2', '', '', base64)
-            if(_.get(resSendTheMessage, 'data.error') || resSendTheMessage.status != 200) {
-                const indexLocal = chatData.findIndex((message) => {
-                    return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
-                })
-
-                chatData[indexLocal].isError = true
-                store.dispatch(chat(chatData))
-
-                return
-            }
             const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
             // update message for everyone in group
             emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
@@ -891,15 +861,6 @@ export default class Chat extends React.Component {
                 type: file.type,
                 uri: file.uri
             })
-            if(_.get(resSendTheMessage, 'error') || !resSendTheMessage) {
-                const indexLocal = chatData.findIndex((message) => {
-                    return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
-                })
-
-                chatData[indexLocal].isError = true
-                store.dispatch(chat(chatData))
-                return
-            }
             const chat_message_id = _.get(resSendTheMessage, 'new_chat_message.chat_message_id')
 
             // update message for everyone in group
@@ -957,16 +918,7 @@ export default class Chat extends React.Component {
                 type: "audio/wav",
                 uri: uri
             })
-            if(_.get(resSendTheMessage, 'error') || !resSendTheMessage) {
-                const indexLocal = chatData.findIndex((message) => {
-                    return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
-                })
-
-                chatData[indexLocal].isError = true
-                store.dispatch(chat(chatData))
-
-                return
-            }
+            
             const chat_message_id = _.get(resSendTheMessage, 'new_chat_message.chat_message_id')
             // update message for everyone in group
             emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
