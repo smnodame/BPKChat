@@ -12,7 +12,8 @@ import {
   Modal as ModalNative,
   Clipboard,
   Share,
-  NativeModules
+  NativeModules,
+  PermissionsAndroid
 } from 'react-native'
 import { InteractionManager, WebView } from 'react-native'
 import {
@@ -23,6 +24,7 @@ import {
   RkStyleSheet,
   RkTheme
 } from 'react-native-ui-kitten'
+import AudioPlayer from '../../components/audioPlayer'
 import RoundCheckbox from 'rn-round-checkbox'
 import Modal from 'react-native-modal'
 import _ from 'lodash'
@@ -66,9 +68,10 @@ import {
     onFetchMessageLists,
     isShowSearchBar,
     onForward,
-    inviteFriends
+    inviteFriends,
+    chat
 } from '../../redux/actions'
-import {sendTheMessage, fetchFriendProfile, saveInKeep } from '../../redux/api'
+import {sendTheMessage, fetchFriendProfile, saveInKeep, sendFileMessage } from '../../redux/api'
 import {
     emit_update_friend_chat_list,
     emit_unsubscribe,
@@ -86,9 +89,13 @@ import RNFetchBlob from 'react-native-fetch-blob'
 
 import ImageView from 'react-native-image-view'
 
+import Sound from 'react-native-sound'
+import {AudioRecorder, AudioUtils} from 'react-native-audio'
+
 let getUserId = (navigation) => {
   return navigation.state.params ? navigation.state.params.userId : undefined
 }
+const audioName = 'audio.wav'
 
 export default class Chat extends React.Component {
 
@@ -101,7 +108,15 @@ export default class Chat extends React.Component {
             showImageView: false,
             page: 0,
             selectedOptionMessageId: {},
-            filterMessage: ''
+            filterMessage: '',
+            currentTime: 0.0,
+            recording: false,
+            paused: false,
+            stoppedRecording: false,
+            finished: false,
+            audioPath: AudioUtils.DocumentDirectoryPath + '/' + audioName,
+            hasPermission: undefined,
+            roundRecording: 0
         }
 
         this._renderItem = this._renderItem.bind(this)
@@ -109,6 +124,26 @@ export default class Chat extends React.Component {
 
     componentWillUnmount() {
         this.unsubscribe()
+    }
+
+    componentDidMount() {
+        this._checkPermission().then((hasPermission) => {
+            this.setState({ hasPermission })
+
+            if (!hasPermission)
+                return
+            this.prepareRecordingPath(this.state.audioPath)
+            AudioRecorder.onProgress = (data) => {
+                this.setState({currentTime: Math.floor(data.currentTime)})
+            }
+
+            AudioRecorder.onFinished = (data) => {
+                // Android callback comes in the form of a promise instead.
+                if (Platform.OS === 'ios') {
+                    this._finishRecording(data.status === "OK", data.audioFileURL)
+                }
+            }
+        })
     }
 
     updateData = () => {
@@ -124,6 +159,83 @@ export default class Chat extends React.Component {
             optionMessage: _.get(state, 'chat.optionMessage', []),
             isShowSearchBar: _.get(state, 'chat.isShowSearchBar', false)
         })
+    }
+
+    _finishRecording = (didSucceed, filePath) => {
+        this.setState({ finished: didSucceed })
+        console.log(`Finished recording of duration ${this.state.currentTime} seconds at path: ${filePath}`)
+        this.setState({
+            roundRecording: this.state.roundRecording + 1
+        })
+    }
+
+    _record = async () => {
+        if (this.state.recording) {
+            console.warn('Already recording!')
+            return
+        }
+
+        if (!this.state.hasPermission) {
+            console.warn('Can\'t record, no permission granted!')
+            return
+        }
+
+        if(this.state.stoppedRecording){
+            this.prepareRecordingPath(this.state.audioPath)
+        }
+
+        this.setState({recording: true, paused: false})
+        try {
+            const filePath = await AudioRecorder.startRecording()
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    _stop = async () => {
+        if (!this.state.recording) {
+            console.warn('Can\'t stop, not recording!')
+            return
+        }
+
+        this.setState({stoppedRecording: true, recording: false, paused: false})
+
+        try {
+            const filePath = await AudioRecorder.stopRecording()
+            if (Platform.OS === 'android') {
+                this._finishRecording(true, filePath)
+        }
+            return filePath
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    prepareRecordingPath = (audioPath) => {
+        AudioRecorder.prepareRecordingAtPath(audioPath, {
+            SampleRate: 22050,
+            Channels: 1,
+            AudioQuality: "Low",
+            AudioEncoding: "wav",
+            AudioEncodingBitRate: 32000
+        })
+    }
+
+    _checkPermission() {
+        if (Platform.OS !== 'android') {
+            return Promise.resolve(true)
+        }
+
+        const rationale = {
+            'title': 'Microphone Permission',
+            'message': 'AudioExample needs access to your microphone so you can record audio.'
+        }
+
+        return PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO, rationale)
+            .then((result) => {
+                console.log('Permission result:', result)
+                return (result === true || result === PermissionsAndroid.RESULTS.GRANTED)
+            })
     }
 
     initState = () => {
@@ -228,29 +340,68 @@ export default class Chat extends React.Component {
 		})
     }
 
-    componentDidMount() {
-
-    }
-
     componentDidUpdate(prevProps, prevState) {
 
     }
 
     loadMoreInviteFriendLists = () => {
-        const page = this.state.page + 30
-        this.setState({
-            page: page + 1
-        })
-        store.dispatch(loadMoreInviteFriends(page, this.state.inviteFriendSeachText))
+        store.dispatch(loadMoreInviteFriends(0, this.state.inviteFriendSeachText))
     }
 
     onLoadMoreMemberInGroup = () => {
         store.dispatch(onLoadMoreMemberInGroup(this.state.memberSeachText))
     }
 
+    _resend = () => {
+        this.setState({
+            showHandleError: false
+        }, () => {
+            const {
+                message,
+                index
+            } = this.state.selectedMessageError
+
+            const messageLists = this.state.chat
+            messageLists.splice(index, 1)
+            store.dispatch(chat(messageLists))
+
+            if (message.message_type == '1') {
+                this._pushMessage(message.content)
+            } else if (message.message_type == '2') {
+                this._pushPhoto(message.base64, message.object_url)
+            } else if (message.message_type == '3') {
+                this._pushAudio()
+            } else if (message.message_type == '4') {
+                this._pushSticker(message.sticker_path, message.object_url)
+            } else if (message.message_type == '5') {
+                this._pushFile({
+                    uri: message.object_url,
+                    fileName: message.file_name,
+                    type: message.file_extension
+                })
+            }
+        })
+    }
+
+    _deleteErrorMessage = () => {
+        this.setState({
+            showHandleError: false
+        }, () => {
+            const {
+                message,
+                index
+            } = this.state.selectedMessageError
+
+            const messageLists = this.state.chat
+            messageLists.splice(index, 1)
+            store.dispatch(chat(messageLists))
+        })
+    }
+
     _renderItem(info) {
         let inMessage = info.item.username != this.state.user.username
         let seenMessage = ''
+        const isError = _.get(info.item, 'isError', false)
         const reader = info.item.who_read.filter((id) => {
             return id != this.state.user.user_id
         })
@@ -266,19 +417,41 @@ export default class Chat extends React.Component {
 
         let renderDate = (date) => (
         <View>
-            <RkText style={{ marginLeft: 15, marginRight: 15, marginTop: 10 }} rkType='secondary7 hintColor'>
+            <Text style={{ marginLeft: 15, marginRight: 15, marginTop: 10, fontSize: 12, color: '#7e7e7e' }} >
                 { `${moment(date).fromNow()}` }
-            </RkText>
+            </Text>
             {
-                (!inMessage||(this.props.navigation.state.params.chat_room_type == 'G' || this.props.navigation.state.params.chat_room_type == 'C'))&&<RkText style={{ marginLeft: 15, paddingRight: 30, width: '100%', textAlign: inMessage? 'left' : 'right' }} rkType='secondary7 hintColor'>
+                (!inMessage||(this.props.navigation.state.params.chat_room_type == 'G' || this.props.navigation.state.params.chat_room_type == 'C'))&&<Text style={{ fontSize: 12, color: '#7e7e7e', marginLeft: 15, paddingRight: 30, width: '100%', textAlign: inMessage? 'left' : 'right' }} rkType='secondary7 hintColor'>
                     {
                         seenMessage
                     }
-                </RkText>
+                </Text>
+            }
+            {
+                !inMessage && isError && <View style={{ marginRight: 20  }}>
+                    <TouchableOpacity
+                        style={{ width: '100%', flexDirection: 'row' }}
+                        onPress={() => {
+                            this.setState({
+                                showHandleError: true,
+                                selectedMessageError: {
+                                    message: info.item,
+                                    index: info.index
+                                }
+                            })
+                        }}
+                    >
+                        <View style={{ flex: 1 }} />
+                        <Icon
+                            style={{ color: '#A9A9A9' }}
+                            name='md-information-circle'
+                        />
+                    </TouchableOpacity>
+                </View>
+
             }
         </View>
     )
-
     return (
         <TouchableWithoutFeedback
 
@@ -320,20 +493,28 @@ export default class Chat extends React.Component {
             {!inMessage && renderDate(info.item.create_date)}
           {
               info.item.message_type=='1' && <View style={[styles.balloon, {backgroundColor}]}>
-                  <TouchableWithoutFeedback onLongPress={() => this.setState({ showPickerModal: true, copiedText: info.item.content, selectedMessageId: info.item.chat_message_id, selectedMessageType: info.item.message_type })}>
-                      <RkText rkType='primary2 mediumLine chat'>{info.item.content}</RkText>
+                  <TouchableWithoutFeedback onLongPress={() => {
+                      if(isError) {
+                          return
+                      }
+                      this.setState({ showPickerModal: true, copiedText: info.item.content, selectedMessageId: info.item.chat_message_id, selectedMessageType: info.item.message_type })
+                  }}>
+                      <Text style={{ fontSize: 16 }}>{info.item.content}</Text>
                   </TouchableWithoutFeedback>
               </View>
           }
           {
               info.item.message_type=='2' && <TouchableWithoutFeedback
-                onLongPress={() =>
+                onLongPress={() => {
+                    if(isError) {
+                        return
+                    }
                     this.setState({
                         showPickerModal: true,
                         selectedMessageId: info.item.chat_message_id,
                         selectedMessageType: info.item.message_type
                     })
-                }
+                }}
                 onPress={() => {
                     this.setState({
                         selectedPhotoUrl: info.item.object_url
@@ -352,13 +533,16 @@ export default class Chat extends React.Component {
           }
           {
               info.item.message_type=='4' && <TouchableWithoutFeedback
-                  onLongPress={() =>
+                  onLongPress={() => {
+                      if(isError) {
+                          return
+                      }
                       this.setState({
                           showPickerModal: true,
                           selectedMessageId: info.item.chat_message_id,
                           selectedMessageType: info.item.message_type
                       })
-                  }
+                  }}
               >
                   <Image
                       style={{ height: 100, width: 100 }}
@@ -367,46 +551,39 @@ export default class Chat extends React.Component {
               </TouchableWithoutFeedback>
           }
           {
-              info.item.message_type=='3' &&  <TouchableWithoutFeedback
-                  onLongPress={() =>
-                      this.setState({
-                          showPickerModal: true,
-                          selectedMessageId: info.item.chat_message_id,
-                          selectedMessageType: info.item.message_type
-                      })
-                  }
-              >
-                  <View style={[styles.balloon, { width: 150, height: 100 }, {backgroundColor}, { padding: 5 }]}>
-                      <View style={{ flex: 1, flexDirection: 'column' }}>
-                          <View style={{ flex: 1, borderColor: '#C0C0C0', borderBottomWidth: 0.5, marginBottom: 2, justifyContent: 'center', alignItems: 'center' }}>
-                              <Text style={{ color: '#C0C0C0', fontSize: 20 }}>10:50</Text>
-                          </View>
-                          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                              <View style={{ flex: 1, borderColor: '#C0C0C0', borderRightWidth: 0.5, justifyContent: 'center', alignItems: 'center' }}>
-                                  <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
-                                      <Icon name='md-play' style={{ color: '#C0C0C0' }}/>
-                                  </Button>
-                              </View>
-                              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                  <Button iconLeft transparent style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
-                                      <Icon name='md-download' style={{ color: '#C0C0C0' }}/>
-                                  </Button>
-                              </View>
-                          </View>
-                      </View>
-                  </View>
-              </TouchableWithoutFeedback>
+              info.item.message_type=='3' &&   <View style={[styles.balloon, { width: 150, height: 100 }, {backgroundColor},  { padding: 5 }]}>
+                <TouchableWithoutFeedback
+                    style={{ backgroundColor: 'yellow'}}
+                    onLongPress={() => {
+                        if(isError) {
+                            return
+                        }
+                        this.setState({
+                            showPickerModal: true,
+                            selectedMessageId: info.item.chat_message_id,
+                            selectedMessageType: info.item.message_type
+                        })
+                    }}
+                >
+                    <View style={{ flex: 1 }}>
+                        <AudioPlayer fileName={info.item.file_name} url={info.item.object_url} backgroundColor={backgroundColor} />
+                    </View>
+                </TouchableWithoutFeedback>
+                </View>
           }
           {
               info.item.message_type=='5' && <View style={[styles.balloon, {backgroundColor}]}>
                   <TouchableWithoutFeedback
-                      onLongPress={() =>
+                      onLongPress={() => {
+                          if(isError) {
+                              return
+                          }
                           this.setState({
                               showPickerModal: true,
                               selectedMessageId: info.item.chat_message_id,
                               selectedMessageType: info.item.message_type
                           })
-                      }
+                      }}
 
                       onPress={() => {
                           const url = info.item.object_url
@@ -438,13 +615,12 @@ export default class Chat extends React.Component {
                               <Icon name='md-list-box' style={{ color: '#A9A9A9' }}/>
                           </View>
                           <View>
-                              <RkText rkType='primary2 mediumLine chat' style={{ marginBottom: 8, height: 22 }}>
-
+                              <Text style={{ fontSize: 16 }} numberOfLines={1} style={{ marginBottom: 8, height: 22 }}>
                                   {  `${info.item.file_name}`}
-                              </RkText>
-                              <RkText rkType='secondary4 hintColor'>
+                              </Text>
+                              <Text style={{ fontSize: 12, color: '#7e7e7e' }}>
                                   {  `file extension: ${info.item.file_extension}`}
-                              </RkText>
+                              </Text>
                           </View>
                       </View>
                   </TouchableWithoutFeedback>
@@ -472,95 +648,304 @@ export default class Chat extends React.Component {
                 this.setState({
                     file: response
                 })
+                this._pushFile(response)
+                console.log('finished send message as file type ')
             }
         })
     }
 
+    generateID = () => {
+        return '_' + Math.random().toString(36).substr(2, 9)
+    }
 
-    async _pushMessage() {
-        if (!this.state.message)
+    async _pushMessage(message) {
+        if (!message)
             return
-        const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '1', this.state.message, '', '')
 
-        if(_.get(resSendTheMessage.data, 'error')) {
-            return
+        const draft_message_id = this.generateID()
+        // send local message
+        const draftMessage = {
+            chat_message_id: draft_message_id,
+            draft_message_id: draft_message_id,
+            content: message,
+            username: this.state.user.username,
+            who_read: [],
+            create_date: new Date(),
+            profile_pic_url: this.state.user.profile_pic_url,
+            message_type: '1',
+            isError: false
         }
 
-        // update message for everyone in group
-        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
+        this.setState({
+            message: ''
+        })
 
-        // update our own
-        emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
+        const messageLists = _.get(this.state, 'chat', [])
+        const chatData = [draftMessage].concat(messageLists)
+        store.dispatch(chat(chatData))
 
-        // update every friends in group
-        if(this.state.chatInfo.chat_room_type == 'G' || this.state.chatInfo.chat_room_type == 'C') {
+        try {
+            const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '1', message, '', '')
+
+            const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
+
+            // update message for everyone in group
+            emit_message(message, this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
+
+            // update our own
+            emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
+
+            // update every friends in group
+            if(this.state.chatInfo.chat_room_type == 'G' || this.state.chatInfo.chat_room_type == 'C') {
+                const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
+                friend_user_ids.forEach((friend_user_id) => {
+                    emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
+                })
+            } else {
+                emit_update_friend_chat_list(this.state.user.user_id, this.state.chatInfo.friend_user_id)
+            }
+
+            this.setState({
+                message: ''
+            })
+
+            this._scroll(true)
+        } catch(err) {
+            const indexLocal = chatData.findIndex((message) => {
+                return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
+            })
+
+            chatData[indexLocal].isError = true
+            store.dispatch(chat(chatData))
+
+            return;
+        }
+    }
+
+    async _pushSticker(sticker_path, object_url) {
+        const draft_message_id = this.generateID()
+        // send local message
+        const draftMessage = {
+            chat_message_id: draft_message_id,
+            draft_message_id: draft_message_id,
+            content: '',
+            username: this.state.user.username,
+            who_read: [],
+            create_date: new Date(),
+            profile_pic_url: this.state.user.profile_pic_url,
+            message_type: '4',
+            object_url: object_url,
+            sticker_path: sticker_path,
+            isError: false
+        }
+
+        this.setState({
+            message: ''
+        })
+
+        const messageLists = _.get(this.state, 'chat', [])
+        const chatData = [draftMessage].concat(messageLists)
+        store.dispatch(chat(chatData))
+
+        try {
+            const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '4', '', sticker_path, '')
+            const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
+            // update message for everyone in group
+            emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
+
+            // update our own
+            emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
+
+            // update every friends in group
             const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
             friend_user_ids.forEach((friend_user_id) => {
                 emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
             })
-        } else {
-            emit_update_friend_chat_list(this.state.user.user_id, this.state.chatInfo.friend_user_id)
-        }
 
-        this.setState({
-            message: ''
-        })
+            this.setState({
+                message: ''
+            })
 
-        this._scroll(true)
-    }
+            this._scroll(true)
+        } catch(err) {
+            const indexLocal = chatData.findIndex((message) => {
+                return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
+            })
 
-    async _pushSticker(sticker_path) {
-        const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '4', '', sticker_path, '')
+            chatData[indexLocal].isError = true
+            store.dispatch(chat(chatData))
 
-        if(_.get(resSendTheMessage.data, 'error')) {
             return
         }
-
-        // update message for everyone in group
-        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
-
-        // update our own
-        emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
-
-        // update every friends in group
-        const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
-        friend_user_ids.forEach((friend_user_id) => {
-            emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
-        })
-
-        this.setState({
-            message: ''
-        })
-
-        this._scroll(true)
-
     }
 
-    async _pushPhoto(base64) {
-        const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '2', '', '', base64)
-
-        if(_.get(resSendTheMessage.data, 'error')) {
-            return
+    async _pushPhoto(base64, object_url) {
+        const draft_message_id = this.generateID()
+        // send local message
+        const draftMessage = {
+            chat_message_id: draft_message_id,
+            draft_message_id: draft_message_id,
+            content: '',
+            username: this.state.user.username,
+            who_read: [],
+            create_date: new Date(),
+            profile_pic_url: this.state.user.profile_pic_url,
+            message_type: '2',
+            object_url: object_url,
+            base64: base64,
+            isError: false
         }
 
-        // update message for everyone in group
-        emit_message(this.state.message, this.state.chatInfo.chat_room_id)
+        const messageLists = _.get(this.state, 'chat', [])
+        const chatData = [draftMessage].concat(messageLists)
+        store.dispatch(chat(chatData))
 
-        // update our own
-        emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
+        try {
+            const resSendTheMessage = await sendTheMessage(this.state.chatInfo.chat_room_id, '2', '', '', base64)
+            const chat_message_id = _.get(resSendTheMessage, 'data.new_chat_message.chat_message_id')
+            // update message for everyone in group
+            emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
 
-        // update every friends in group
-        const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
-        friend_user_ids.forEach((friend_user_id) => {
-            emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
-        })
+            // update our own
+            emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
 
-        this.setState({
-            message: ''
-        })
+            // update every friends in group
+            const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
+            friend_user_ids.forEach((friend_user_id) => {
+                emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
+            })
 
-        this._scroll(true)
+            this.setState({
+                message: ''
+            })
 
+            this._scroll(true)
+        } catch(err) {
+            const indexLocal = chatData.findIndex((message) => {
+                return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
+            })
+
+            chatData[indexLocal].isError = true
+            store.dispatch(chat(chatData))
+
+            return
+        }
+    }
+
+    async _pushFile(file) {
+
+        const draft_message_id = this.generateID()
+        // send local message
+        const draftMessage = {
+            chat_message_id: draft_message_id,
+            draft_message_id: draft_message_id,
+            content: '',
+            username: this.state.user.username,
+            who_read: [],
+            create_date: new Date(),
+            profile_pic_url: this.state.user.profile_pic_url,
+            message_type: '5',
+            object_url: file.uri,
+            file_name: file.fileName,
+            file_extension: file.type,
+            isError: false
+        }
+
+        const messageLists = _.get(this.state, 'chat', [])
+        const chatData = [draftMessage].concat(messageLists)
+        store.dispatch(chat(chatData))
+
+        try {
+            const resSendTheMessage = await sendFileMessage(this.state.chatInfo.chat_room_id, '5', {
+                fileName: file.fileName,
+                type: file.type,
+                uri: file.uri
+            })
+            const chat_message_id = _.get(resSendTheMessage, 'new_chat_message.chat_message_id')
+
+            // update message for everyone in group
+            emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
+
+            // update our own
+            emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
+
+            // update every friends in group
+            const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
+            friend_user_ids.forEach((friend_user_id) => {
+                emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
+            })
+
+            this.setState({
+                message: ''
+            })
+        } catch(err) {
+            const indexLocal = chatData.findIndex((message) => {
+                return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
+            })
+
+            chatData[indexLocal].isError = true
+            store.dispatch(chat(chatData))
+            return
+        }
+    }
+
+    async _pushAudio() {
+        const uri = Platform.OS !== 'android'? AudioUtils.DocumentDirectoryPath + '/' + audioName : 'file://' + AudioUtils.DocumentDirectoryPath + '/' + audioName
+
+        const draft_message_id = this.generateID()
+        // send local message
+        const draftMessage = {
+            chat_message_id: draft_message_id,
+            draft_message_id: draft_message_id,
+            content: '',
+            username: this.state.user.username,
+            who_read: [],
+            create_date: new Date(),
+            profile_pic_url: this.state.user.profile_pic_url,
+            message_type: '3',
+            object_url: uri,
+            file_name: audioName,
+            file_extension: "audio/wav"
+        }
+
+        const messageLists = _.get(this.state, 'chat', [])
+        const chatData = [draftMessage].concat(messageLists)
+        store.dispatch(chat(chatData))
+
+        try {
+            const resSendTheMessage = await sendFileMessage(this.state.chatInfo.chat_room_id, '3', {
+                fileName: audioName,
+                type: "audio/wav",
+                uri: uri
+            })
+
+            const chat_message_id = _.get(resSendTheMessage, 'new_chat_message.chat_message_id')
+            // update message for everyone in group
+            emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
+
+            // update our own
+            emit_update_friend_chat_list(this.state.user.user_id, this.state.user.user_id)
+
+            // update every friends in group
+            const friend_user_ids = this.state.chatInfo.friend_user_ids.split(',')
+            friend_user_ids.forEach((friend_user_id) => {
+                emit_update_friend_chat_list(this.state.user.user_id, friend_user_id)
+            })
+
+            this.setState({
+                message: '',
+                roundRecording: 0
+            })
+        } catch(err) {
+            const indexLocal = chatData.findIndex((message) => {
+                return _.get(message, 'draft_message_id', 'unknown') == draft_message_id
+            })
+
+            chatData[indexLocal].isError = true
+            store.dispatch(chat(chatData))
+
+            return
+        }
     }
 
   render() {
@@ -593,8 +978,9 @@ export default class Chat extends React.Component {
                 <Right>
                     {
                         !this.state.isShowSearchBar && <Button transparent onPress={() => {
-                            this.setState({
-                                showOptionMessageModal: true
+                            this.props.navigation.navigate('Calling', {
+                                user_id: this.state.user.user_id,
+                                friend_id: this.state.chatInfo.friend_user_id
                             })
                         }}>
                             <Icon style={{ color: 'white' }} name="md-call" />
@@ -652,11 +1038,31 @@ export default class Chat extends React.Component {
             }
             {
                  this.state.showInviteModal && <ModalNative
-                     onRequestClose={() => this.setState({ showInviteModal: false })}
-                     onBackdropPress={() => this.setState({ showInviteModal: false })}
+                     onRequestClose={() => {
+                         this.setState({ showInviteModal: false }, () => {
+                             new Promise(() => {
+                                 this.setState({
+                                     selectedOptionMessageId: {},
+                                     inviteFriends: [],
+                                     inviteFriendSeachText: ''
+                                 })
+                             })
+                         })
+                     }}
+                     onBackdropPress={() => {
+                         this.setState({ showInviteModal: false }, () => {
+                             new Promise(() => {
+                                 this.setState({
+                                     selectedOptionMessageId: {},
+                                     inviteFriends: [],
+                                     inviteFriendSeachText: ''
+                                 })
+                             })
+                         })
+                     }}
                      isVisible={true}
                  >
-                     <View style={{
+                     <Container style={{
                          backgroundColor: 'white',
                          borderRadius: 4,
                          borderColor: 'rgba(0, 0, 0, 0.1)',
@@ -664,7 +1070,15 @@ export default class Chat extends React.Component {
                          <Header style={{ backgroundColor: '#3b5998' }}>
                              <Left>
                                  <Button transparent onPress={() => {
-                                     this.setState({ showInviteModal: false })
+                                     this.setState({ showInviteModal: false }, () => {
+                                         new Promise(() => {
+                                             this.setState({
+                                                 selectedOptionMessageId: {},
+                                                 inviteFriends: [],
+                                                 inviteFriendSeachText: ''
+                                             })
+                                         })
+                                     })
                                  }}>
                                      <Icon style={{ color: 'white' }} name="md-close" />
                                  </Button>
@@ -689,50 +1103,55 @@ export default class Chat extends React.Component {
                                         rkType='row'
                                         placeholder='Search'/>
                          </View>
-                         <View style={{ marginBottom: 40 }}>
-                             <List>
-                                <FlatList
-                                     data={this.state.inviteFriends}
-                                     onEndReached={() => this.loadMoreInviteFriendLists()}
-                                     onEndReachedThreshold={0.4}
-                                     renderItem={({item}) => (
-                                         <ListItem avatar onPress={() => {
-                                             if(this.state.isOpenCase) {
-                                                this.setState({
-                                                    showOptionMessageModal: true,
-                                                    chat_room_id: this.state.chatInfo.chat_room_id,
-                                                    selected_invite_friend_user_id: item.friend_user_id
-                                                })
-                                                new Promise(() => {
-                                                    store.dispatch(onEnterOptionMessage())
-                                                })
-                                             } else {
-                                                 if(item.invited) {
-                                                     store.dispatch(onRemoveFriendFromGroup(this.state.chatInfo.chat_room_id, item.friend_user_id, false))
-                                                 } else {
-                                                     store.dispatch(onInviteFriendToGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
-                                                 }
+                        <FlatList
+                            getItemLayout={(data, index) => (
+                                {length: 100, offset: 100 * index, index}
+                            )}
+                             data={this.state.inviteFriends}
+                             onEndReached={() => {
+                                 this.loadMoreInviteFriendLists()
+                             }}
+                             onEndReachedThreshold={0.1}
+                             keyExtractor={(item) => {
+                                 return item.friend_user_id
+                             }}
+                             extraData={this.state}
+                             renderItem={({item}) => (
+                                 <ListItem avatar onPress={() => {
+                                     if(this.state.isOpenCase) {
+                                        this.setState({
+                                            showOptionMessageModal: true,
+                                            chat_room_id: this.state.chatInfo.chat_room_id,
+                                            selected_invite_friend_user_id: item.friend_user_id
+                                        })
+                                        new Promise(() => {
+                                            store.dispatch(onEnterOptionMessage())
+                                        })
+                                     } else {
+                                         if(item.invited) {
+                                             store.dispatch(onRemoveFriendFromGroup(this.state.chatInfo.chat_room_id, item.friend_user_id, false))
+                                         } else {
+                                             store.dispatch(onInviteFriendToGroup(this.state.chatInfo.chat_room_id, item.friend_user_id))
+                                         }
 
-                                                if(this.state.chatInfo.chat_room_type == 'N') {
-                                                     this.setState({
-                                                         showInviteModal: false
-                                                     })
-                                                 }
-                                             }
-                                        }}>
-                                             <Left>
-                                                 <Thumbnail source={{ uri: item.profile_pic_url }} />
-                                             </Left>
-                                             <Body>
-                                                 <Text>{ item.display_name }</Text>
-                                                 <Text note style={{ marginLeft: 2 }}>{ item.status_quote }</Text>
-                                             </Body>
-                                          </ListItem>
-                                     )}
-                                 />
-                             </List>
-                         </View>
-                     </View>
+                                        if(this.state.chatInfo.chat_room_type == 'N') {
+                                             this.setState({
+                                                 showInviteModal: false
+                                             })
+                                         }
+                                     }
+                                }}>
+                                     <Left>
+                                         <Thumbnail source={{ uri: item.profile_pic_url }} />
+                                     </Left>
+                                     <Body>
+                                         <Text>{ item.display_name }</Text>
+                                         <Text note style={{ marginLeft: 2 }}>{ item.status_quote }</Text>
+                                     </Body>
+                                  </ListItem>
+                             )}
+                         />
+                     </Container>
                  </ModalNative>
              }
              {
@@ -853,6 +1272,36 @@ export default class Chat extends React.Component {
                   }
                 </View>
             </Modal>
+            <Modal
+                onRequestClose={() => this.setState({ showHandleError: false })}
+                onBackdropPress={() => this.setState({ showHandleError: false })}
+                isVisible={this.state.showHandleError}
+            >
+                <View style={{
+                    backgroundColor: 'white',
+                    borderRadius: 4,
+                    borderColor: 'rgba(0, 0, 0, 0.1)',
+                }}>
+                      <Button
+                          block
+                          light
+                          onPress={() => {
+                              this._resend()
+                          }}
+                      >
+                          <Text>RESEND</Text>
+                      </Button>
+                      <Button
+                          block
+                          light
+                          onPress={() => {
+                              this._deleteErrorMessage()
+                          }}
+                      >
+                          <Text>DELETE</Text>
+                      </Button>
+                </View>
+            </Modal>
             <RkAvoidKeyboard style={styles.container} onResponderRelease={(event) => {
               Keyboard.dismiss()
             }}>
@@ -863,12 +1312,12 @@ export default class Chat extends React.Component {
                         items={this.state.optionLists}
                         renderItem={item => (
                             <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                                <RkButton style={styles.plus} rkType='clear' onPress={item.event}>
+                                <TouchableOpacity style={styles.plus} rkType='clear' onPress={item.event}>
                                     <Icon ios={item.icon} android={item.icon} style={{fontSize: 20, color: 'gray'}}/>
-                                </RkButton>
-                                <RkText rkType='secondary4 hintColor' style={{ textAlign: 'center'}}>
+                                </TouchableOpacity>
+                                <Text  style={{ textAlign: 'center', fontSize: 13, color: '#7e7e7e' }}>
                                      { item.name }
-                                </RkText>
+                                </Text>
                             </View>
                         )}
                     />
@@ -898,12 +1347,7 @@ export default class Chat extends React.Component {
                    onBackdropPress={() => this.setState({ showOptionMessageModal: false })}
                    isVisible={true}
                >
-                       <View style={{
-                           backgroundColor: 'white',
-                           borderRadius: 4,
-                           borderColor: 'rgba(0, 0, 0, 0.1)',
-                           flex: 1
-                       }}>
+                       <Container>
                            <Header style={{ backgroundColor: '#3b5998' }}>
                                <Left>
                                    <Button transparent onPress={() => {
@@ -946,22 +1390,22 @@ export default class Chat extends React.Component {
                                 data={this.state.optionMessage}
                                 renderItem={this._renderItem.bind(this)}
                             />
-                    </View>
+                    </Container>
                 </ModalNative>
             }
               <View style={styles.footer}>
                 {
-                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => this.setState({ isShowMedie: false })}>
+                    this.state.isShowMedie&&<TouchableOpacity style={styles.plus} rkType='clear' onPress={() => this.setState({ isShowMedie: false })}>
                       <Icon ios='md-camera' android="md-arrow-dropleft-circle" style={{fontSize: 20, color: 'gray'}}/>
-                    </RkButton>
+                    </TouchableOpacity>
                 }
                 {
-                    !this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => this.setState({ isShowMedie: true })}>
+                    !this.state.isShowMedie&&<TouchableOpacity style={styles.plus} rkType='clear' onPress={() => this.setState({ isShowMedie: true })}>
                         <Icon ios='md-camera' android="md-arrow-dropright-circle" style={{fontSize: 20, color: 'gray'}}/>
-                    </RkButton>
+                    </TouchableOpacity>
                 }
                 {
-                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => {
+                    this.state.isShowMedie&&<TouchableOpacity style={styles.plus} rkType='clear' onPress={() => {
                         Keyboard.dismiss()
                         // Launch Camera:
                         ImagePicker.launchCamera({
@@ -983,15 +1427,15 @@ export default class Chat extends React.Component {
                             } else if (response.customButton) {
                                 console.log('User tapped custom button: ', response.customButton)
                             } else {
-                                this._pushPhoto(response.data)
+                                this._pushPhoto(response.data, response.uri)
                             }
                         })
                     }}>
                         <Icon ios='md-camera' android="md-camera" style={{fontSize: 20, color: 'gray'}}/>
-                    </RkButton>
+                    </TouchableOpacity>
                 }
                 {
-                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => {
+                    this.state.isShowMedie&&<TouchableOpacity style={styles.plus} rkType='clear' onPress={() => {
                         Keyboard.dismiss()
                         // Launch Camera:
                         ImagePicker.launchImageLibrary({
@@ -1013,15 +1457,15 @@ export default class Chat extends React.Component {
                             } else if (response.customButton) {
                                 console.log('User tapped custom button: ', response.customButton)
                             } else {
-                                this._pushPhoto(response.data)
+                                this._pushPhoto(response.data, response.uri)
                             }
                         })
                     }}>
                         <Icon ios='md-photos' android="md-photos" style={{fontSize: 20, color: 'gray'}}/>
-                    </RkButton>
+                    </TouchableOpacity>
                 }
                 {
-                    this.state.isShowMedie&&<RkButton style={styles.plus} rkType='clear' onPress={() => {
+                    this.state.isShowMedie&&<TouchableOpacity style={styles.plus} rkType='clear' onPress={() => {
                         Keyboard.dismiss()
                         this.setState({
                             isShowRecord: !this.state.isShowRecord,
@@ -1030,10 +1474,10 @@ export default class Chat extends React.Component {
                         })
                     }}>
                         <Icon ios='attachment' android="md-mic" style={{fontSize: 20, color: 'gray'}}/>
-                    </RkButton>
+                    </TouchableOpacity>
                 }
                 {
-                    this.state.isShowMedie&&<RkButton
+                    this.state.isShowMedie&&<TouchableOpacity
                         style={styles.plus}
                         rkType='clear'
                         onPress={() => {
@@ -1041,7 +1485,7 @@ export default class Chat extends React.Component {
                         }}
                     >
                         <Icon ios='attachment' android="md-folder-open" style={{fontSize: 20, color: 'gray'}}/>
-                    </RkButton>
+                    </TouchableOpacity>
                 }
 
                 <ImageView
@@ -1053,27 +1497,27 @@ export default class Chat extends React.Component {
                       })
                   }}
                 />
-
-                <RkTextInput
-                  onFocus={() => {
-                      this._scroll(true)
-                      this.setState({ isShowMedie: false, isShowPhoto: false })
-                  }}
-                  onBlur={() => this._scroll(true)}
-                  onChangeText={(message) => this.setState({message})}
-                  value={this.state.message}
-                  rkType='row sticker'
-                  placeholder="Add a comment..."/>
-                  <RkButton style={styles.plus} rkType='clear' onPress={() => {
+                    <Item regular style={[styles.textInput, { marginLeft: 5, marginRight: 5, marginBottom: 5, backgroundColor: 'white', flex: 1 } ]}>
+                        <Input
+                            onFocus={() => {
+                            this._scroll(true)
+                            this.setState({ isShowMedie: false, isShowPhoto: false })
+                        }}
+                        onBlur={() => this._scroll(true)}
+                        onChangeText={(message) => this.setState({message})}
+                        value={this.state.message}
+                        placeholder="Add a comment ..."/>
+                    </Item>
+                  <TouchableOpacity style={styles.plus} rkType='clear' onPress={() => {
                       Keyboard.dismiss()
                       this.setState({ isShowPhoto: !this.state.isShowPhoto, isShowRecord: false, isShowAdditionalHeader: false })
                   }}>
                         <Icon ios='attachment' android="md-happy" style={{fontSize: 20, color: 'gray'}}/>
-                  </RkButton>
-
-                <RkButton onPress={() => this._pushMessage()} style={styles.send} rkType='circle highlight'>
+                  </TouchableOpacity>
+                <TouchableOpacity onPress={() => this._pushMessage(this.state.message)} style={{ backgroundColor: '#f64e59', width: 40, height: 40, borderRadius: 20, justifyContent: 'center',
+    alignItems: 'center' }}>
                     <Image source={require('../../assets/icons/sendIcon.png')}/>
-                </RkButton>
+                </TouchableOpacity>
               </View>
               {
                   this.state.isShowPhoto&&<View style={{ height: 200 }}>
@@ -1083,7 +1527,7 @@ export default class Chat extends React.Component {
                             renderItem={item => (
                                 <View>
                                     <TouchableOpacity onPress={() => {
-                                        this._pushSticker(item.path)
+                                        this._pushSticker(item.path, item.url)
                                     }}>
                                         <Image
                                             style={{ height: 70 }}
@@ -1119,13 +1563,45 @@ export default class Chat extends React.Component {
               }
               {
                   this.state.isShowRecord && <View style={{ height: 200, backgroundColor: '#f9f9f9' }}>
-                        <View style={{ height: 50, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text>0:00</Text>
-                        </View>
-                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                            <View style={{ backgroundColor: '#ff6666', width: 120, height: 120, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: 'white' }}>Record</Text>
-                            </View>
+
+                        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
+                            {
+                                this.state.roundRecording >= 1 && this.state.recording == false  && <TouchableOpacity style={{ marginRight: 10, backgroundColor: '#edb730', width: 80, height: 80, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
+                                    this.setState({
+                                        currentTime: 0.0
+                                    }, () => {
+                                        this._record()
+                                    })
+                                }}>
+                                 <Icon name='md-sync' style={{ color: 'white', fontSize: 35 }}/>
+                                </TouchableOpacity>
+                            }
+                            {
+                                this.state.roundRecording >= 1 && this.state.recording == false  && <TouchableOpacity style={{ marginLeft: 10, backgroundColor: '#ff6666', width: 80, height: 80, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
+                                    this._pushAudio()
+                                }}>
+                                    <Text style={{ color: 'white' }}>Send</Text>
+                                </TouchableOpacity>
+                            }
+                            {
+                                (this.state.roundRecording == 0 || this.state.recording == true ) && <TouchableOpacity style={{ backgroundColor: '#ff6666', width: 120, height: 120, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
+                                    if(this.state.recording) {
+                                        this._stop()
+                                    } else {
+                                        this._record()
+                                    }
+                                }}>
+                                    <Text style={{ color: 'white' }}>{ this.state.recording? 'Stop' : 'Record' }</Text>
+                                    {
+                                        this.state.recording && <Text style={{ color: 'white' }}>
+                                            {
+                                                Math.floor(this.state.currentTime)
+                                            }
+                                        </Text>
+                                    }
+                                </TouchableOpacity>
+                            }
+
                         </View>
 
                   </View>
@@ -1210,4 +1686,10 @@ row: {
   borderColor: theme.colors.border.base,
   alignItems: 'center'
 },
+textInput: {
+    height: 45,
+    borderRadius: 10,
+    paddingHorizontal: 19,
+    paddingLeft: 10, paddingRight: 10
+}
 }))

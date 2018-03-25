@@ -133,6 +133,34 @@ export const sendTheMessage = (chat_room_id, message_type, content, sticker_path
     })
 }
 
+export const sendFileMessage = (chat_room_id, message_type, file) => {
+    return getAuth().then((user_id) => {
+        const bodyFormData = new FormData()
+        bodyFormData.append('user_id', user_id)
+        bodyFormData.append('chat_room_id', chat_room_id)
+        bodyFormData.append('message_type', message_type)
+        bodyFormData.append('content', '')
+        bodyFormData.append('sticker_path', '')
+        bodyFormData.append('image_base64', '')
+        bodyFormData.append('file', {
+            name: file.fileName,
+            type: file.type,
+            uri: file.uri
+        })
+        return fetch('http://itsmartone.com/bpk_connect/api/message/send?token=asdf1234aaa', {
+            method: 'post',
+            body: bodyFormData
+            }).then(res => {
+                if(res.status != 200) {
+                    return {
+                        error: 'lost connection'
+                    }
+                }
+                return res.json()
+            })
+    })
+}
+
 export const fetchSticker = () => {
     return getAuth().then((user_id) => {
         return axios.get(`http://itsmartone.com/bpk_connect/api/message/sticker_list?token=asdf1234aaa&user_id=${user_id}`)

@@ -12,24 +12,54 @@ let user_id = ''
 
 export const on_message = () => {
     socket.on('message', function(data) {
-        console.log('Incoming message:', data)
+        console.log('Incoming message:', data.message)
+        console.log(data)
 
-        const state = store.getState()
-        const chatInfo = _.get(state, 'chat.chatInfo')
+        if(user_id == data.user_id) {
+            const state = store.getState()
+            const chatInfo = _.get(state, 'chat.chatInfo')
 
-        const messageLists = _.get(state, 'chat.chat')
+            const messageLists = _.get(state, 'chat.chat', [])
 
-        const lastChatMessageId = _.get(messageLists[0], 'chat_message_id', '0')
+            const lastChatMessageId = state.lastMessageID || '0'
 
-        fetchChat(chatInfo.chat_room_id, '', lastChatMessageId).then((res) => {
-            const chatData = _.get(res, 'data.data', []).concat(messageLists)
-            // store data in store redux
-            store.dispatch(chat(chatData))
-        })
+            fetchChat(chatInfo.chat_room_id, '', lastChatMessageId).then((res) => {
+                // const chatData = _.get(res, 'data.data', []).concat(messageLists)
 
-        setAsSeen(chatInfo.chat_room_id).then(() => {
-            emit_as_seen(chatInfo.chat_room_id)
-        })
+                const indexLocal = messageLists.findIndex((message) => {
+                    return message.draft_message_id == data.draft_message_id
+                })
+
+                const indexOrigin = _.get(res, 'data.data', []).findIndex((message) => {
+                    return message.chat_message_id == data.chat_message_id
+                })
+
+                messageLists[indexLocal] = _.get(res, 'data.data', [])[indexOrigin]
+
+                // store data in store redux
+                store.dispatch(chat(messageLists))
+            })
+
+        } else {
+            const state = store.getState()
+            const chatInfo = _.get(state, 'chat.chatInfo')
+
+            const messageLists = _.get(state, 'chat.chat')
+
+            const lastChatMessageId = messageLists.find((message) => {
+                return message.chat_message_id[0] != '_'
+            }).chat_message_id
+
+            fetchChat(chatInfo.chat_room_id, '', lastChatMessageId).then((res) => {
+                const chatData = _.get(res, 'data.data', []).concat(messageLists)
+                // store data in store redux
+                store.dispatch(chat(chatData))
+            })
+
+            setAsSeen(chatInfo.chat_room_id).then(() => {
+                emit_as_seen(chatInfo.chat_room_id)
+            })
+        }
     })
 }
 
@@ -110,12 +140,17 @@ export const on_update_friend_chat_list = () => {
     })
 }
 
-export const emit_message = (message, chat_room_id) => {
+export const emit_message = (message, chat_room_id, user_id, chat_message_id, draft_message_id) => {
     console.log('[emit_message]')
-    socket.emit('message', {
+    const req = {
         message,
-        chat_room_id
-    })
+        chat_room_id,
+        user_id,
+        chat_message_id,
+        draft_message_id
+    }
+    console.log(req)
+    socket.emit('message', req)
 }
 
 export const start_socket = (user_id_from_store) => {

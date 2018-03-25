@@ -3,7 +3,14 @@ package com.bpkchat;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+<<<<<<< HEAD
 import com.futurice.rctaudiotoolkit.AudioPackage;
+=======
+import com.zxcpoiu.incallmanager.InCallManagerPackage;
+import com.oney.WebRTCModule.WebRTCModulePackage;
+import com.zmxv.RNSound.RNSoundPackage;
+import com.rnim.rn.audio.ReactNativeAudioPackage;
+>>>>>>> release@0.2
 import com.filepicker.FilePickerPackage;
 import com.wix.reactnativenotifications.RNNotificationsPackage;
 import com.meedan.ShareMenuPackage;
@@ -30,7 +37,14 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+<<<<<<< HEAD
             new AudioPackage(),
+=======
+            new InCallManagerPackage(),
+            new WebRTCModulePackage(),
+            new RNSoundPackage(),
+            new ReactNativeAudioPackage(),
+>>>>>>> release@0.2
             new FilePickerPackage(),
             new RNNotificationsPackage(MainApplication.this),
             new ShareMenuPackage(),

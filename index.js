@@ -12,6 +12,7 @@ import GroupSetting from './src/screens/groupSetting'
 import ProfileSettings from './src/screens/profile'
 import Splash from './src/screens/splash'
 import RecieveMessage from './src/screens/recieveMessage'
+import Calling from './src/screens/calling'
 
 import {store} from './src/redux'
 import { start_app  } from './src/redux/actions.js'
@@ -31,7 +32,8 @@ const BPKChat = StackNavigator({
     GroupSetting: { screen: GroupSetting },
     ProfileSettings: { screen: ProfileSettings },
     Splash: { screen: Splash },
-    RecieveMessage: { screen: RecieveMessage }
+    RecieveMessage: { screen: RecieveMessage },
+    Calling: { screen: Calling }
 },
 {
     initialRouteName: "Splash",

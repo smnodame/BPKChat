@@ -148,7 +148,14 @@ android {
 }
 
 dependencies {
+<<<<<<< HEAD
     compile project(':react-native-audio-toolkit')
+=======
+    compile project(':react-native-incall-manager')
+    compile project(':react-native-webrtc')
+    compile project(':react-native-sound')
+    compile project(':react-native-audio')
+>>>>>>> release@0.2
     compile project(':react-native-file-picker')
     compile project(':react-native-notifications')
     compile project(':react-native-share-menu')
