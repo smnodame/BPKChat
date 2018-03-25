@@ -18,6 +18,8 @@ import {
 } from 'native-base'
 import io from 'socket.io-client';
 
+import InCallManager from 'react-native-incall-manager';
+
 const socket = io.connect('http://10.1.20.89:4443/', {transports: ['websocket']});
 
 import {
@@ -208,7 +210,7 @@ socket.on('connect', function(data) {
   getLocalStream(true, function(stream) {
     localStream = stream;
     container.setState({selfViewSrc: stream.toURL()});
-    container.setState({status: 'ready', info: 'Please enter or create room ID'});
+    container.setState({status: 'ready', info: 'Calling'});
   });
 });
 
@@ -238,6 +240,19 @@ function getStats() {
 
 let container;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 export default class Calling extends React.Component {
 
     constructor(props) {
@@ -252,18 +267,25 @@ export default class Calling extends React.Component {
             remoteList: {},
             textRoomConnected: false,
             textRoomData: [],
-            textRoomValue: ''
+            textRoomValue: '',
+            mute: false,
+            speaker: true
         }
+
+
+        // InCallManager.start({media: 'audio', ringback: '_BUNDLE_'}); // or _DEFAULT_ or _DTMF_
     }
 
     componentDidMount() {
         container = this
+
+        this._press()
     }
 
-    _press = (event) => {
-        this.refs.roomID.blur();
+    _press = () => {
+        InCallManager.setMicrophoneMute(false)
         this.setState({status: 'connect', info: 'Connecting'});
-        join(this.state.roomID);
+        join('abc');
     }
 
     _switchVideoType = () => {
@@ -345,13 +367,18 @@ export default class Calling extends React.Component {
                             source={{ uri: "https://postmediacanoe.files.wordpress.com/2017/12/swift1000getty.jpg" }}
                         />
                         <Text style={{ fontSize: 20, marginBottom: 12 }}>Smnodame</Text>
-                        <Text style={{ fontSize: 16, marginBottom: 20 }}>Calling</Text>
+                        <Text style={{ fontSize: 16, marginBottom: 20 }}>{ this.state.info }</Text>
                         <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                             <TouchableOpacity
+                                onPress={ () => {
+                                    this.setState({
+                                        speaker: !this.state.speaker
+                                    })
+                                }}
                                 style={{
                                     marginRight: 10,
                                     marginLeft: 10,
-                                    backgroundColor: '#edb730',
+                                    backgroundColor:  this.state.speaker? '#D3D3D3' : '#edb730',
                                     width: 70,
                                     height: 70,
                                     borderRadius: 60,
@@ -362,10 +389,16 @@ export default class Calling extends React.Component {
                             </TouchableOpacity>
 
                             <TouchableOpacity
+                                onPress={ () => {
+                                    InCallManager.setMicrophoneMute(!this.state.mute)
+                                    this.setState({
+                                        mute: !this.state.mute
+                                    })
+                                }}
                                 style={{
                                     marginRight: 10,
                                     marginLeft: 10,
-                                    backgroundColor: '#edb730',
+                                    backgroundColor: !this.state.mute? '#D3D3D3' : '#edb730',
                                     width: 70,
                                     height: 70,
                                     borderRadius: 60,
@@ -397,6 +430,12 @@ export default class Calling extends React.Component {
                       </View>
 
                 </View>
+                <RTCView streamURL={this.state.selfViewSrc}/>
+                {
+                    mapHash(this.state.remoteList, function(remote, index) {
+                        return <RTCView key={index} streamURL={remote}/>
+                    })
+                }
             </View>
         );
     }
@@ -431,12 +470,7 @@ export default class Calling extends React.Component {
 //     </TouchableHighlight>
 //     </View>) : null
 // }
-// <RTCView streamURL={this.state.selfViewSrc} style={styles.selfView}/>
-// {
-//     mapHash(this.state.remoteList, function(remote, index) {
-//         return <RTCView key={index} streamURL={remote} style={styles.remoteView}/>
-//     })
-// }
+
 
 const styles = StyleSheet.create({
   selfView: {

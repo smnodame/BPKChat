@@ -60,6 +60,7 @@
 		5C1AE6A553E74820ADB3114E /* libRNAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB3D8F5266A4BD8BAB5D391 /* libRNAudio.a */; };
 		2D96CA17F7EF4169A5A50CAD /* libRNSound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9131077C11A64522B51B7E46 /* libRNSound.a */; };
 		546DC630A67549F5B0740657 /* libRCTWebRTC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B8D8D9F94EA145FEB1335A45 /* libRCTWebRTC.a */; };
+		A1972BA3EB2047F69F7FD106 /* libRNInCallManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D9AC9BE33314983A8792FAA /* libRNInCallManager.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -319,6 +320,8 @@
 		9131077C11A64522B51B7E46 /* libRNSound.a */ = {isa = PBXFileReference; name = "libRNSound.a"; path = "libRNSound.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		2F0B3CEA953146A982DB34A4 /* RCTWebRTC.xcodeproj */ = {isa = PBXFileReference; name = "RCTWebRTC.xcodeproj"; path = "../node_modules/react-native-webrtc/ios/RCTWebRTC.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		B8D8D9F94EA145FEB1335A45 /* libRCTWebRTC.a */ = {isa = PBXFileReference; name = "libRCTWebRTC.a"; path = "libRCTWebRTC.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		FF25462AD88D445CB905BA8D /* RNInCallManager.xcodeproj */ = {isa = PBXFileReference; name = "RNInCallManager.xcodeproj"; path = "../node_modules/react-native-incall-manager/ios/RNInCallManager.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		1D9AC9BE33314983A8792FAA /* libRNInCallManager.a */ = {isa = PBXFileReference; name = "libRNInCallManager.a"; path = "libRNInCallManager.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -357,6 +360,7 @@
 				5C1AE6A553E74820ADB3114E /* libRNAudio.a in Frameworks */,
 				2D96CA17F7EF4169A5A50CAD /* libRNSound.a in Frameworks */,
 				546DC630A67549F5B0740657 /* libRCTWebRTC.a in Frameworks */,
+				A1972BA3EB2047F69F7FD106 /* libRNInCallManager.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -533,6 +537,7 @@
 				522F4E538B3A4F25943B8B1D /* RNAudio.xcodeproj */,
 				DC933B208AB44412AF355228 /* RNSound.xcodeproj */,
 				2F0B3CEA953146A982DB34A4 /* RCTWebRTC.xcodeproj */,
+				FF25462AD88D445CB905BA8D /* RNInCallManager.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1136,6 +1141,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1147,6 +1153,7 @@
 					"$(SRCROOT)/../node_modules/react-native-audio/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-webrtc/ios/RCTWebRTC/**",
+					"$(SRCROOT)/../node_modules/react-native-incall-manager/ios/RNInCallManager",
 				);
 			};
 			name = Debug;
@@ -1175,6 +1182,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1186,6 +1194,7 @@
 					"$(SRCROOT)/../node_modules/react-native-audio/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-webrtc/ios/RCTWebRTC/**",
+					"$(SRCROOT)/../node_modules/react-native-incall-manager/ios/RNInCallManager",
 				);
 			};
 			name = Release;
@@ -1215,6 +1224,7 @@
 					"$(SRCROOT)/../node_modules/react-native-audio/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-webrtc/ios/RCTWebRTC/**",
+					"$(SRCROOT)/../node_modules/react-native-incall-manager/ios/RNInCallManager",
 				);
 			};
 			name = Debug;
@@ -1243,6 +1253,7 @@
 					"$(SRCROOT)/../node_modules/react-native-audio/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-webrtc/ios/RCTWebRTC/**",
+					"$(SRCROOT)/../node_modules/react-native-incall-manager/ios/RNInCallManager",
 				);
 			};
 			name = Release;
@@ -1280,6 +1291,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1291,6 +1303,7 @@
 					"$(SRCROOT)/../node_modules/react-native-audio/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-webrtc/ios/RCTWebRTC/**",
+					"$(SRCROOT)/../node_modules/react-native-incall-manager/ios/RNInCallManager",
 				);
 			};
 			name = Debug;
@@ -1328,6 +1341,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1339,6 +1353,7 @@
 					"$(SRCROOT)/../node_modules/react-native-audio/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-webrtc/ios/RCTWebRTC/**",
+					"$(SRCROOT)/../node_modules/react-native-incall-manager/ios/RNInCallManager",
 				);
 			};
 			name = Release;
@@ -1371,6 +1386,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};
 			name = Debug;
@@ -1395,6 +1411,7 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",

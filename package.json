@@ -33,7 +33,8 @@
     "redux-saga": "^0.16.0",
     "rn-round-checkbox": "^0.3.3",
     "socket.io": "^2.0.4",
-    "react-native-webrtc": "git+https://git@github.com/oney/react-native-webrtc.git"
+    "react-native-webrtc": "git+https://git@github.com/oney/react-native-webrtc.git",
+    "react-native-incall-manager": "git://github.com/zxcpoiu/react-native-incall-manager.git"
   },
   "devDependencies": {
     "babel-jest": "21.2.0",
