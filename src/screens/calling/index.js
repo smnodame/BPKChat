@@ -20,7 +20,7 @@ import io from 'socket.io-client';
 
 import InCallManager from 'react-native-incall-manager';
 
-const socket = io.connect('http://10.1.20.89:4443/', {transports: ['websocket']});
+const socket = io.connect('http://192.168.1.39:4443/', {transports: ['websocket']});
 
 import {
   RTCPeerConnection,
@@ -241,15 +241,12 @@ function getStats() {
 let container;
 
 
-
-
-
-
-
-
-
-
-
+function after_leave() {
+    socket.disconnect()
+    Object.keys(pcPeers).forEach(function(key) {
+        leave(key)
+    })
+}
 
 
 
@@ -417,19 +414,22 @@ export default class Calling extends React.Component {
                 </View>
                 <View style={{ flex: 1 }}>
 
-                      <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
-                          <TouchableOpacity
-                              style={{
-                                  backgroundColor: '#ff6666',
-                                  width: 80,
-                                  height: 80,
-                                  borderRadius: 60,
-                                  justifyContent: 'center',
-                                  alignItems: 'center'
-                               }}>
-                               <Icon name='hangup' style={{ color: 'white', fontSize: 35 }}/>
-                          </TouchableOpacity>
-                      </View>
+                        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
+                            <TouchableOpacity
+                                onPress={ () => {
+                                    after_leave()
+                                }}
+                                style={{
+                                    backgroundColor: '#ff6666',
+                                    width: 80,
+                                    height: 80,
+                                    borderRadius: 60,
+                                    justifyContent: 'center',
+                                    alignItems: 'center'
+                                }}>
+                                <Icon name='hangup' style={{ color: 'white', fontSize: 35 }}/>
+                            </TouchableOpacity>
+                        </View>
 
                 </View>
                 <RTCView streamURL={this.state.selfViewSrc}/>
