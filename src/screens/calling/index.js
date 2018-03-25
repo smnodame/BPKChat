@@ -18,7 +18,7 @@ import {
 } from 'native-base'
 import io from 'socket.io-client';
 
-const socket = io.connect('http://192.168.1.39:4443/', {transports: ['websocket']});
+const socket = io.connect('http://10.1.20.89:4443/', {transports: ['websocket']});
 
 import {
   RTCPeerConnection,
