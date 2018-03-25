@@ -17,7 +17,7 @@ import {
     Icon
 } from 'native-base'
 import io from 'socket.io-client';
-
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import InCallManager from 'react-native-incall-manager';
 
 let socket = io.connect('http://192.168.1.39:4443/', {transports: ['websocket']});
@@ -433,7 +433,7 @@ export default class Calling extends React.Component {
                                     justifyContent: 'center',
                                     alignItems: 'center'
                                 }}>
-                                <Icon name='hangup' style={{ color: 'white', fontSize: 35 }}/>
+                                <MaterialCommunityIcons name='phone-hangup' style={{ color: 'white', fontSize: 35 }}/>
                             </TouchableOpacity>
                         </View>
 
