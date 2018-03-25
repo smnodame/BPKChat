@@ -269,7 +269,7 @@ export default class Calling extends React.Component {
             textRoomData: [],
             textRoomValue: '',
             mute: false,
-            speaker: true
+            speaker: false
         }
 
 
@@ -284,6 +284,7 @@ export default class Calling extends React.Component {
 
     _press = () => {
         InCallManager.setMicrophoneMute(false)
+        InCallManager.setSpeakerphoneOn(false)
         this.setState({status: 'connect', info: 'Connecting'});
         join('abc');
     }
@@ -371,6 +372,7 @@ export default class Calling extends React.Component {
                         <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                             <TouchableOpacity
                                 onPress={ () => {
+                                    InCallManager.setSpeakerphoneOn(!this.state.speaker)
                                     this.setState({
                                         speaker: !this.state.speaker
                                     })
@@ -378,7 +380,7 @@ export default class Calling extends React.Component {
                                 style={{
                                     marginRight: 10,
                                     marginLeft: 10,
-                                    backgroundColor:  this.state.speaker? '#D3D3D3' : '#edb730',
+                                    backgroundColor:  !this.state.speaker? '#D3D3D3' : '#edb730',
                                     width: 70,
                                     height: 70,
                                     borderRadius: 60,
