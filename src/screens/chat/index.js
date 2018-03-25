@@ -918,7 +918,7 @@ export default class Chat extends React.Component {
                 type: "audio/wav",
                 uri: uri
             })
-            
+
             const chat_message_id = _.get(resSendTheMessage, 'new_chat_message.chat_message_id')
             // update message for everyone in group
             emit_message('', this.state.chatInfo.chat_room_id, this.state.user.user_id, chat_message_id, draft_message_id)
@@ -978,8 +978,9 @@ export default class Chat extends React.Component {
                 <Right>
                     {
                         !this.state.isShowSearchBar && <Button transparent onPress={() => {
-                            this.setState({
-                                showOptionMessageModal: true
+                            this.props.navigation.navigate('Calling', {
+                                user_id: this.state.user.user_id,
+                                friend_id: this.state.chatInfo.friend_user_id
                             })
                         }}>
                             <Icon style={{ color: 'white' }} name="md-call" />

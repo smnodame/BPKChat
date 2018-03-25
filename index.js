@@ -36,7 +36,7 @@ const BPKChat = StackNavigator({
     Calling: { screen: Calling }
 },
 {
-    initialRouteName: "Calling",
+    initialRouteName: "Splash",
     headerMode: "none",
 })
 

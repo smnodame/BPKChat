@@ -20,7 +20,9 @@ import io from 'socket.io-client';
 
 import InCallManager from 'react-native-incall-manager';
 
-const socket = io.connect('http://192.168.1.39:4443/', {transports: ['websocket']});
+let socket = io.connect('http://192.168.1.39:4443/', {transports: ['websocket']});
+
+import { NavigationActions } from 'react-navigation'
 
 import {
   RTCPeerConnection,
@@ -195,7 +197,7 @@ function leave(socketId) {
   const remoteList = container.state.remoteList;
   delete remoteList[socketId]
   container.setState({ remoteList: remoteList });
-  container.setState({info: 'One peer leave!'});
+  container.setState({ status: 'stop', info: 'One peer leave!' });
 }
 
 socket.on('exchange', function(data){
@@ -246,6 +248,8 @@ function after_leave() {
     Object.keys(pcPeers).forEach(function(key) {
         leave(key)
     })
+
+    container.props.navigation.dispatch(NavigationActions.back())
 }
 
 
@@ -270,19 +274,19 @@ export default class Calling extends React.Component {
         }
 
 
-        // InCallManager.start({media: 'audio', ringback: '_BUNDLE_'}); // or _DEFAULT_ or _DTMF_
+
     }
 
     componentDidMount() {
         container = this
-
-        this._press()
+        // socket.connect()
+        // this._press()
     }
 
     _press = () => {
         InCallManager.setMicrophoneMute(false)
         InCallManager.setSpeakerphoneOn(false)
-        this.setState({status: 'connect', info: 'Connecting'});
+        this.setState({status: 'connect', info: 'Calling'});
         join('abc');
     }
 
@@ -366,47 +370,49 @@ export default class Calling extends React.Component {
                         />
                         <Text style={{ fontSize: 20, marginBottom: 12 }}>Smnodame</Text>
                         <Text style={{ fontSize: 16, marginBottom: 20 }}>{ this.state.info }</Text>
-                        <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
-                            <TouchableOpacity
-                                onPress={ () => {
-                                    InCallManager.setSpeakerphoneOn(!this.state.speaker)
-                                    this.setState({
-                                        speaker: !this.state.speaker
-                                    })
-                                }}
-                                style={{
-                                    marginRight: 10,
-                                    marginLeft: 10,
-                                    backgroundColor:  !this.state.speaker? '#D3D3D3' : '#edb730',
-                                    width: 70,
-                                    height: 70,
-                                    borderRadius: 60,
-                                    justifyContent: 'center',
-                                    alignItems: 'center'
-                                 }}>
-                                 <Icon name='md-volume-up' style={{ color: 'white', fontSize: 35 }}/>
-                            </TouchableOpacity>
+                        {
+                            this.state.status != 'stop' && <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                                <TouchableOpacity
+                                    onPress={ () => {
+                                        InCallManager.setSpeakerphoneOn(!this.state.speaker)
+                                        this.setState({
+                                            speaker: !this.state.speaker
+                                        })
+                                    }}
+                                    style={{
+                                        marginRight: 10,
+                                        marginLeft: 10,
+                                        backgroundColor:  !this.state.speaker? '#D3D3D3' : '#edb730',
+                                        width: 70,
+                                        height: 70,
+                                        borderRadius: 60,
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
+                                     }}>
+                                     <Icon name='md-volume-up' style={{ color: 'white', fontSize: 35 }}/>
+                                </TouchableOpacity>
 
-                            <TouchableOpacity
-                                onPress={ () => {
-                                    InCallManager.setMicrophoneMute(!this.state.mute)
-                                    this.setState({
-                                        mute: !this.state.mute
-                                    })
-                                }}
-                                style={{
-                                    marginRight: 10,
-                                    marginLeft: 10,
-                                    backgroundColor: !this.state.mute? '#D3D3D3' : '#edb730',
-                                    width: 70,
-                                    height: 70,
-                                    borderRadius: 60,
-                                    justifyContent: 'center',
-                                    alignItems: 'center'
-                                 }}>
-                                 <Icon name='md-mic-off' style={{ color: 'white', fontSize: 35 }}/>
-                            </TouchableOpacity>
-                        </View>
+                                <TouchableOpacity
+                                    onPress={ () => {
+                                        InCallManager.setMicrophoneMute(!this.state.mute)
+                                        this.setState({
+                                            mute: !this.state.mute
+                                        })
+                                    }}
+                                    style={{
+                                        marginRight: 10,
+                                        marginLeft: 10,
+                                        backgroundColor: !this.state.mute? '#D3D3D3' : '#edb730',
+                                        width: 70,
+                                        height: 70,
+                                        borderRadius: 60,
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
+                                     }}>
+                                     <Icon name='md-mic-off' style={{ color: 'white', fontSize: 35 }}/>
+                                </TouchableOpacity>
+                            </View>
+                        }
                     </View>
 
 
