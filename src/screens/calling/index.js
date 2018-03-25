@@ -279,8 +279,8 @@ export default class Calling extends React.Component {
 
     componentDidMount() {
         container = this
-        // socket.connect()
-        // this._press()
+        socket.connect()
+        this._press()
     }
 
     _press = () => {
