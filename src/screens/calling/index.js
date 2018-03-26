@@ -366,9 +366,9 @@ export default class Calling extends React.Component {
                                 borderWidth: 1,
                                 marginBottom: 15
                             }}
-                            source={{ uri: "https://postmediacanoe.files.wordpress.com/2017/12/swift1000getty.jpg" }}
+                            source={{ uri: this.props.navigation.state.params.friend_pic_url }}
                         />
-                        <Text style={{ fontSize: 20, marginBottom: 12 }}>Smnodame</Text>
+                        <Text style={{ fontSize: 20, marginBottom: 12 }}>{ this.props.navigation.state.params.friend_name }</Text>
                         <Text style={{ fontSize: 16, marginBottom: 20 }}>{ this.state.info }</Text>
                         {
                             this.state.status != 'stop' && <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>

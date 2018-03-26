@@ -980,7 +980,9 @@ export default class Chat extends React.Component {
                         !this.state.isShowSearchBar && <Button transparent onPress={() => {
                             this.props.navigation.navigate('Calling', {
                                 user_id: this.state.user.user_id,
-                                friend_id: this.state.chatInfo.friend_user_id
+                                friend_id: this.state.chatInfo.friend_user_id,
+                                friend_pic_url: _.get(this.state.chatInfo, 'profile_pic_url', ''),
+                                friend_name: this.props.navigation.state.params.display_name
                             })
                         }}>
                             <Icon style={{ color: 'white' }} name="md-call" />
