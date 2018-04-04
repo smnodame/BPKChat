@@ -1,5 +1,6 @@
 'use strict';
 
+import _ from 'lodash'
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -20,7 +21,7 @@ import io from 'socket.io-client';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import InCallManager from 'react-native-incall-manager';
 
-let socket = io.connect('http://192.168.1.39:4443/', {transports: ['websocket']});
+let socket = io('http://172.20.10.2:4443/', {transports: ['websocket']});
 
 import { NavigationActions } from 'react-navigation'
 
@@ -270,24 +271,38 @@ export default class Calling extends React.Component {
             textRoomData: [],
             textRoomValue: '',
             mute: false,
-            speaker: false
+            speaker: false,
+            isCalling: _.get(this.props.navigation.state.params, 'isInComing', false),
+            isInComing: _.get(this.props.navigation.state.params, 'isInComing', false)
         }
-
-
-
     }
 
     componentDidMount() {
         container = this
         socket.connect()
-        this._press()
+        if(this.state.isInComing) {
+            this.setState({
+                info: 'Incoming Call'
+            })
+            InCallManager.setSpeakerphoneOn(true)
+            InCallManager.start({media: 'audio'})
+        } else {
+            this._startCall()
+        }
     }
 
-    _press = () => {
+    _startCall = () => {
+        // stop when hang up
+        this.setState({
+            isCalling: false
+        })
+        InCallManager.stop()
+
+        // init
         InCallManager.setMicrophoneMute(false)
         InCallManager.setSpeakerphoneOn(false)
-        this.setState({status: 'connect', info: 'Calling'});
-        join('abc');
+        this.setState({status: 'connect', info: 'Calling'})
+        join('abc')
     }
 
     _switchVideoType = () => {
@@ -368,10 +383,10 @@ export default class Calling extends React.Component {
                             }}
                             source={{ uri: this.props.navigation.state.params.friend_pic_url }}
                         />
-                        <Text style={{ fontSize: 20, marginBottom: 12 }}>{ this.props.navigation.state.params.friend_name }</Text>
+                        <Text style={{ fontSize: 20, marginBottom: 12, width: '75%' }}>{ this.props.navigation.state.params.friend_name }</Text>
                         <Text style={{ fontSize: 16, marginBottom: 20 }}>{ this.state.info }</Text>
                         {
-                            this.state.status != 'stop' && <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                            this.state.status != 'stop' && !this.state.isCalling && <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                                 <TouchableOpacity
                                     onPress={ () => {
                                         InCallManager.setSpeakerphoneOn(!this.state.speaker)
@@ -414,13 +429,28 @@ export default class Calling extends React.Component {
                             </View>
                         }
                     </View>
-
-
-
                 </View>
                 <View style={{ flex: 1 }}>
-
-                        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
+                    {
+                        this.state.isCalling && <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
+                            <TouchableOpacity
+                                onPress={ () => {
+                                    this._startCall()
+                                }}
+                                style={{
+                                    backgroundColor: '#ff6666',
+                                    width: 80,
+                                    height: 80,
+                                    borderRadius: 60,
+                                    justifyContent: 'center',
+                                    alignItems: 'center'
+                                }}>
+                                <MaterialCommunityIcons name='phone' style={{ color: 'white', fontSize: 35 }}/>
+                            </TouchableOpacity>
+                        </View>
+                    }
+                    {
+                        !this.state.isCalling && <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
                             <TouchableOpacity
                                 onPress={ () => {
                                     after_leave()
@@ -436,7 +466,7 @@ export default class Calling extends React.Component {
                                 <MaterialCommunityIcons name='phone-hangup' style={{ color: 'white', fontSize: 35 }}/>
                             </TouchableOpacity>
                         </View>
-
+                    }
                 </View>
                 <RTCView streamURL={this.state.selfViewSrc}/>
                 {
@@ -448,36 +478,6 @@ export default class Calling extends React.Component {
         );
     }
 }
-
-// <Text style={styles.welcome}>
-//     {this.state.info}
-// </Text>
-// {this.state.textRoomConnected && this._renderTextRoom()}
-// <View style={{flexDirection: 'row'}}>
-//     <Text>
-//         {this.state.isFront ? "Use front camera" : "Use back camera"}
-//     </Text>
-//     <TouchableHighlight
-//         style={{borderWidth: 1, borderColor: 'black'}}
-//         onPress={this._switchVideoType}>
-//         <Text>Switch camera</Text>
-//     </TouchableHighlight>
-// </View>
-// { this.state.status == 'ready' ?
-// (<View>
-//     <TextInput
-//     ref='roomID'
-//     autoCorrect={false}
-//     style={{width: 200, height: 40, borderColor: 'gray', borderWidth: 1}}
-//     onChangeText={(text) => this.setState({roomID: text})}
-//     value={this.state.roomID}
-//     />
-//     <TouchableHighlight
-//     onPress={this._press}>
-//     <Text>Enter room</Text>
-//     </TouchableHighlight>
-//     </View>) : null
-// }
 
 
 const styles = StyleSheet.create({
