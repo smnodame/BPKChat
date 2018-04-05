@@ -17,11 +17,11 @@ import {
 import {
     Icon
 } from 'native-base'
-import io from 'socket.io-client';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import InCallManager from 'react-native-incall-manager';
+import io from 'socket.io-client'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import InCallManager from 'react-native-incall-manager'
 
-let socket = io('http://172.20.10.2:4443/', {transports: ['websocket']});
+let socket = io('http://172.20.10.2:4443/', {transports: ['websocket']})
 
 import { NavigationActions } from 'react-navigation'
 
@@ -33,12 +33,16 @@ import {
   RTCView,
   MediaStreamTrack,
   getUserMedia,
-} from 'react-native-webrtc';
+} from 'react-native-webrtc'
 
-const configuration = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
+import {
+    emit_call
+} from '../../redux/socket.js'
 
-const pcPeers = {};
-let localStream;
+const configuration = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]}
+
+const pcPeers = {}
+let localStream
 
 function getLocalStream(isFront, callback) {
 
@@ -260,6 +264,8 @@ export default class Calling extends React.Component {
     constructor(props) {
         super(props)
         this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => true});
+        const sender = _.get(this.props.navigation.state.params, 'user_id', '')
+        const receiver = _.get(this.props.navigation.state.params, 'friend_user_id', '')
         this.state = {
             info: 'Initializing',
             status: 'init',
@@ -273,8 +279,12 @@ export default class Calling extends React.Component {
             mute: false,
             speaker: false,
             isCalling: _.get(this.props.navigation.state.params, 'isInComing', false),
-            isInComing: _.get(this.props.navigation.state.params, 'isInComing', false)
+            isInComing: _.get(this.props.navigation.state.params, 'isInComing', false),
+            sender: sender,
+            receiver: receiver
         }
+
+        emit_call(sender, receiver)
     }
 
     componentDidMount() {
@@ -284,7 +294,7 @@ export default class Calling extends React.Component {
             this.setState({
                 info: 'Incoming Call'
             })
-            InCallManager.setSpeakerphoneOn(true)
+            // InCallManager.setSpeakerphoneOn(true)
             InCallManager.start({media: 'audio'})
         } else {
             this._startCall()

@@ -5,7 +5,7 @@ import { fetchChatLists, fetchChat, setAsSeen } from './api.js'
 import { chatLists, chat } from './actions.js'
 import { store } from './index.js'
 
-const socket = SocketIOClient('http://122.155.210.29:4444/', {
+const socket = SocketIOClient('http://172.20.10.2:4444/', {
     transports: ['websocket']
 })
 let user_id = ''
@@ -153,6 +153,19 @@ export const emit_message = (message, chat_room_id, user_id, chat_message_id, dr
     socket.emit('message', req)
 }
 
+export const emit_call = (sender, receiver) => {
+    socket.emit('call', {
+        sender,
+        receiver
+    })
+}
+
+export const on_incomming_call = () => {
+    socket.on('incoming_call', (data) => {
+        console.log('call from '+ data.sender +' to '+ data.receiver)
+    })
+}
+
 export const start_socket = (user_id_from_store) => {
     // Connect!
     socket.connect();
@@ -168,6 +181,7 @@ export const start_socket = (user_id_from_store) => {
     on_update_friend_chat_list()
     on_as_seen()
     on_message()
+    on_incomming_call()
 
     socket.on('reconnect', (socket) => {
         console.log('Re-connected')
