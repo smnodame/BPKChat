@@ -30,6 +30,10 @@ export const incomingCall = (sender, receiver, sender_photo, sender_name) => ({
     }
 })
 
+export const hangup = () => ({
+    type: 'HANGUP'
+})
+
 export const signup = (id, password, confirm_password, display_name, mobile_no, language_id) => ({
     type: 'SIGNUP',
     payload: {

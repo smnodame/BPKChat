@@ -2,7 +2,7 @@ import _ from 'lodash'
 import SocketIOClient from 'socket.io-client'
 
 import { fetchChatLists, fetchChat, setAsSeen } from './api.js'
-import { chatLists, chat, incomingCall } from './actions.js'
+import { chatLists, chat, incomingCall, hangup } from './actions.js'
 import { store } from './index.js'
 
 const socket = SocketIOClient('http://172.20.10.2:4444/', {
@@ -178,7 +178,7 @@ export const emit_hangup = (sender, receiver) => {
 
 export const on_hangup = () => {
     socket.on('hangup', (data) => {
-        console.log(' hangup ', data.sender, data.receiver)
+        store.dispatch(hangup())
     })
 }
 
@@ -199,7 +199,7 @@ export const start_socket = (user_id_from_store) => {
     on_message()
     on_incomming_call()
     on_hangup()
-    
+
     socket.on('reconnect', (socket) => {
         console.log('Re-connected')
     })

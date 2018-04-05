@@ -99,14 +99,18 @@ export const getAuth = () => {
     })
 }
 
+function* hangupSaga() {
+    while (true) {
+        yield take('HANGUP')
+
+        const navigate = yield select(navigateSelector)
+        navigate.dispatch(NavigationActions.back())
+    }
+}
+
 function* incomingCallSaga() {
     while (true) {
         const { payload: { sender, receiver, sender_photo, sender_name }} = yield take('INCOMING_CALL')
-
-        console.log(' incoming call saga ')
-        console.log(sender, receiver)
-        console.log(sender_photo)
-        console.log(sender_name)
         // navigate to chat page
         const navigate = yield select(navigateSelector)
         navigate.navigate('Calling', {
@@ -1240,6 +1244,7 @@ export function* rootSaga() {
         onUpdateGroupListsSaga(),
         onUpdateGroupSettingSaga(),
         onSelectKeepSaga(),
-        incomingCallSaga()
+        incomingCallSaga(),
+        hangupSaga()
     ])
 }

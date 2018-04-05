@@ -203,7 +203,7 @@ function leave(socketId) {
   const remoteList = container.state.remoteList;
   delete remoteList[socketId]
   container.setState({ remoteList: remoteList });
-  container.setState({ status: 'stop', info: 'Call End' });
+  container.setState({ status: 'stop', info: 'Call Ended' });
 }
 
 socket.on('exchange', function(data){
@@ -249,13 +249,11 @@ function getStats() {
 let container;
 
 
-function after_leave(sender, receiver) {
+function after_leave() {
     socket.disconnect()
     Object.keys(pcPeers).forEach(function(key) {
         leave(key)
     })
-
-    emit_hangup(sender, receiver)
 
     container.props.navigation.dispatch(NavigationActions.back())
 }
@@ -474,7 +472,10 @@ export default class Calling extends React.Component {
                         <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
                             <TouchableOpacity
                                 onPress={ () => {
-                                    after_leave(this.state.sender, this.state.receiver)
+                                    if(this.state.status != 'One peer join!') {
+                                        emit_hangup(this.state.sender, this.state.receiver)
+                                    }
+                                    after_leave()
                                 }}
                                 style={{
                                     backgroundColor: '#ff6666',
