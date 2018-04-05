@@ -169,6 +169,19 @@ export const on_incomming_call = () => {
     })
 }
 
+export const emit_hangup = (sender, receiver) => {
+    socket.emit('hangup', {
+        sender,
+        receiver
+    })
+}
+
+export const on_hangup = () => {
+    socket.on('hangup', (data) => {
+        console.log(' hangup ', data.sender, data.receiver)
+    })
+}
+
 export const start_socket = (user_id_from_store) => {
     // Connect!
     socket.connect();
@@ -185,7 +198,8 @@ export const start_socket = (user_id_from_store) => {
     on_as_seen()
     on_message()
     on_incomming_call()
-
+    on_hangup()
+    
     socket.on('reconnect', (socket) => {
         console.log('Re-connected')
     })

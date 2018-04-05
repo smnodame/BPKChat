@@ -36,7 +36,8 @@ import {
 } from 'react-native-webrtc'
 
 import {
-    emit_call
+    emit_call,
+    emit_hangup
 } from '../../redux/socket.js'
 
 const configuration = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]}
@@ -248,11 +249,13 @@ function getStats() {
 let container;
 
 
-function after_leave() {
+function after_leave(sender, receiver) {
     socket.disconnect()
     Object.keys(pcPeers).forEach(function(key) {
         leave(key)
     })
+
+    emit_hangup(sender, receiver)
 
     container.props.navigation.dispatch(NavigationActions.back())
 }
@@ -448,7 +451,7 @@ export default class Calling extends React.Component {
                         }
                     </View>
                 </View>
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 1, flexDirection: 'row' }}>
                     {
                         this.state.isCalling && <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
                             <TouchableOpacity
@@ -456,7 +459,7 @@ export default class Calling extends React.Component {
                                     this._startCall()
                                 }}
                                 style={{
-                                    backgroundColor: '#ff6666',
+                                    backgroundColor: 'green',
                                     width: 80,
                                     height: 80,
                                     borderRadius: 60,
@@ -468,10 +471,10 @@ export default class Calling extends React.Component {
                         </View>
                     }
                     {
-                        !this.state.isCalling && <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
                             <TouchableOpacity
                                 onPress={ () => {
-                                    after_leave()
+                                    after_leave(this.state.sender, this.state.receiver)
                                 }}
                                 style={{
                                     backgroundColor: '#ff6666',
