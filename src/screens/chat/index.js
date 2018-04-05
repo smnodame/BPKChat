@@ -982,7 +982,9 @@ export default class Chat extends React.Component {
                                 user_id: this.state.user.user_id,
                                 friend_user_id: this.state.chatInfo.friend_user_id,
                                 friend_pic_url: _.get(this.state.chatInfo, 'profile_pic_url', ''),
-                                friend_name: this.props.navigation.state.params.display_name
+                                friend_name: this.props.navigation.state.params.display_name,
+                                user_photo: this.state.user.profile_pic_url,
+                                user_name: this.state.user.display_name
                             })
                         }}>
                             <Icon style={{ color: 'white' }} name="md-call" />

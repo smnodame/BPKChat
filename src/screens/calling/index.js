@@ -283,8 +283,6 @@ export default class Calling extends React.Component {
             sender: sender,
             receiver: receiver
         }
-
-        emit_call(sender, receiver)
     }
 
     componentDidMount() {
@@ -297,6 +295,9 @@ export default class Calling extends React.Component {
             // InCallManager.setSpeakerphoneOn(true)
             InCallManager.start({media: 'audio'})
         } else {
+            const user_photo = _.get(this.props.navigation.state.params, 'user_photo')
+            const user_name = _.get(this.props.navigation.state.params, 'user_name')
+            emit_call(this.state.sender, this.state.receiver, user_photo, user_name)
             this._startCall()
         }
     }

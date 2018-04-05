@@ -99,6 +99,26 @@ export const getAuth = () => {
     })
 }
 
+function* incomingCallSaga() {
+    while (true) {
+        const { payload: { sender, receiver, sender_photo, sender_name }} = yield take('INCOMING_CALL')
+
+        console.log(' incoming call saga ')
+        console.log(sender, receiver)
+        console.log(sender_photo)
+        console.log(sender_name)
+        // navigate to chat page
+        const navigate = yield select(navigateSelector)
+        navigate.navigate('Calling', {
+            user_id: receiver,
+            friend_user_id: sender,
+            friend_pic_url: sender_photo,
+            friend_name: sender_name,
+            isInComing: true
+        })
+    }
+}
+
 function* onStickerSaga() {
     while (true) {
         yield take('ON_STICKER')
@@ -234,22 +254,22 @@ function* signin() {
         const { payload: { username, password } } = yield take('SIGNIN')
         yield put(isLoading(true))
         if(username && password) {
-            const res_loginApi = yield call(loginApi, username, password)
-
-            console.log(' finsihed sign in ')
-            console.log(res_loginApi)
-
-            if(_.get(res_loginApi.data, 'error')) {
-                yield put(signin_error(res_loginApi.data.error))
-                yield put(isLoading(false))
-                continue
-            }
-            const { data: { token, setting, user } } = res_loginApi
-            yield put(authenticated(token, setting))
-            yield put(signin_error(''))
+            // const res_loginApi = yield call(loginApi, username, password)
+            //
+            // console.log(' finsihed sign in ')
+            // console.log(res_loginApi)
+            //
+            // if(_.get(res_loginApi.data, 'error')) {
+            //     yield put(signin_error(res_loginApi.data.error))
+            //     yield put(isLoading(false))
+            //     continue
+            // }
+            // const { data: { token, setting, user } } = res_loginApi
+            // yield put(authenticated(token, setting))
+            // yield put(signin_error(''))
 
             AsyncStorage.removeItem('user_id').then(() => {
-                AsyncStorage.setItem('user_id', user.user_id)
+                AsyncStorage.setItem('user_id', '3963')
             })
 
             yield put(enterContact())
@@ -1219,6 +1239,7 @@ export function* rootSaga() {
         onForwardSaga(),
         onUpdateGroupListsSaga(),
         onUpdateGroupSettingSaga(),
-        onSelectKeepSaga()
+        onSelectKeepSaga(),
+        incomingCallSaga()
     ])
 }

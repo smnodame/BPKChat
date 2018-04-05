@@ -20,6 +20,16 @@ export const signupEror = (error) => ({
     }
 })
 
+export const incomingCall = (sender, receiver, sender_photo, sender_name) => ({
+    type: 'INCOMING_CALL',
+    payload: {
+        sender,
+        receiver,
+        sender_photo,
+        sender_name
+    }
+})
+
 export const signup = (id, password, confirm_password, display_name, mobile_no, language_id) => ({
     type: 'SIGNUP',
     payload: {

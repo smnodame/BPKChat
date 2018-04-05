@@ -2,7 +2,7 @@ import _ from 'lodash'
 import SocketIOClient from 'socket.io-client'
 
 import { fetchChatLists, fetchChat, setAsSeen } from './api.js'
-import { chatLists, chat } from './actions.js'
+import { chatLists, chat, incomingCall } from './actions.js'
 import { store } from './index.js'
 
 const socket = SocketIOClient('http://172.20.10.2:4444/', {
@@ -153,16 +153,19 @@ export const emit_message = (message, chat_room_id, user_id, chat_message_id, dr
     socket.emit('message', req)
 }
 
-export const emit_call = (sender, receiver) => {
+export const emit_call = (sender, receiver, sender_photo, sender_name) => {
     socket.emit('call', {
         sender,
-        receiver
+        receiver,
+        sender_photo,
+        sender_name
     })
 }
 
 export const on_incomming_call = () => {
     socket.on('incoming_call', (data) => {
-        console.log('call from '+ data.sender +' to '+ data.receiver)
+        // call redux to navigate
+        store.dispatch(incomingCall(data.sender, data.receiver, data.sender_photo, data.sender_name))
     })
 }
 
