@@ -217,7 +217,7 @@ socket.on('connect', function(data) {
   getLocalStream(true, function(stream) {
     localStream = stream;
     container.setState({selfViewSrc: stream.toURL()});
-    container.setState({status: 'ready', info: 'Calling'});
+    container.setState({status: 'ready'});
   });
 });
 
@@ -298,6 +298,8 @@ export default class Calling extends React.Component {
             const user_photo = _.get(this.props.navigation.state.params, 'user_photo')
             const user_name = _.get(this.props.navigation.state.params, 'user_name')
             emit_call(this.state.sender, this.state.receiver, user_photo, user_name)
+
+            this.setState({status: 'connect', info: 'Calling'})
             this._startCall()
         }
     }
@@ -312,7 +314,6 @@ export default class Calling extends React.Component {
         // init
         InCallManager.setMicrophoneMute(false)
         InCallManager.setSpeakerphoneOn(false)
-        this.setState({status: 'connect', info: 'Calling'})
         join('abc')
     }
 
