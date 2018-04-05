@@ -383,7 +383,7 @@ export default class Calling extends React.Component {
                             }}
                             source={{ uri: this.props.navigation.state.params.friend_pic_url }}
                         />
-                        <Text style={{ fontSize: 20, marginBottom: 12, width: '75%' }}>{ this.props.navigation.state.params.friend_name }</Text>
+                        <Text style={{ fontSize: 20, marginBottom: 12, width: '75%', textAlign: 'center' }}>{ this.props.navigation.state.params.friend_name }</Text>
                         <Text style={{ fontSize: 16, marginBottom: 20 }}>{ this.state.info }</Text>
                         {
                             this.state.status != 'stop' && !this.state.isCalling && <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
