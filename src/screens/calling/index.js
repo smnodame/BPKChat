@@ -202,7 +202,7 @@ function leave(socketId) {
   const remoteList = container.state.remoteList;
   delete remoteList[socketId]
   container.setState({ remoteList: remoteList });
-  container.setState({ status: 'stop', info: 'One peer leave!' });
+  container.setState({ status: 'stop', info: 'Call End' });
 }
 
 socket.on('exchange', function(data){
@@ -288,9 +288,13 @@ export default class Calling extends React.Component {
     componentDidMount() {
         container = this
         socket.connect()
+
+        const sender = _.get(this.props.navigation.state.params, 'user_id', '')
+        const receiver = _.get(this.props.navigation.state.params, 'friend_user_id', '')
         if(this.state.isInComing) {
             this.setState({
-                info: 'Incoming Call'
+                info: 'Incoming Call',
+                id_room: receiver + '_' + sender
             })
             // InCallManager.setSpeakerphoneOn(true)
             InCallManager.start({media: 'audio'})
@@ -299,8 +303,9 @@ export default class Calling extends React.Component {
             const user_name = _.get(this.props.navigation.state.params, 'user_name')
             emit_call(this.state.sender, this.state.receiver, user_photo, user_name)
 
-            this.setState({status: 'connect', info: 'Calling'})
-            this._startCall()
+            this.setState({status: 'connect', info: 'Calling', id_room: sender + '_' + receiver}, () => {
+                this._startCall()
+            })
         }
     }
 
@@ -314,7 +319,8 @@ export default class Calling extends React.Component {
         // init
         InCallManager.setMicrophoneMute(false)
         InCallManager.setSpeakerphoneOn(false)
-        join('abc')
+        console.log(' join room id : ', this.state.id_room )
+        join(this.state.id_room)
     }
 
     _switchVideoType = () => {
