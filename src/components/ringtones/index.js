@@ -9,19 +9,18 @@ class Ringtone {
                 return
             }
             // loaded successfully
+            this.whoosh.setNumberOfLoops(3);
+
             console.log('duration in seconds: ' + this.whoosh.getDuration() + 'number of channels: ' + this.whoosh.getNumberOfChannels());
         });
     }
 
     stop() {
         if(this.whoosh) {
-            this.whoosh.stop(() => {
-                // Note: If you want to play a sound after stopping and rewinding it,
-                // it is important to call play() in a callback.
-                this.whoosh.play();
-            });
+
             this.whoosh.stop()
             this.whoosh.setCurrentTime(0.0)
+
             console.log(' stop audio for tone ')
         }
     }
@@ -33,9 +32,6 @@ class Ringtone {
                 console.log('successfully finished playing');
             } else {
                 console.log('playback failed due to audio decoding errors');
-                // reset the player to its uninitialized state (android only)
-                // this is the only option to recover after an error occured and use the player again
-                this.whoosh.reset();
             }
         });
     }

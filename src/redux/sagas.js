@@ -89,6 +89,11 @@ import {
 import { start_socket, emit_subscribe, on_message, emit_message, emit_update_friend_chat_list, emit_as_seen } from './socket.js'
 import * as NavigationService from '../services/NavigationService.js'
 
+import {
+    ringback,
+    ringtone
+} from '../components/ringtones'
+
 export const getAuth = () => {
     return AsyncStorage.getItem('user_id').then((user_id) => {
         return user_id
@@ -103,6 +108,9 @@ function* hangupSaga() {
     while (true) {
         yield take('HANGUP')
 
+        ringback.stop()
+        ringtone.stop()
+        
         const navigate = yield select(navigateSelector)
         navigate.dispatch(NavigationActions.back())
     }
