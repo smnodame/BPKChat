@@ -34,11 +34,16 @@ import {
   MediaStreamTrack,
   getUserMedia,
 } from 'react-native-webrtc'
+import Sound from 'react-native-sound'
 
 import {
     emit_call,
     emit_hangup
 } from '../../redux/socket.js'
+import {
+    ringback,
+    ringtone
+} from '../../components/ringtones'
 
 const configuration = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]}
 
@@ -125,6 +130,9 @@ function createPC(socketId, isOffer) {
   };
 
   pc.onaddstream = function (event) {
+    ringback.stop()
+    ringtone.stop()
+
     console.log('onaddstream', event.stream);
     container.setState({info: 'One peer join!'});
 
@@ -297,13 +305,13 @@ export default class Calling extends React.Component {
                 info: 'Incoming Call',
                 id_room: receiver + '_' + sender
             })
-            // InCallManager.setSpeakerphoneOn(true)
-            InCallManager.start({media: 'audio'})
+            ringtone.play()
+            InCallManager.setSpeakerphoneOn(true)
         } else {
             const user_photo = _.get(this.props.navigation.state.params, 'user_photo')
             const user_name = _.get(this.props.navigation.state.params, 'user_name')
             emit_call(this.state.sender, this.state.receiver, user_photo, user_name)
-
+            ringback.play()
             this.setState({status: 'connect', info: 'Calling', id_room: sender + '_' + receiver}, () => {
                 this._startCall()
             })
@@ -474,6 +482,8 @@ export default class Calling extends React.Component {
                                 onPress={ () => {
                                     if(this.state.info != 'One peer join!' && this.state.status != 'stop') {
                                         emit_hangup(this.state.sender, this.state.receiver)
+                                        ringback.stop()
+                                        ringtone.stop()
                                     }
                                     after_leave()
                                 }}
