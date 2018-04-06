@@ -472,7 +472,7 @@ export default class Calling extends React.Component {
                         <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, flexDirection: 'row' }}>
                             <TouchableOpacity
                                 onPress={ () => {
-                                    if(this.state.status != 'One peer join!') {
+                                    if(this.state.info != 'One peer join!' && this.state.status != 'stop') {
                                         emit_hangup(this.state.sender, this.state.receiver)
                                     }
                                     after_leave()

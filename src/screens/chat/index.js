@@ -977,7 +977,10 @@ export default class Chat extends React.Component {
                 </Body>
                 <Right>
                     {
-                        !this.state.isShowSearchBar && <Button transparent onPress={() => {
+                        !this.state.isShowSearchBar &&
+                        this.props.navigation.state.params.chat_room_type != 'G' &&
+                        this.props.navigation.state.params.chat_room_type != 'C' &&
+                         <Button transparent onPress={() => {
                             this.props.navigation.navigate('Calling', {
                                 user_id: this.state.user.user_id,
                                 friend_user_id: this.state.chatInfo.friend_user_id,

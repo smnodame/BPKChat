@@ -386,7 +386,26 @@ export default class Contacts extends React.Component {
                             <Icon name='md-chatboxes' style={{ color: 'gray' }} />
                             <Text style={{ color: 'gray' }}>CHAT</Text>
                         </Button>
-                        <Button transparent style={{ flexDirection: 'column', marginLeft: 10 }}>
+                        <Button
+                            transparent
+                            style={{ flexDirection: 'column', marginLeft: 10 }}
+                            onPress={() => {
+                                this.setState({
+                                    showFriendModal: false,
+                                    showProfileModal: false
+                                }, () => {
+                                    this.props.screenProps.rootNavigation.navigate('Calling', {
+                                        user_id: this.state.user.user_id,
+                                        friend_user_id: this.state.selectedFriend.friend_user_id,
+                                        friend_pic_url: _.get(this.state.selectedFriend, 'profile_pic_url', ''),
+                                        friend_name: this.state.selectedFriend.display_name,
+                                        user_photo: this.state.user.profile_pic_url,
+                                        user_name: this.state.user.display_name
+                                    })
+                                })
+
+                            }}
+                        >
                             <Icon name='md-call' style={{ color: 'gray' }} />
                             <Text style={{ color: 'gray' }}>FREE CALL</Text>
                         </Button>
