@@ -21,7 +21,7 @@ import io from 'socket.io-client'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import InCallManager from 'react-native-incall-manager'
 
-let socket = io('http://172.20.10.2:4443/', {transports: ['websocket']})
+let socket = io('http://192.168.1.39:4443/', {transports: ['websocket']})
 
 import { NavigationActions } from 'react-navigation'
 

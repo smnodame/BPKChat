@@ -110,7 +110,7 @@ function* hangupSaga() {
 
         ringback.stop()
         ringtone.stop()
-        
+
         const navigate = yield select(navigateSelector)
         navigate.dispatch(NavigationActions.back())
     }

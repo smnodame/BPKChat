@@ -8,8 +8,9 @@ class Ringtone {
                 console.log('failed to load the sound', error)
                 return
             }
-            // loaded successfully
-            this.whoosh.setNumberOfLoops(3);
+
+            // Loop indefinitely until stop() is called
+            this.whoosh.setNumberOfLoops(-1);
 
             console.log('duration in seconds: ' + this.whoosh.getDuration() + 'number of channels: ' + this.whoosh.getNumberOfChannels());
         });
@@ -17,11 +18,8 @@ class Ringtone {
 
     stop() {
         if(this.whoosh) {
-
             this.whoosh.stop()
             this.whoosh.setCurrentTime(0.0)
-
-            console.log(' stop audio for tone ')
         }
     }
 

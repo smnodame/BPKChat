@@ -5,7 +5,7 @@ import { fetchChatLists, fetchChat, setAsSeen } from './api.js'
 import { chatLists, chat, incomingCall, hangup } from './actions.js'
 import { store } from './index.js'
 
-const socket = SocketIOClient('http://172.20.10.2:4444/', {
+const socket = SocketIOClient('http://192.168.1.39:4444/', {
     transports: ['websocket']
 })
 let user_id = ''
