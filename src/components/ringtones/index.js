@@ -1,7 +1,8 @@
 import Sound from 'react-native-sound'
 
+
 class Ringtone {
-    constructor(filename) {
+    constructor(filename, isPlayback) {
         this.filename = filename
         // See notes below about preloading sounds within initialization code below.
         this.whoosh = new Sound(filename, Sound.MAIN_BUNDLE, (error) => {
@@ -10,11 +11,18 @@ class Ringtone {
                 return
             }
 
+            // if (PLAYBACK) {
+            //   this.sound.setCategory("Playback");
+            // } else {
+            //   this.sound.setCategory("PlayAndRecord");
+            // }
+
             // Loop indefinitely until stop() is called
             this.whoosh.setNumberOfLoops(-1)
 
             console.log('duration in seconds: ' + this.whoosh.getDuration() + 'number of channels: ' + this.whoosh.getNumberOfChannels())
         })
+
     }
 
     stop() {
@@ -25,6 +33,7 @@ class Ringtone {
                 console.log('at ' + seconds)
             })
             clearTimeout(this.playAudio)
+            this.whoosh.stop()
             this.whoosh.setVolume(0.0)
         }
     }
