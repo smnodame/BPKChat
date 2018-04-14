@@ -2,6 +2,7 @@ import Sound from 'react-native-sound'
 
 class Ringtone {
     constructor(filename) {
+        this.filename = filename
         // See notes below about preloading sounds within initialization code below.
         this.whoosh = new Sound(filename, Sound.MAIN_BUNDLE, (error) => {
             if (error) {
@@ -10,28 +11,39 @@ class Ringtone {
             }
 
             // Loop indefinitely until stop() is called
-            this.whoosh.setNumberOfLoops(-1);
+            this.whoosh.setNumberOfLoops(-1)
 
-            console.log('duration in seconds: ' + this.whoosh.getDuration() + 'number of channels: ' + this.whoosh.getNumberOfChannels());
-        });
+            console.log('duration in seconds: ' + this.whoosh.getDuration() + 'number of channels: ' + this.whoosh.getNumberOfChannels())
+        })
     }
 
     stop() {
         if(this.whoosh) {
-            this.whoosh.stop()
-            this.whoosh.setCurrentTime(0.0)
+            // Get the current playback point in seconds
+            this.whoosh.getCurrentTime((seconds) => {
+                console.log(this.filename)
+                console.log('at ' + seconds)
+            })
+            clearTimeout(this.playAudio)
+            this.whoosh.setVolume(0.0)
         }
     }
 
     play() {
-        // Play the sound with an onEnd callback
-        this.whoosh.play((success) => {
-            if (success) {
-                console.log('successfully finished playing');
-            } else {
-                console.log('playback failed due to audio decoding errors');
-            }
-        });
+        this.whoosh.setVolume(0.5)
+        this.whoosh.setCurrentTime(0.0)
+        this.playAudio = setTimeout(() => {
+            // Play the sound with an onEnd callback
+            this.whoosh.play((success) => {
+                if (success) {
+                    console.log('successfully finished playing')
+                } else {
+                    console.log('playback failed due to audio decoding errors')
+
+                    this.whoosh.reset()
+                }
+            })
+        }, 100)
     }
 }
 
