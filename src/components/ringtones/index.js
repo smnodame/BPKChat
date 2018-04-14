@@ -1,5 +1,7 @@
 import Sound from 'react-native-sound'
 
+// Enable playback in silence mode
+Sound.setCategory('Playback');
 
 class Ringtone {
     constructor(filename, isPlayback) {
@@ -11,11 +13,11 @@ class Ringtone {
                 return
             }
 
-            // if (PLAYBACK) {
-            //   this.sound.setCategory("Playback");
-            // } else {
-            //   this.sound.setCategory("PlayAndRecord");
-            // }
+            if (isPlayback) {
+              this.whoosh.setCategory("Playback");
+            } else {
+              this.whoosh.setCategory("PlayAndRecord");
+            }
 
             // Loop indefinitely until stop() is called
             this.whoosh.setNumberOfLoops(-1)

@@ -318,9 +318,14 @@ export const saveInKeep = (copy_chat_message_id) => {
 
 export const saveNotiToken = (token) => {
     return getAuth().then((user_id) => {
-        return axios.post(`http://itsmartone.com/bpk_connect/api/user/save_noti_android_token?token=asdf1234aaa`, {
-            user_id,
-            android_token: token
+        if(user_id) {
+            return axios.post(`http://itsmartone.com/bpk_connect/api/user/save_noti_android_token?token=asdf1234aaa`, {
+                user_id,
+                android_token: token
+            })
+        }
+        return new Promise(() => {
+            resolve('error')
         })
     })
 }
