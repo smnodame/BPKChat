@@ -223,13 +223,11 @@ socket.on('leave', function(socketId){
 
 socket.on('connect', function(data) {
   console.log('connect');
-  if( container ) {
-      getLocalStream(true, function(stream) {
-        localStream = stream;
-        container.setState({selfViewSrc: stream.toURL()});
-        container.setState({status: 'ready'});
-      });
-  }
+  getLocalStream(true, function(stream) {
+    localStream = stream;
+    container.setState({selfViewSrc: stream.toURL()});
+    container.setState({status: 'ready'});
+  });
 });
 
 function logError(error) {

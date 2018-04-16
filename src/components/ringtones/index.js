@@ -1,7 +1,9 @@
 import Sound from 'react-native-sound'
+import InCallManager from 'react-native-incall-manager'
 
 // Enable playback in silence mode
-Sound.setCategory('Playback');
+InCallManager.start({media: 'audio'});
+// Sound.setCategory('Playback');
 
 class Ringtone {
     constructor(filename, isPlayback) {
@@ -14,10 +16,11 @@ class Ringtone {
             }
 
             if (isPlayback) {
-              this.whoosh.setCategory("Playback");
+              this.whoosh.setCategory("Playback")
             } else {
-              this.whoosh.setCategory("PlayAndRecord");
+              this.whoosh.setCategory("PlayAndRecord")
             }
+
 
             // Loop indefinitely until stop() is called
             this.whoosh.setNumberOfLoops(-1)
@@ -58,5 +61,5 @@ class Ringtone {
     }
 }
 
-export const ringtone = new Ringtone('incallmanager_ringtone.mp3')
-export const ringback = new Ringtone('incallmanager_ringback.mp3')
+export const ringtone = new Ringtone('incallmanager_ringtone.mp3', false)
+export const ringback = new Ringtone('incallmanager_ringback.mp3', true)
