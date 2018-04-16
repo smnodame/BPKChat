@@ -1,8 +1,7 @@
 import Sound from 'react-native-sound'
 import InCallManager from 'react-native-incall-manager'
 
-// Enable playback in silence mode
-InCallManager.start({media: 'audio'});
+
 // Sound.setCategory('Playback');
 
 class Ringtone {
@@ -40,11 +39,16 @@ class Ringtone {
             clearTimeout(this.playAudio)
             this.whoosh.stop()
             this.whoosh.setVolume(0.0)
+
+            InCallManager.stop()
         }
     }
 
     play() {
-        this.whoosh.setVolume(0.5)
+        // Enable playback in silence mode
+        InCallManager.start({media: 'audio'});
+
+        this.whoosh.setVolume(0.99)
         this.whoosh.setCurrentTime(0.0)
         this.playAudio = setTimeout(() => {
             // Play the sound with an onEnd callback

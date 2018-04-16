@@ -21,7 +21,7 @@ import io from 'socket.io-client'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import InCallManager from 'react-native-incall-manager'
 
-let socket = io('http://192.168.1.39:4443/', {transports: ['websocket']})
+let socket = io('http://122.155.210.29:4443/', {transports: ['websocket']})
 
 import { NavigationActions } from 'react-navigation'
 
@@ -132,6 +132,12 @@ function createPC(socketId, isOffer) {
   pc.onaddstream = function (event) {
     ringback.stop()
     ringtone.stop()
+
+    setTimeout(() => {
+        InCallManager.start();
+        InCallManager.setSpeakerphoneOn(container.state.speaker)
+        InCallManager.setMicrophoneMute(container.state.mute)
+    }, 100)
 
     console.log('onaddstream', event.stream);
     container.setState({info: 'One peer join!'});
@@ -323,7 +329,6 @@ export default class Calling extends React.Component {
         this.setState({
             isCalling: false
         })
-        InCallManager.stop()
 
         // init
         InCallManager.setMicrophoneMute(false)

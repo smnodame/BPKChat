@@ -324,7 +324,7 @@ export const saveNotiToken = (token) => {
                 android_token: token
             })
         }
-        return new Promise(() => {
+        return new Promise((resolve, reject) => {
             resolve('error')
         })
     })
