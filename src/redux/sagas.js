@@ -267,10 +267,7 @@ function* signin() {
         yield put(isLoading(true))
         if(username && password) {
             const res_loginApi = yield call(loginApi, username, password)
-            
-            console.log(' finsihed sign in ')
-            console.log(res_loginApi)
-
+        
             if(_.get(res_loginApi.data, 'error')) {
                 yield put(signin_error(res_loginApi.data.error))
                 yield put(isLoading(false))
